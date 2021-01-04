@@ -1,11 +1,11 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
-	pointsName: "points",
+	name: "The Colour Tree",
+	id: "FD101/TheColourTree",
+	author: "FrozenDude101",
+	pointsName: "blank pigment",
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	
 	offlineLimit: 1,  // In hours
 }
