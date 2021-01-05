@@ -41,7 +41,24 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(1);
+
+	// Base add.
+	if (hasUpgrade("redPigment", 11)) gain = gain.add(upgradeEffect("redPigment", 11));
+	if (hasUpgrade("yellowPigment", 11)) gain = gain.add(upgradeEffect("yellowPigment", 11));
+	if (hasUpgrade("bluePigment", 11)) gain = gain.add(upgradeEffect("bluePigment", 11));
+
+	// Multiply.
+	if (hasUpgrade("redPigment", 12)) gain = gain.mul(upgradeEffect("redPigment", 12));
+	if (hasUpgrade("redPigment", 21)) gain = gain.mul(upgradeEffect("redPigment", 21));
+	if (hasUpgrade("redPigment", 22)) gain = gain.mul(upgradeEffect("redPigment", 22));
+	if (hasUpgrade("yellowPigment", 12)) gain = gain.mul(upgradeEffect("yellowPigment", 12));
+	if (hasUpgrade("yellowPigment", 21)) gain = gain.mul(upgradeEffect("yellowPigment", 21));
+	if (hasUpgrade("yellowPigment", 22)) gain = gain.mul(upgradeEffect("yellowPigment", 22));
+	if (hasUpgrade("bluePigment", 12)) gain = gain.mul(upgradeEffect("bluePigment", 12));
+	if (hasUpgrade("bluePigment", 21)) gain = gain.mul(upgradeEffect("bluePigment", 21));
+	if (hasUpgrade("bluePigment", 22)) gain = gain.mul(upgradeEffect("bluePigment", 22));
+
 	return gain
 }
 

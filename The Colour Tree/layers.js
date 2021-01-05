@@ -1,197 +1,174 @@
-// TODO
-// Separate out the baseLayers. Each might have unique things in them anyway, so it can't be done in a loop.
-// Come up with unique aspects to put into each layer (for content after initial pigments).
+addLayer("achievements", {
+    symbol: "🏆",
+    row: "side",
+    resource: "achievements.",
 
-// Red    - Blood / Fire / 
-// Orange - Fire / 
-// Yellow - Gold / Bees / 
-// Green  - Nature / Trees / 
-// Blue   - Water / Fish / 
-// Purple - Poision / 
+    tooltip: "Achievements",
 
-baseLayers = {
-    red: "#D22",
-    orange: "#D82",
-    yellow: "#DD2",
-    green: "#2D2",
-    blue: "#22D",
-    purple: "#828",
-}
+    layerShown: true,
 
-for (let baseLayer in baseLayers) {
+    startData() {
+        let levels = {};
+        for (let achievement in this.achievements) {
+            if (achievement == "rows" || achievement == "cols") continue;
+            levels[achievement] = 0;
+        };
 
-    addLayer(baseLayer, {
-        symbol: baseLayer[0].toUpperCase(),
-        color: baseLayers[baseLayer],
+        return {
+            points: "",
+            levels: levels,
+        };
+    },
+    points() {
+        let points = 0;
+        let total = 0;
+        for (let achievement in player.achievements.levels) {
+            points += player.achievements.levels[achievement];
+            total += layers.achievements.achievements[achievement].max;
+        }
+        player.achievements.points = points + "/" + total;
+    },
 
-        tooltip() {
-            return "You have " + player[this.layer + "Pigment"].points + " " + this.layer + " pigment.";
-        },
-        tooltipLocked() {
-            return (player.points.lt(layers[this.layer + "Pigment"].getNextAt()) ? "You need " + layers[this.layer + "Pigment"].getNextAt() + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(player.points) + ")" : "Unlock the colour " + this.layer + ".");
-        },
-    
-        layerShown() {
-            return true;
-        },    
-        unlocked() {
-            player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || layers[this.layer + "Pigment"].canReset();
-        },
-    
-        startData() {
-            return {
-                unlocked: false,
-            };
-        },
-    
-        tabFormat: {
-            "Pigment": {
-                embedLayer: baseLayer + "Pigment",
+    tabFormat: {
+        "Achievements": {
+            content: [
+                "main-display",
+                "achievements",
+            ]
+        }
+    },
+
+    achievements: {
+        rows: 10,
+        cols: 6,
+
+        11: {
+            name() {
+                return "A Blank<br>Canvas<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max))
+            },
+            tooltip() {
+                switch (player.achievements.levels[this.id]) {
+                    case 0:
+                        return "Have " + formatWhole(this.goal()) + " blank pigment.\nNext Reward:\n+" + this.effect(1) + "% blank pigment.";
+                    case this.max:
+                        return "MAXED\nReward:\n+" + this.effect() + "% blank pigment.";
+                    default:
+                        return "Have " + formatWhole(this.goal()) + " blank pigment.\nCurrent Reward:\n+" + this.effect() + "% blank pigment.\nNext Reward:\n+" + this.effect(1) + "% blank pigment.";
+                }
+            },
+
+            max: 30,
+            goal() {
+                return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
+            },
+            done() {
+                return player.points.gte(this.goal());
+            },
+            onComplete() {
+                if (player.achievements.levels[this.id] != this.max) {
+                    player.achievements.levels[this.id] += 1;
+                    player.achievements.achievements.pop();
+                }
+            },
+            effect(delta = 0) {
+                return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
-    })
+        12: {
+            name() {
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Red<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
+            },
+            tooltip() {
+                switch (player.achievements.levels[this.id]) {
+                    case 0:
+                        return "Have " + formatWhole(this.goal()) + " red pigment.\nNext Reward:\n+" + this.effect(1) + "% red pigment.";
+                    case this.max:
+                        return "MAXED\nReward:\n+" + this.effect() + "% red pigment.";
+                    default:
+                        return "Have " + formatWhole(this.goal()) + " red pigment.\nCurrent Reward:\n+" + this.effect() + "% red pigment.\nNext Reward:\n+" + this.effect(1) + "% red pigment.";
+                }
+            },
 
-}
+            max: 30,
+            goal() {
+                return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
+            },
+            done() {
+                return player.redPigment.points.gte(this.goal());
+            },
+            onComplete() {
+                if (player.achievements.levels[this.id] != this.max) {
+                    player.achievements.levels[this.id] += 1;
+                    player.achievements.achievements.pop();
+                }
+            },
+            effect(delta = 0) {
+                return Math.min(player.achievements.levels[this.id]+delta, this.max);
+            },
+        },
+        13: {
+            name() {
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Yellow<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
+            },
+            tooltip() {
+                switch (player.achievements.levels[this.id]) {
+                    case 0:
+                        return "Have " + formatWhole(this.goal()) + " yellow pigment.\nNext Reward:\n+" + this.effect(1) + "% yellow pigment.";
+                    case this.max:
+                        return "MAXED\nReward:\n+" + this.effect() + "% yellow pigment.";
+                    default:
+                        return "Have " + formatWhole(this.goal()) + " yellow pigment.\nCurrent Reward:\n+" + this.effect() + "% yellow pigment.\nNext Reward:+\n" + this.effect(1) + "% yellow pigment.";
+                }
+            },
 
-addLayer("redPigment", {
-    color: layers.red.color,
-    resource: "red pigment.",
-    shouldNotify() {
-        return !player[this.layer].unlocked && this.canReset();
-    },
+            max: 30,
+            goal() {
+                return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
+            },
+            done() {
+                return player.yellowPigment.points.gte(this.goal());
+            },
+            onComplete() {
+                if (player.achievements.levels[this.id] != this.max) {
+                    player.achievements.levels[this.id] += 1;
+                    player.achievements.achievements.pop();
+                }
+            },
+            effect(delta = 0) {
+                return Math.min(player.achievements.levels[this.id]+delta, this.max);
+            },
+        },
+        14: {
+            name() {
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Blue<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
+            },
+            tooltip() {
+                switch (player.achievements.levels[this.id]) {
+                    case 0:
+                        return "Have " + formatWhole(this.goal()) + " blue pigment.\nNext Reward:\n+" + this.effect(1) + "% blue pigment.";
+                    case this.max:
+                        return "MAXED\nReward:\n+" + this.effect() + "% blue pigment.";
+                    default:
+                        return "Have " + formatWhole(this.goal()) + " blue pigment.\nCurrent Reward:\n+" + this.effect() + "% blue pigment.\nNext Reward:+\n" + this.effect(1) + "% blue pigment.";
+                }
+            },
 
-    startData() {
-        return {
-            points: new Decimal(0),
-            unlocked: false,
-        };
+            max: 30,
+            goal() {
+                return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
+            },
+            done() {
+                return player.bluePigment.points.gte(this.goal());
+            },
+            onComplete() {
+                if (player.achievements.levels[this.id] != this.max) {
+                    player.achievements.levels[this.id] += 1;
+                    player.achievements.achievements.pop();
+                }
+            },
+            effect(delta = 0) {
+                return Math.min(player.achievements.levels[this.id]+delta, this.max);
+            },
+        },
     },
-
-    type: "custom",
-    prestigeButtonText() {
-        return "Add dye and make " + formatWhole(this.getResetGain(), 0) + " " + this.resource + "<br>Next at " + formatWhole(this.getNextAt(true), 0) + " blank pigment.";
-    },
-    getNextAt(canMax = false) {
-        if (canMax) {
-            return this.getResetGain().add(1).pow(2).mul(this.getNextAt());
-        } else {
-            return new Decimal(10).pow(Decimal.pow(2, player[this.layer].unlockOrder));
-        }
-    },
-    getResetGain() {
-        return player.points.div(this.getNextAt()).pow(0.5).floor();
-    },
-    canReset() {
-        return this.getResetGain().gte(1);
-    },
-    onPrestige() {
-        if (!player.red.unlocked) {
-            player.red.unlockOrder = coloursUnlocked();
-        }
-    },
-})
-
-addLayer("orangePigment", {
-    color: layers.orange.color,
-    resource: "orange pigment.",
-    shouldNotify() {
-        return !player[this.layer].unlocked && this.canReset();
-    },
-
-    startData() {
-        return {
-            points: new Decimal(0),
-        };
-    },
-
-    getNextAt() {
-        return new Decimal(0);
-    },
-    canReset() {
-        return false;
-    }
-})
-
-addLayer("yellowPigment", {
-    color: layers.yellow.color,
-    resource: "yellow pigment.",
-    shouldNotify() {
-        return !player[this.layer].unlocked && this.canReset();
-    },
-
-    startData() {
-        return {
-            points: new Decimal(0),
-        };
-    },
-
-    getNextAt() {
-        return new Decimal(0);
-    },
-    canReset() {
-        return false;
-    }
-})
-
-addLayer("greenPigment", {
-    color: layers.green.color,
-    resource: "green pigment.",
-    shouldNotify() {
-        return !player[this.layer].unlocked && this.canReset();
-    },
-
-    startData() {
-        return {
-            points: new Decimal(0),
-        };
-    },
-
-    getNextAt() {
-        return new Decimal(0);
-    },
-    canReset() {
-        return false;
-    }
-})
-
-addLayer("bluePigment", {
-    color: layers.blue.color,
-    resource: "blue pigment.",
-    shouldNotify() {
-        return !player[this.layer].unlocked && this.canReset();
-    },
-
-    startData() {
-        return {
-            points: new Decimal(0),
-        };
-    },
-
-    getNextAt() {
-        return new Decimal(0);
-    },
-    canReset() {
-        return false;
-    }
-})
-
-addLayer("purplePigment", {
-    color: layers.purple.color,
-    resource: "purple pigment.",
-    shouldNotify() {
-        return !player[this.layer].unlocked && this.canReset();
-    },
-
-    startData() {
-        return {
-            points: new Decimal(0),
-        };
-    },
-
-    getNextAt() {
-        return new Decimal(0);
-    },
-    canReset() {
-        return false;
-    }
-})
+});
