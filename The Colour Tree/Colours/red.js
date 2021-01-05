@@ -1,3 +1,6 @@
+// www.eggradients.com/shades-of-red
+// 6-1
+
 addLayer("red", {
     symbol: "R",
     color: "#D22",
@@ -112,7 +115,7 @@ addLayer("redPigment", {
             cost: new Decimal(5),
         },
         21: {
-            title: "Scarlet",
+            title: "Blood Red",
             description: "Boost blank pigment gain based on blank pigment amount.",
 
             effect() {
@@ -121,7 +124,7 @@ addLayer("redPigment", {
             cost: new Decimal(10),
         },
         22: {
-            title: "Carmine",
+            title: "Candy Apple Red",
             description: "Boost blank pigment gain based on red pigment amount.",
 
             effect() {
@@ -130,7 +133,7 @@ addLayer("redPigment", {
             cost: new Decimal(25),
         },
         23: {
-            title: "Crimson",
+            title: "Alizarin Crimson",
             description: "Boost red pigment gain based on red pigment amount.",
 
             effect() {

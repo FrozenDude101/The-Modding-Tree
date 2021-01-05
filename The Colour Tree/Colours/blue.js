@@ -1,3 +1,6 @@
+// www.eggradients.com/shades-of-blue-color
+// 3-1
+
 addLayer("blue", {
     symbol: "B",
     color: "#22D",
@@ -91,28 +94,28 @@ addLayer("bluePigment", {
         cols: 3,
 
         11: {
-            title: "Maroon",
+            title: "Royal Blue",
             description: "Add 1 to base blank pigment gain.",
 
             effect: 1,
             cost: new Decimal(1),
         },
         12: {
-            title: "Burgundy",
+            title: "Navy Blue",
             description: "Multiply blank pigment gain by 2.",
 
             effect: 2,
             cost: new Decimal(1),
         },
         13: {
-            title: "Auburn",
+            title: "Cobalt Blue",
             description: "Multiply blue pigment gain by 2.",
 
             effect: 2,
             cost: new Decimal(5),
         },
         21: {
-            title: "Scarlet",
+            title: "Baby Blue",
             description: "Boost blank pigment gain based on blank pigment amount.",
 
             effect() {
@@ -121,7 +124,7 @@ addLayer("bluePigment", {
             cost: new Decimal(10),
         },
         22: {
-            title: "Carmine",
+            title: "Tiffany Blue",
             description: "Boost blank pigment gain based on blue pigment amount.",
 
             effect() {
@@ -130,7 +133,7 @@ addLayer("bluePigment", {
             cost: new Decimal(25),
         },
         23: {
-            title: "Crimson",
+            title: "Midnight Blue",
             description: "Boost blue pigment gain based on blue pigment amount.",
 
             effect() {

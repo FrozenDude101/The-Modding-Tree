@@ -1,3 +1,6 @@
+// www.eggradients.com/shades-of-yellow
+// 4-3
+
 addLayer("yellow", {
     symbol: "Y",
     color: "#DD2",
@@ -91,28 +94,28 @@ addLayer("yellowPigment", {
         cols: 3,
 
         11: {
-            title: "Maroon",
+            title: "Lemon Yellow",
             description: "Add 1 to base blank pigment gain.",
 
             effect: 1,
             cost: new Decimal(1),
         },
         12: {
-            title: "Burgundy",
+            title: "Canary Yellow",
             description: "Multiply blank pigment gain by 2.",
 
             effect: 2,
             cost: new Decimal(1),
         },
         13: {
-            title: "Auburn",
+            title: "Golden Yellow",
             description: "Multiply yellow pigment gain by 2.",
 
             effect: 2,
             cost: new Decimal(5),
         },
         21: {
-            title: "Scarlet",
+            title: "Dandelion Yellow",
             description: "Boost blank pigment gain based on blank pigment amount.",
 
             effect() {
@@ -121,7 +124,7 @@ addLayer("yellowPigment", {
             cost: new Decimal(10),
         },
         22: {
-            title: "Carmine",
+            title: "Citrine Yellow",
             description: "Boost blank pigment gain based on yellow pigment amount.",
 
             effect() {
@@ -130,7 +133,7 @@ addLayer("yellowPigment", {
             cost: new Decimal(25),
         },
         23: {
-            title: "Crimson",
+            title: "Mustard Yellow",
             description: "Boost yellow pigment gain based on yellow pigment amount.",
 
             effect() {
