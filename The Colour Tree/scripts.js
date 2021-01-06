@@ -26,6 +26,6 @@ function formatNumeral(number) {
 
 function pigmentsUnlocked() {
 
-    return -3 + player.redPigment.unlocked + player.orangePigment.unlocked + player.yellowPigment.unlocked + player.greenPigment.unlocked + player.bluePigment.unlocked + player.purplePigment.unlocked;
+    return -2 + player.redPigment.unlocked + player.orangePigment.unlocked + player.yellowPigment.unlocked + player.greenPigment.unlocked + player.bluePigment.unlocked + player.purplePigment.unlocked;
 
 }

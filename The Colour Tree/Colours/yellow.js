@@ -49,34 +49,54 @@ addLayer("yellowPigment", {
             points: new Decimal(0),
         };
     },
-
     unlockOrder() {
         if (!player[this.layer].unlocked) {
             player[this.layer].unlockOrder = pigmentsUnlocked();
         }
     },
 
-    type: "normal",
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        "blank",
+        "upgrades",
+    ],
+
+    type: "custom",
+    row: 0,
+    prestigeButtonText() {
+        return "Dye blank pigment yellow for " + formatWhole(this.getResetGain()) + " yellow pigment.<br>Next at " + format(this.getNextAt()) + " blank pigment.";
+    },
+
     exponent: 0.5,
-    baseResource: "blank pigment.",
     baseAmount() {
         return player.points;
     },
-
     requires() {
         return new Decimal(10).pow(Decimal.pow(2, player[this.layer].unlockOrder));
     },
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade("yellowPigment", 13)) mult = mult.mul(upgradeEffect("yellowPigment", 13));
-        if (hasUpgrade("yellowPigment", 23)) mult = mult.mul(upgradeEffect("yellowPigment", 23));
+        if (hasUpgrade("bluePigment", 13)) mult = mult.mul(upgradeEffect("bluePigment", 13));
+        if (hasUpgrade("bluePigment", 23)) mult = mult.mul(upgradeEffect("bluePigment", 23));
 
         return mult;
     },
     gainExp() {
         let exp = new Decimal(1);
         return exp;
+    },
+    getResetGain() {
+        if (this.baseAmount().lt(this.requires())) return new Decimal(0);
+        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).floor().max(0);
+    },
+    getNextAt() {
+        return this.getResetGain().add(1).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+    },
+
+    canReset() {
+        return this.getResetGain().gte(1);
     },
 
     hotkeys: [
@@ -117,6 +137,9 @@ addLayer("yellowPigment", {
         21: {
             title: "Dandelion Yellow",
             description: "Boost blank pigment gain based on blank pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
 
             effect() {
                 return player.points.add(1).log(10).add(1)
@@ -126,6 +149,9 @@ addLayer("yellowPigment", {
         22: {
             title: "Citrine Yellow",
             description: "Boost blank pigment gain based on yellow pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
 
             effect() {
                 return player.yellowPigment.points.add(1).log(10).add(1);
@@ -135,9 +161,12 @@ addLayer("yellowPigment", {
         23: {
             title: "Mustard Yellow",
             description: "Boost yellow pigment gain based on yellow pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
 
             effect() {
-                return player.yellowPigment.points.add(1).log(10).add(1);
+                return player.yellowPigment.points.add(1).log(20).add(1);
             },
             cost: new Decimal(50),
         },

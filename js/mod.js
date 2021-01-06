@@ -25,7 +25,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = []
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -38,8 +38,7 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
+	if(!canGenPoints()) return new Decimal(0);
 
 	let gain = new Decimal(1);
 
@@ -50,12 +49,12 @@ function getPointGen() {
 
 	// Multiply.
 	for (let primary of ["red", "yellow", "blue"]) {
-		if (hasUpgrade("redPigment", 12)) gain = gain.mul(upgradeEffect("redPigment", 12));
-		if (hasUpgrade("redPigment", 21)) gain = gain.mul(upgradeEffect("redPigment", 21));
-		if (hasUpgrade("redPigment", 22)) gain = gain.mul(upgradeEffect("redPigment", 22));
+		if (hasUpgrade(primary+"Pigment", 12)) gain = gain.mul(upgradeEffect(primary+"Pigment", 12));
+		if (hasUpgrade(primary+"Pigment", 21)) gain = gain.mul(upgradeEffect(primary+"Pigment", 21));
+		if (hasUpgrade(primary+"Pigment", 22)) gain = gain.mul(upgradeEffect(primary+"Pigment", 22));
 	}
 
-	return gain
+	return gain;
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values

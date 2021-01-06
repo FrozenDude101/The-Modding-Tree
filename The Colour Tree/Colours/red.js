@@ -35,6 +35,7 @@ addLayer("red", {
 addLayer("redPigment", {
     color: "#D22",
     resource: "red pigment.",
+    row: 0,
     shouldNotify() {
         return !player[this.layer].unlocked && canReset(this.layer);
     },
@@ -49,34 +50,62 @@ addLayer("redPigment", {
             points: new Decimal(0),
         };
     },
-
     unlockOrder() {
         if (!player[this.layer].unlocked) {
             player[this.layer].unlockOrder = pigmentsUnlocked();
         }
     },
 
-    type: "normal",
+    tabFormat: [
+        "main-display",
+        "prestige-button",
+        "blank",
+        "upgrades",
+    ],
+
+    type: "custom",
+    row: 0,
+    prestigeButtonText() {
+        return "Dye blank pigment red for " + formatWhole(this.getResetGain()) + " red pigment.<br>Next at " + format(this.getNextAt()) + " blank pigment.";
+    },
+
     exponent: 0.5,
-    baseResource: "blank pigment.",
     baseAmount() {
         return player.points;
     },
-
     requires() {
         return new Decimal(10).pow(Decimal.pow(2, player[this.layer].unlockOrder));
     },
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade("redPigment", 13)) mult = mult.mul(upgradeEffect("redPigment", 13));
-        if (hasUpgrade("redPigment", 23)) mult = mult.mul(upgradeEffect("redPigment", 23));
+        if (hasUpgrade("bluePigment", 13)) mult = mult.mul(upgradeEffect("bluePigment", 13));
+        if (hasUpgrade("bluePigment", 23)) mult = mult.mul(upgradeEffect("bluePigment", 23));
 
         return mult;
     },
     gainExp() {
         let exp = new Decimal(1);
         return exp;
+    },
+    getResetGain() {
+        if (this.baseAmount().lt(this.requires())) return new Decimal(0);
+        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).floor().max(0);
+    },
+    getNextAt() {
+        return this.getResetGain().add(1).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+    },
+
+    canReset() {
+        return this.getResetGain().gte(1);
+    },
+    doReset(layer) {
+        let keep = [];
+        switch(layer) {
+            case "orangePigment": 
+            case "purplePigment":
+                layerDataReset(this.layer, keep);
+        }
     },
 
     hotkeys: [
@@ -117,6 +146,9 @@ addLayer("redPigment", {
         21: {
             title: "Blood Red",
             description: "Boost blank pigment gain based on blank pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
 
             effect() {
                 return player.points.add(1).log(10).add(1)
@@ -126,6 +158,9 @@ addLayer("redPigment", {
         22: {
             title: "Candy Apple Red",
             description: "Boost blank pigment gain based on red pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
 
             effect() {
                 return player.redPigment.points.add(1).log(10).add(1);
@@ -135,9 +170,12 @@ addLayer("redPigment", {
         23: {
             title: "Alizarin Crimson",
             description: "Boost red pigment gain based on red pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
 
             effect() {
-                return player.redPigment.points.add(1).log(10).add(1);
+                return player.redPigment.points.add(1).log(20).add(1);
             },
             cost: new Decimal(50),
         },
