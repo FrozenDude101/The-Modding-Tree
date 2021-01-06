@@ -180,16 +180,15 @@ function doReset(layer, force=false) {
 	if (tmp[layer].type == "none") return
 	let row = tmp[layer].row
 	if (!force) {
-		if (tmp[layer].type=="custom") {
-			if (!tmp[layer].canReset) return;
-		} else {
-			if (tmp[layer].baseAmount.lt(tmp[layer].requires)) return;
-		}
+		if (tmp[layer].baseAmount.lt(tmp[layer].requires)) return;
 		let gain = tmp[layer].resetGain
 		if (tmp[layer].type=="static") {
 			if (tmp[layer].baseAmount.lt(tmp[layer].nextAt)) return;
 			gain =(tmp[layer].canBuyMax ? gain : 1)
-		}
+		} 
+		if (tmp[layer].type=="custom") {
+			if (!tmp[layer].canReset) return;
+		} 
 
 		if (layers[layer].onPrestige)
 			run(layers[layer].onPrestige, layers[layer], gain)
