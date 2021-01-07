@@ -73,13 +73,13 @@ addLayer("yellowPigment", {
         return player.points;
     },
     requires() {
-        return new Decimal(10).pow(Decimal.pow(2, player[this.layer].unlockOrder));
+        return new Decimal(10).mul(Decimal.pow(10, 0.5*(player[this.layer].unlockOrder)*(player[this.layer].unlockOrder+1)));
     },
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade("bluePigment", 13)) mult = mult.mul(upgradeEffect("bluePigment", 13));
-        if (hasUpgrade("bluePigment", 23)) mult = mult.mul(upgradeEffect("bluePigment", 23));
+        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
 
         return mult;
     },
@@ -98,13 +98,21 @@ addLayer("yellowPigment", {
     canReset() {
         return this.getResetGain().gte(1);
     },
+    doReset(layer) {
+        let keep = [];
+        switch(layer) {
+            case "orangePigment": 
+            case "greenPigment":
+                layerDataReset(this.layer, keep);
+        }
+    },
 
     hotkeys: [
         {
             key: "y",
             description: "Y : Dye blank pigment yellow.",
             onPress() {
-                if (player.yellowPigment.unlocked) doReset("yellowPigment");
+                if (player[this.layer].unlocked) doReset(this.layer);
             },
         }
     ],
@@ -117,6 +125,10 @@ addLayer("yellowPigment", {
             title: "Lemon Yellow",
             description: "Add 1 to base blank pigment gain.",
 
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || player[this.layer].unlocked;
+            },
+
             effect: 1,
             cost: new Decimal(1),
         },
@@ -124,12 +136,20 @@ addLayer("yellowPigment", {
             title: "Canary Yellow",
             description: "Multiply blank pigment gain by 2.",
 
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 11);
+            },
+
             effect: 2,
             cost: new Decimal(1),
         },
         13: {
             title: "Golden Yellow",
             description: "Multiply yellow pigment gain by 2.",
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 12);
+            },
 
             effect: 2,
             cost: new Decimal(5),
@@ -139,6 +159,10 @@ addLayer("yellowPigment", {
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 13);
             },
 
             effect() {
@@ -153,8 +177,12 @@ addLayer("yellowPigment", {
                 return "x" + format(this.effect());
             },
 
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 21);
+            },
+
             effect() {
-                return player.yellowPigment.points.add(1).log(10).add(1);
+                return player[this.layer].points.add(1).log(10).add(1);
             },
             cost: new Decimal(25),
         },
@@ -165,8 +193,12 @@ addLayer("yellowPigment", {
                 return "x" + format(this.effect());
             },
 
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 22);
+            },
+
             effect() {
-                return player.yellowPigment.points.add(1).log(20).add(1);
+                return player[this.layer].points.add(1).log(20).add(1);
             },
             cost: new Decimal(50),
         },

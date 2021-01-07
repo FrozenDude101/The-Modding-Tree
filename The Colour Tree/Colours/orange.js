@@ -49,7 +49,7 @@ addLayer("orangePigment", {
     },
     unlockOrder() {
         if (!player[this.layer].unlocked) {
-            player[this.layer].unlockOrder = pigmentsUnlocked();
+            player[this.layer].unlockOrder = Math.max(pigmentsUnlocked()-2, 0);
         }
     },
 
@@ -58,12 +58,13 @@ addLayer("orangePigment", {
         "prestige-button",
         "blank",
         "upgrades",
+        "challenges",
     ],
 
     type: "custom",
     row: 0,
     prestigeButtonText() {
-        return "Combine yellow and red pigment for " + formatWhole(this.getResetGain()) + " orange pigment.<br>Next at " + format(this.getNextAt()) + " yellow and red pigment.";
+        return "Combine red and yellow pigment for " + formatWhole(this.getResetGain()) + " orange pigment.<br>Next at " + format(this.getNextAt()) + " yellow and red pigment.";
     },
 
     exponent: 0.5,
@@ -71,7 +72,7 @@ addLayer("orangePigment", {
         return player.redPigment.points.min(player.yellowPigment.points);
     },
     requires() {
-        return new Decimal(1000);
+        return new Decimal(1000).mul(Decimal.pow(10, 0.5*(player[this.layer].unlockOrder)*(player[this.layer].unlockOrder+1)));
     },
     gainMult() {
         let mult = new Decimal(1);
@@ -107,4 +108,111 @@ addLayer("orangePigment", {
             },
         }
     ],
+
+    upgrades: {
+        rows: 2,
+        cols: 3,
+
+        11: {
+            title: "Amber",
+            description: "Add 1 to base blank pigment gain.",
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || player[this.layer].unlocked;
+            },
+
+            effect: 1,
+            cost: new Decimal(1),
+        },
+        12: {
+            title: "Peach",
+            description: "Multiply blank pigment gain by 2.",
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 11);
+            },
+
+            effect: 2,
+            cost: new Decimal(1),
+        },
+        13: {
+            title: "Burnt Orange",
+            description: "Multiply orange pigment gain by 2.",
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 12);
+            },
+
+            effect: 2,
+            cost: new Decimal(5),
+        },
+        21: {
+            title: "Champagne",
+            description: "Boost blank pigment gain based on blank pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 13);
+            },
+
+            effect() {
+                return player.points.add(1).log(10).add(1)
+            },
+            cost: new Decimal(10),
+        },
+        22: {
+            title: "Apricot",
+            description: "Boost blank pigment gain based on orange pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 21);
+            },
+
+            effect() {
+                return player[this.layer].points.add(1).log(10).add(1);
+            },
+            cost: new Decimal(25),
+        },
+        23: {
+            title: "Neon Orange",
+            description: "Boost orange pigment gain based on orange pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 22);
+            },
+
+            effect() {
+                return player[this.layer].points.add(1).log(20).add(1);
+            },
+            cost: new Decimal(50),
+        },
+    },
+
+    challenges: {
+        rows: 1,
+        cols: 2,
+
+        11: {
+            name: "Additive",
+            challengeDescription: "Only have red, orange, and yellow pigments.",
+            goalDescription: "Reach 250,000 blank pigment.",
+            rewardDescription: "Generate 10% of red and yellow pigment per second.<br>(100% if already at 10%.)",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
+
+            canComplete() {
+                return player.points.gte(250000);
+            },
+        },
+    },
 })

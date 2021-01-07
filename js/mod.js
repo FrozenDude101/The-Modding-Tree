@@ -43,15 +43,15 @@ function getPointGen() {
 	let gain = new Decimal(1);
 
 	// Base add.
-	for (let primary of ["red", "yellow", "blue"]) {
-		if (hasUpgrade(primary+"Pigment", 11)) gain = gain.add(upgradeEffect(primary+"Pigment", 11));
+	for (let colour of ["red", "yellow", "blue", "orange"]) {
+		if (hasUpgrade(colour+"Pigment", 11)) gain = gain.add(upgradeEffect(colour+"Pigment", 11));
 	}
 
 	// Multiply.
-	for (let primary of ["red", "yellow", "blue"]) {
-		if (hasUpgrade(primary+"Pigment", 12)) gain = gain.mul(upgradeEffect(primary+"Pigment", 12));
-		if (hasUpgrade(primary+"Pigment", 21)) gain = gain.mul(upgradeEffect(primary+"Pigment", 21));
-		if (hasUpgrade(primary+"Pigment", 22)) gain = gain.mul(upgradeEffect(primary+"Pigment", 22));
+	for (let colour of ["red", "yellow", "blue", "orange"]) {
+		if (hasUpgrade(colour+"Pigment", 12)) gain = gain.mul(upgradeEffect(colour+"Pigment", 12));
+		if (hasUpgrade(colour+"Pigment", 21)) gain = gain.mul(upgradeEffect(colour+"Pigment", 21));
+		if (hasUpgrade(colour+"Pigment", 22)) gain = gain.mul(upgradeEffect(colour+"Pigment", 22));
 	}
 
 	return gain;
