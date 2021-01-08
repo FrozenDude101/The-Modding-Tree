@@ -40,18 +40,27 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints()) return new Decimal(0);
 
+
 	let gain = new Decimal(1);
 
+	let colours = [];
+	if (colours.length == 0) colours = ["red", "orange", "yellow", "green", "blue", "purple"];
+	// Limit colours based on challenges, if no limits, they are all added.
+
 	// Base add.
-	for (let colour of ["red", "yellow", "blue", "orange"]) {
+	for (let colour of colours) {
 		if (hasUpgrade(colour+"Pigment", 11)) gain = gain.add(upgradeEffect(colour+"Pigment", 11));
 	}
 
 	// Multiply.
-	for (let colour of ["red", "yellow", "blue", "orange"]) {
+	for (let colour of colours) {
 		if (hasUpgrade(colour+"Pigment", 12)) gain = gain.mul(upgradeEffect(colour+"Pigment", 12));
 		if (hasUpgrade(colour+"Pigment", 21)) gain = gain.mul(upgradeEffect(colour+"Pigment", 21));
 		if (hasUpgrade(colour+"Pigment", 22)) gain = gain.mul(upgradeEffect(colour+"Pigment", 22));
+	}
+	
+	for (let colour of colours) {
+		if (hasUpgrade(colour+"Pigment", 51)) gain = gain.pow(1.1);
 	}
 
 	return gain;

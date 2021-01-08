@@ -62,9 +62,12 @@ addLayer("orangePigment", {
     ],
 
     type: "custom",
-    row: 0,
+    row: 1,
     prestigeButtonText() {
         return "Combine red and yellow pigment for " + formatWhole(this.getResetGain()) + " orange pigment.<br>Next at " + format(this.getNextAt()) + " yellow and red pigment.";
+    },
+    resetsNothing() {
+        return hasChallenge(this.layer, 12);
     },
 
     exponent: 0.5,
@@ -76,6 +79,10 @@ addLayer("orangePigment", {
     },
     gainMult() {
         let mult = new Decimal(1);
+
+        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
+
         return mult;
     },
     gainExp() {
@@ -102,7 +109,7 @@ addLayer("orangePigment", {
     hotkeys: [
         {
             key: "o",
-            description: "O : Combine red and yellow pigments to make orange pigment.",
+            description: "O : Combine red and yellow pigment to make orange pigment.",
             onPress() {
                 if (player.orangePigment.unlocked) doReset("orangePigment");
             },
@@ -202,12 +209,26 @@ addLayer("orangePigment", {
 
         11: {
             name: "Additive",
-            challengeDescription: "Only have red, orange, and yellow pigments.",
+            challengeDescription: "Only have red, orange, and yellow pigment.",
             goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Generate 10% of red and yellow pigment per second.<br>(100% if already at 10%.)",
+            rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
+
+            canComplete() {
+                return player.points.gte(250000);
+            },
+        },
+        12: {
+            name: "Complementary",
+            challengeDescription: "Only have blue and orange pigment.",
+            goalDescription: "Reach 250,000 blank pigment.",
+            rewardDescription: "Unlock a row of blue and orange upgrades.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || hasChallenge(this.layer, 11);
             },
 
             canComplete() {

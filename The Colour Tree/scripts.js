@@ -24,8 +24,18 @@ function formatNumeral(number) {
 
 }
 
-function pigmentsUnlocked() {
+function calcRequiresExponent(layer, delta=0) {
 
-    return -2 + player.redPigment.unlocked + player.orangePigment.unlocked + player.yellowPigment.unlocked + player.greenPigment.unlocked + player.bluePigment.unlocked + player.purplePigment.unlocked;
+    let primary =   player.redPigment.unlocked + player.yellowPigment.unlocked + player.bluePigment.unlocked;
+    let secondary = player.orangePigment.unlocked + player.greenPigment.unlocked + player.purplePigment.unlocked;
+
+    if (["red", "yellow", "blue"].includes(layer)) {
+        return Math.max(0.5 * (primary+delta) * (primary+delta+1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0)
+    }
+    if (["orange", "green", "purple"].includes(layer)) {
+        return Math.max(0.5 * (primary+delta-2) * (primary+delta-1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0)
+    }
+    alert("Invalid layer '" + layer + "' called to calcUnlock.");
+    return 0;
 
 }
