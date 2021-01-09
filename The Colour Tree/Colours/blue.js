@@ -65,7 +65,9 @@ addLayer("bluePigment", {
 
     tabFormat: [
         "main-display",
-        "prestige-button",
+        ["prestige-button", "", function() {
+            return layers.bluePigment.passiveGeneration() < 1 ? {} : {display: "none"};
+        }],
         "blank",
         ["upgrades", function() {
             rows = [];
@@ -103,12 +105,12 @@ addLayer("bluePigment", {
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
         if (hasUpgrade(this.layer, 41)) mult = mult.mul(upgradeEffect(this.layer, 41));
         if (hasUpgrade(this.layer, 42)) mult = mult.mul(upgradeEffect(this.layer, 42));
-        if (hasUpgrade("orangePigment", 32)) mult = mult.mul(upgradeEffect("orangePigment", 32));
+        if (layers.orangePigment.layerShown() && hasUpgrade("orangePigment", 32)) mult = mult.mul(upgradeEffect("orangePigment", 32));
 
         return mult;
     },
@@ -185,14 +187,6 @@ addLayer("bluePigment", {
         },
         13: {
             title: "Navy Blue",
-            description: "Multiply blue pigment gain by 2.",
-
-            effect: 2,
-            cost: new Decimal(5),
-        },
-        
-        21: {
-            title: "Cobalt Blue",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
@@ -201,6 +195,14 @@ addLayer("bluePigment", {
             effect() {
                 return player.points.add(1).log(10).add(1)
             },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Cobalt Blue",
+            description: "Multiply blue pigment gain by 2.",
+
+            effect: 2,
             cost: new Decimal(10),
         },
         22: {
@@ -267,7 +269,7 @@ addLayer("bluePigment", {
             effect() {
                 return player.redPigment.points.add(player.yellowPigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(1000000),
+            cost: new Decimal(100000000),
         },
         42: {
             title: "Electric Blue",
@@ -279,7 +281,7 @@ addLayer("bluePigment", {
             effect() {
                 return player.greenPigment.points.add(player.purplePigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(2000000),
+            cost: new Decimal(200000000),
         },
         43: {
             title: "Prussian Blue",
@@ -290,7 +292,7 @@ addLayer("bluePigment", {
             },
 
             effect: 0.9,
-            cost: new Decimal(10000000),
+            cost: new Decimal(1000000000),
         },
 
         51: {
@@ -316,7 +318,7 @@ addLayer("bluePigment", {
             },
 
             effect: 1,
-            cost: new Decimal(100000000),
+            cost: new Decimal(1e15),
         },
     },
 });

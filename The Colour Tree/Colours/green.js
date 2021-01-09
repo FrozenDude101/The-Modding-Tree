@@ -14,7 +14,7 @@ addLayer("green", {
     },
 
     tooltip() {
-        return "You have " + player[this.layer + "Pigment"].points + " " + this.layer + " pigment.";
+        return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
         return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " blue and yellow pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
@@ -169,14 +169,6 @@ addLayer("greenPigment", {
         },
         13: {
             title: "Forest Green",
-            description: "Multiply green pigment gain by 2.",
-
-            effect: 2,
-            cost: new Decimal(5),
-        },
-        
-        21: {
-            title: "Lime Green",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
@@ -185,6 +177,14 @@ addLayer("greenPigment", {
             effect() {
                 return player.points.add(1).log(10).add(1)
             },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Lime Green",
+            description: "Multiply green pigment gain by 2.",
+
+            effect: 2,
             cost: new Decimal(10),
         },
         22: {
@@ -214,7 +214,7 @@ addLayer("greenPigment", {
         
         31: {
             title: "Pastel Green",
-            description: "Keep red and yellow pigment upgrades on orange pigment reset.",
+            description: "Keep blue and yellow pigment upgrades on orange pigment reset.",
 
             cost: new Decimal(200),
         },
@@ -254,6 +254,10 @@ addLayer("greenPigment", {
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of blue and yellow pigment upgrades.",
 
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
+
             canComplete() {
                 return player.points.gte(250000);
             },
@@ -263,6 +267,10 @@ addLayer("greenPigment", {
             challengeDescription: "Only have red and green pigment.",
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of red and green pigment upgrades.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
 
             canComplete() {
                 return player.points.gte(250000);

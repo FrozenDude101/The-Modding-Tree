@@ -14,7 +14,7 @@ addLayer("purple", {
     },
 
     tooltip() {
-        return "You have " + player[this.layer + "Pigment"].points + " " + this.layer + " pigment.";
+        return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
         return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " red and blue pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
@@ -101,7 +101,7 @@ addLayer("purplePigment", {
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
@@ -169,14 +169,6 @@ addLayer("purplePigment", {
         },
         13: {
             title: "Byzantium",
-            description: "Multiply purple pigment gain by 2.",
-
-            effect: 2,
-            cost: new Decimal(5),
-        },
-        
-        21: {
-            title: "Chinese Violet",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
@@ -185,6 +177,14 @@ addLayer("purplePigment", {
             effect() {
                 return player.points.add(1).log(10).add(1)
             },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Chinese Violet",
+            description: "Multiply purple pigment gain by 2.",
+
+            effect: 2,
             cost: new Decimal(10),
         },
         22: {
@@ -214,7 +214,7 @@ addLayer("purplePigment", {
         
         31: {
             title: "Electric Indigo",
-            description: "Keep red and yellow pigment upgrades on orange pigment reset.",
+            description: "Keep red and blue pigment upgrades on orange pigment reset.",
 
             cost: new Decimal(200),
         },
@@ -254,6 +254,10 @@ addLayer("purplePigment", {
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of red and blue pigment upgrades.",
 
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
+
             canComplete() {
                 return player.points.gte(250000);
             },
@@ -263,6 +267,10 @@ addLayer("purplePigment", {
             challengeDescription: "Only have purple and yellow pigment.",
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of purple and yellow pigment upgrades.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
 
             canComplete() {
                 return player.points.gte(250000);

@@ -14,7 +14,7 @@ addLayer("orange", {
     },
 
     tooltip() {
-        return "You have " + player[this.layer + "Pigment"].points + " " + this.layer + " pigment.";
+        return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
         return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " red and yellow pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
@@ -78,11 +78,7 @@ addLayer("orangePigment", {
             if (hasChallenge("orangePigment", 12)) rows.push(3);
             return rows;
         }],
-        ["challenges", function() {
-            rows = [];
-            if (player.orangePigment.unlocked) rows.push(1);
-            return rows;
-        }],
+        "challenges",
     ],
 
     type: "custom",
@@ -101,7 +97,7 @@ addLayer("orangePigment", {
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
@@ -169,14 +165,6 @@ addLayer("orangePigment", {
         },
         13: {
             title: "Orange Peel",
-            description: "Multiply orange pigment gain by 2.",
-
-            effect: 2,
-            cost: new Decimal(5),
-        },
-        
-        21: {
-            title: "Burnt Orange",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
@@ -185,6 +173,14 @@ addLayer("orangePigment", {
             effect() {
                 return player.points.add(1).log(10).add(1)
             },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Burnt Orange",
+            description: "Multiply orange pigment gain by 2.",
+
+            effect: 2,
             cost: new Decimal(10),
         },
         22: {
@@ -254,6 +250,10 @@ addLayer("orangePigment", {
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
 
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
+
             canComplete() {
                 return player.points.gte(250000);
             },
@@ -263,6 +263,10 @@ addLayer("orangePigment", {
             challengeDescription: "Only have blue and orange pigment.",
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of blue and orange pigment upgrades.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+            },
 
             canComplete() {
                 return player.points.gte(250000);

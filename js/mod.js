@@ -43,21 +43,13 @@ function getPointGen() {
 
 	let gain = new Decimal(1);
 
+	const primary = ["red", "yellow", "blue"];
+	const secondary = ["orange", "green", "purple"];
+
 	let colours = [];
-
-	if (inChallenge("orangePigment", 11)) colours = ["red", "orange", "yellow"];
-	if (inChallenge("greenPigment", 11)) colours = ["yellow", "green", "blue"];
-	if (inChallenge("purplePigment", 11)) colours = ["red", "purple", "blue"];
-
-	if (inChallenge("orangePigment", 12)) colours = ["orange", "blue"];
-	if (inChallenge("greenPigment", 12)) colours = ["red", "green"];
-	if (inChallenge("purplePigment", 12)) colours = ["purple", "yellow"];
-
-	if (colours.length == 0) colours = ["red", "orange", "yellow", "green", "blue", "purple"];
-	// Limit colours based on challenges, if no limits, they are all added.
-
-	let primary = ["red", "yellow", "blue"];
-	let secondary = ["orange", "green", "purple"];
+	for (let colour of primary.concat(secondary)) {
+		if (layers[colour+"Pigment"].layerShown()) colours.push(colour);
+	}
 
 	// Base add.
 	for (let colour of colours) {
@@ -67,7 +59,7 @@ function getPointGen() {
 	// Multiply.
 	for (let colour of colours) {
 		if (hasUpgrade(colour+"Pigment", 12)) gain = gain.mul(upgradeEffect(colour+"Pigment", 12));
-		if (hasUpgrade(colour+"Pigment", 21)) gain = gain.mul(upgradeEffect(colour+"Pigment", 21));
+		if (hasUpgrade(colour+"Pigment", 13)) gain = gain.mul(upgradeEffect(colour+"Pigment", 13));
 		if (hasUpgrade(colour+"Pigment", 22)) gain = gain.mul(upgradeEffect(colour+"Pigment", 22));
 	}
 

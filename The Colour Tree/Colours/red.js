@@ -65,7 +65,9 @@ addLayer("redPigment", {
 
     tabFormat: [
         "main-display",
-        "prestige-button",
+        ["prestige-button", "", function() {
+            return layers.redPigment.passiveGeneration() < 1 ? {} : {display: "none"};
+        }],
         "blank",
         ["upgrades", function() {
             rows = [];
@@ -103,12 +105,12 @@ addLayer("redPigment", {
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
         if (hasUpgrade(this.layer, 41)) mult = mult.mul(upgradeEffect(this.layer, 41));
         if (hasUpgrade(this.layer, 42)) mult = mult.mul(upgradeEffect(this.layer, 42));
-        if (hasUpgrade("greenPigment", 32)) mult = mult.mul(upgradeEffect("greenPigment", 32));
+        if (layers.greenPigment.layerShown() && hasUpgrade("greenPigment", 32)) mult = mult.mul(upgradeEffect("greenPigment", 32));
 
         return mult;
     },
@@ -185,14 +187,6 @@ addLayer("redPigment", {
         },
         13: {
             title: "Auburn",
-            description: "Multiply red pigment gain by 2.",
-
-            effect: 2,
-            cost: new Decimal(5),
-        },
-        
-        21: {
-            title: "Blood Red",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
@@ -201,6 +195,14 @@ addLayer("redPigment", {
             effect() {
                 return player.points.add(1).log(10).add(1)
             },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Blood Red",
+            description: "Multiply red pigment gain by 2.",
+
+            effect: 2,
             cost: new Decimal(10),
         },
         22: {
@@ -267,7 +269,7 @@ addLayer("redPigment", {
             effect() {
                 return player.yellowPigment.points.add(player.bluePigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(1000000),
+            cost: new Decimal(100000000),
         },
         42: {
             title: "Ruby",
@@ -279,7 +281,7 @@ addLayer("redPigment", {
             effect() {
                 return player.orangePigment.points.add(player.purplePigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(2000000),
+            cost: new Decimal(200000000),
         },
         43: {
             title: "Chocolate Cosmos",
@@ -290,7 +292,7 @@ addLayer("redPigment", {
             },
 
             effect: 0.9,
-            cost: new Decimal(10000000),
+            cost: new Decimal(1000000000),
         },
 
         51: {
@@ -316,7 +318,7 @@ addLayer("redPigment", {
             },
 
             effect: 1,
-            cost: new Decimal(100000000),
+            cost: new Decimal(1e15),
         },
     },
 });

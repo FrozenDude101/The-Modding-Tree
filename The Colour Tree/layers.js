@@ -34,13 +34,52 @@ addLayer("achievements", {
             content: [
                 "main-display",
                 "achievements",
-            ]
+            ],
+        },
+        "Effects": {
+            content: [
+                "main-display",
+                ["text-display", function() {
+                    let effects = layers.achievements.calcTotalEffect();
+                }],
+            ],
+        },
+    },
+
+    calcTotalEffect(effect = null) {
+        let ret = {};
+        switch(effect) {
+            case null:
+            case "blankPigment":
+                ret.blankPigment = achievementEffect(this.layer, 11);
+                if (effect) break;
+            case "redPigment":
+                ret.redPigment = achievementEffect(this.layer, 11);
+                if (effect) break;
+            case "orangePigment":
+                ret.orangePigment = achievementEffect(this.layer, 11);
+                if (effect) break;
+            case "yellowPigment":
+                ret.yellowPigment = achievementEffect(this.layer, 11);
+                if (effect) break;
+            case "greenPigment":
+                ret.greenPigment = achievementEffect(this.layer, 11);
+                if (effect) break;
+            case "bluePigment":
+                ret.bluePigment = achievementEffect(this.layer, 11);
+                if (effect) break;
+            case "purplePigment":
+                ret.purplePigment = achievementEffect(this.layer, 11);
+                if (effect) break;
         }
+
+        if (effect) ret = ret.effect;
+        return ret;
     },
 
     achievements: {
         rows: 10,
-        cols: 5,
+        cols: 6,
 
         11: {
             name() {
@@ -74,7 +113,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
-        12: {
+        21: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Red<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
             },
@@ -89,12 +128,16 @@ addLayer("achievements", {
                 }
             },
 
+            style() {
+                return {opacity: (player.redPigment.unlocked ? 1 : 0)};
+            },
+
             max: 30,
             goal() {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.redPigment.points.gte(this.goal());
+                return player.redPigment.points.gte(this.goal()) && this.style().opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {
@@ -106,7 +149,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
-        13: {
+        22: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Yellow<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
             },
@@ -121,12 +164,16 @@ addLayer("achievements", {
                 }
             },
 
+            style() {
+                return {opacity: (player.yellowPigment.unlocked ? 1 : 0)};
+            },
+
             max: 30,
             goal() {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.yellowPigment.points.gte(this.goal());
+                return player.yellowPigment.points.gte(this.goal()) && this.style().opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {
@@ -138,7 +185,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
-        14: {
+        23: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Blue<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
             },
@@ -153,12 +200,16 @@ addLayer("achievements", {
                 }
             },
 
+            style() {
+                return {opacity: (player.bluePigment.unlocked ? 1 : 0)};
+            },
+
             max: 30,
             goal() {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.bluePigment.points.gte(this.goal());
+                return player.bluePigment.points.gte(this.goal()) && this.style().opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {
@@ -170,7 +221,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
-        15: {
+        31: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
             },
@@ -185,12 +236,16 @@ addLayer("achievements", {
                 }
             },
 
+            style() {
+                return {opacity: (player.orangePigment.unlocked ? 1 : 0)};
+            },
+
             max: 30,
             goal() {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.orangePigment.points.gte(this.goal());
+                return player.orangePigment.points.gte(this.goal()) && this.style().opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {
@@ -202,7 +257,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
-        21: {
+        32: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Green<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
             },
@@ -217,12 +272,16 @@ addLayer("achievements", {
                 }
             },
 
+            style() {
+                return {opacity: (player.greenPigment.unlocked ? 1 : 0)};
+            },
+
             max: 30,
             goal() {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.greenPigment.points.gte(this.goal());
+                return player.greenPigment.points.gte(this.goal()) && this.style.opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {
@@ -234,7 +293,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
-        22: {
+        33: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Purple<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
             },
@@ -249,12 +308,16 @@ addLayer("achievements", {
                 }
             },
 
+            style() {
+                return {opacity: (player.purplePigment.unlocked ? 1 : 0)};
+            },
+
             max: 30,
             goal() {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.purplePigment.points.gte(this.goal());
+                return player.purplePigment.points.gte(this.goal()) && this.style.opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {

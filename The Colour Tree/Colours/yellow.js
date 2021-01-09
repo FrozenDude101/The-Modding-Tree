@@ -65,7 +65,9 @@ addLayer("yellowPigment", {
 
     tabFormat: [
         "main-display",
-        "prestige-button",
+        ["prestige-button", "", function() {
+            return layers.yellowPigment.passiveGeneration() < 1 ? {} : {display: "none"};
+        }],
         "blank",
         ["upgrades", function() {
             rows = [];
@@ -103,12 +105,12 @@ addLayer("yellowPigment", {
     gainMult() {
         let mult = new Decimal(1);
 
-        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
         if (hasUpgrade(this.layer, 41)) mult = mult.mul(upgradeEffect(this.layer, 41));
         if (hasUpgrade(this.layer, 42)) mult = mult.mul(upgradeEffect(this.layer, 42));
-        if (hasUpgrade("purplePigment", 32)) mult = mult.mul(upgradeEffect("purplePigment", 32));
+        if (layers.purplePigment.layerShown() && hasUpgrade("purplePigment", 32)) mult = mult.mul(upgradeEffect("purplePigment", 32));
 
         return mult;
     },
@@ -185,14 +187,6 @@ addLayer("yellowPigment", {
         },
         13: {
             title: "Golden Yellow",
-            description: "Multiply yellow pigment gain by 2.",
-
-            effect: 2,
-            cost: new Decimal(5),
-        },
-        
-        21: {
-            title: "Dandelion",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
@@ -201,6 +195,14 @@ addLayer("yellowPigment", {
             effect() {
                 return player.points.add(1).log(10).add(1)
             },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Dandelion",
+            description: "Multiply yellow pigment gain by 2.",
+
+            effect: 2,
             cost: new Decimal(10),
         },
         22: {
@@ -267,7 +269,7 @@ addLayer("yellowPigment", {
             effect() {
                 return player.redPigment.points.add(player.bluePigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(1000000),
+            cost: new Decimal(100000000),
         },
         42: {
             title: "Sunflower Yellow",
@@ -279,7 +281,7 @@ addLayer("yellowPigment", {
             effect() {
                 return player.orangePigment.points.add(player.greenPigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(2000000),
+            cost: new Decimal(200000000),
         },
         43: {
             title: "Visitation",
@@ -290,7 +292,7 @@ addLayer("yellowPigment", {
             },
 
             effect: 0.9,
-            cost: new Decimal(10000000),
+            cost: new Decimal(1000000000),
         },
 
         51: {
@@ -316,7 +318,7 @@ addLayer("yellowPigment", {
             },
 
             effect: 1,
-            cost: new Decimal(100000000),
+            cost: new Decimal(1e15),
         },
     },
 });
