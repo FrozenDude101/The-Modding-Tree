@@ -82,8 +82,30 @@ function shouldNotify(layer){
 		// ["upgrades", [rows]] only exists if tabFormat is an Array.
 		for (let component of tmp[layer].tabFormat) {
 			if (component[0] == "upgrades") {
-				upgradeRows = component[1];
-				break;
+				if (upgradeRows == null) upgradeRows = [];
+				for (let row of component[1]) {
+					if (!upgradeRows.includes(rows)) upgradeRows.push(row);
+				}
+				// Every instance of upgrades must be accounted for, so we can't break after, or simply set upgradeRows to component[1].
+			}
+		}
+	} else {
+		// It must be an object.
+		for (let tab in tmp[layer].tabFormat) {
+			if (tab.embedLayer) continue;
+			// embedLayer overwrites content, and is handled further down.
+			if ((tmp[layer].tabFormat[tab].unlocked == undefined || tmp[layer].tabFormat[tab].content) && tmp[layer].tabFormat[tab].content) {
+				// Only tabs that are unlocked and have content continue.
+				for (let component of tmp[layer].tabFormat[tab].content) {
+					if (component[0] == "upgrades") {
+						if (upgradeRows == null) upgradeRows = [];
+						for (let row of component[1]) {
+							if (!upgradeRows.includes(row)) upgradeRows.push(row);
+						}
+						// Every instance of upgrades must be accounted for, so we can't break after, or simply set upgradeRows to component[1].
+					}
+				}
+				// We also have to check every tab for their upgrades anyway.
 			}
 		}
 	}
