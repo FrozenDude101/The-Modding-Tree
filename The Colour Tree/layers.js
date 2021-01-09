@@ -40,7 +40,7 @@ addLayer("achievements", {
 
     achievements: {
         rows: 10,
-        cols: 6,
+        cols: 5,
 
         11: {
             name() {
@@ -159,6 +159,102 @@ addLayer("achievements", {
             },
             done() {
                 return player.bluePigment.points.gte(this.goal());
+            },
+            onComplete() {
+                if (player.achievements.levels[this.id] != this.max) {
+                    player.achievements.levels[this.id] += 1;
+                    player.achievements.achievements.pop();
+                }
+            },
+            effect(delta = 0) {
+                return Math.min(player.achievements.levels[this.id]+delta, this.max);
+            },
+        },
+        15: {
+            name() {
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
+            },
+            tooltip() {
+                switch (player.achievements.levels[this.id]) {
+                    case 0:
+                        return "Have " + formatWhole(this.goal()) + " orange pigment.\nNext Reward:\n+" + this.effect(1) + "% orange pigment.";
+                    case this.max:
+                        return "MAXED\nReward:\n+" + this.effect() + "% orange pigment.";
+                    default:
+                        return "Have " + formatWhole(this.goal()) + " orange pigment.\nCurrent Reward:\n+" + this.effect() + "% orange pigment.\nNext Reward:+\n" + this.effect(1) + "% orange pigment.";
+                }
+            },
+
+            max: 30,
+            goal() {
+                return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
+            },
+            done() {
+                return player.orangePigment.points.gte(this.goal());
+            },
+            onComplete() {
+                if (player.achievements.levels[this.id] != this.max) {
+                    player.achievements.levels[this.id] += 1;
+                    player.achievements.achievements.pop();
+                }
+            },
+            effect(delta = 0) {
+                return Math.min(player.achievements.levels[this.id]+delta, this.max);
+            },
+        },
+        21: {
+            name() {
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Green<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
+            },
+            tooltip() {
+                switch (player.achievements.levels[this.id]) {
+                    case 0:
+                        return "Have " + formatWhole(this.goal()) + " green pigment.\nNext Reward:\n+" + this.effect(1) + "% green pigment.";
+                    case this.max:
+                        return "MAXED\nReward:\n+" + this.effect() + "% green pigment.";
+                    default:
+                        return "Have " + formatWhole(this.goal()) + " green pigment.\nCurrent Reward:\n+" + this.effect() + "% green pigment.\nNext Reward:+\n" + this.effect(1) + "% green pigment.";
+                }
+            },
+
+            max: 30,
+            goal() {
+                return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
+            },
+            done() {
+                return player.greenPigment.points.gte(this.goal());
+            },
+            onComplete() {
+                if (player.achievements.levels[this.id] != this.max) {
+                    player.achievements.levels[this.id] += 1;
+                    player.achievements.achievements.pop();
+                }
+            },
+            effect(delta = 0) {
+                return Math.min(player.achievements.levels[this.id]+delta, this.max);
+            },
+        },
+        22: {
+            name() {
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Purple<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
+            },
+            tooltip() {
+                switch (player.achievements.levels[this.id]) {
+                    case 0:
+                        return "Have " + formatWhole(this.goal()) + " purple pigment.\nNext Reward:\n+" + this.effect(1) + "% purple pigment.";
+                    case this.max:
+                        return "MAXED\nReward:\n+" + this.effect() + "% purple pigment.";
+                    default:
+                        return "Have " + formatWhole(this.goal()) + " purple pigment.\nCurrent Reward:\n+" + this.effect() + "% purple pigment.\nNext Reward:+\n" + this.effect(1) + "% purple pigment.";
+                }
+            },
+
+            max: 30,
+            goal() {
+                return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
+            },
+            done() {
+                return player.purplePigment.points.gte(this.goal());
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {

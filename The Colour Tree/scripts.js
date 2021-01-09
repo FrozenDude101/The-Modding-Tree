@@ -1,3 +1,7 @@
+const ALWAYS_KEEP_ON_RESET = [
+    "requiresExponent",
+]
+
 function formatNumeral(number) {
 
     let numerals = {
@@ -24,15 +28,27 @@ function formatNumeral(number) {
 
 }
 
+function filter(arr1, arr2) {
+
+    let ret = [];
+    for(let item of arr1) {
+        if (arr2.includes(item)) {
+            ret.push(item);
+        }
+    }
+    return ret;
+
+}
+
 function calcRequiresExponent(layer, delta=0) {
 
     let primary =   player.redPigment.unlocked + player.yellowPigment.unlocked + player.bluePigment.unlocked;
     let secondary = player.orangePigment.unlocked + player.greenPigment.unlocked + player.purplePigment.unlocked;
 
-    if (["red", "yellow", "blue"].includes(layer)) {
+    if (["redPigment", "yellowPigment", "bluePigment"].includes(layer)) {
         return Math.max(0.5 * (primary+delta) * (primary+delta+1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0)
     }
-    if (["orange", "green", "purple"].includes(layer)) {
+    if (["orangePigment", "greenPigment", "purplePigment"].includes(layer)) {
         return Math.max(0.5 * (primary+delta-2) * (primary+delta-1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0)
     }
     alert("Invalid layer '" + layer + "' called to calcUnlock.");

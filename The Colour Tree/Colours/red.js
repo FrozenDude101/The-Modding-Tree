@@ -1,16 +1,19 @@
-// www.eggradients.com/shades-of-red
-// 7-5
-// #D22
+/* 
+    www.eggradients.com/shades-of-red
+    7-5
+
+    #D22
+*/
 
 addLayer("red", {
     symbol: "R",
     color: "#D22",
 
     tooltip() {
-        return "You have " + player[this.layer + "Pigment"].points + " " + this.layer + " pigment.";
+        return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(player.points) + ".)";
+        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
     },
 
     layerShown() {
@@ -42,7 +45,8 @@ addLayer("redPigment", {
     },
 
     layerShown() {
-        return true;
+        let challengeCondition = !(inChallenge("greenPigment", 11) || inChallenge("orangePigment", 12) || inChallenge("purplePigment", 12));
+        return challengeCondition;
     },
 
     startData() {
@@ -55,7 +59,7 @@ addLayer("redPigment", {
     },
     requiresExponent() {
         if (!player[this.layer].unlocked) {
-            player[this.layer].requiresExponent = calcRequiresExponent();
+            player[this.layer].requiresExponent = calcRequiresExponent(this.layer);
         }
     },
 
@@ -66,7 +70,7 @@ addLayer("redPigment", {
         ["upgrades", function() {
             rows = [];
             if (player.redPigment.unlocked) rows.push(1);
-            if (hasUpgrade("redPigment", 13)) rows.push(2);
+            if (hasUpgrade("redPigment", 13) || player.orangePigment.unlocked || player.purplePigment.unlocked) rows.push(2);
             if (hasChallenge("orangePigment", 11) || hasChallenge("purplePigment", 11)) rows.push(3);
             if (hasChallenge("orangePigment", 11) && hasChallenge("purplePigment", 11)) rows.push(4);
             if (hasChallenge("greenPigment", 12)) rows.push(5);
@@ -82,9 +86,9 @@ addLayer("redPigment", {
     passiveGeneration() {
         let gain = 0;
 
-        if (hasUpgrade(this.layer, 33)) gain = gain.add(upgradeEffect(this.layer, 33));
-        if (hasUpgrade(this.layer, 43)) gain = gain.add(upgradeEffect(this.layer, 43));
-        if (hasUpgrade(this.layer, 54)) gain = gain.add(upgradeEffect(this.layer, 53));
+        if (hasUpgrade(this.layer, 33)) gain += upgradeEffect(this.layer, 33);
+        if (hasUpgrade(this.layer, 43)) gain += upgradeEffect(this.layer, 43);
+        if (hasUpgrade(this.layer, 53)) gain += upgradeEffect(this.layer, 53);
 
         return gain;
     },
@@ -104,13 +108,14 @@ addLayer("redPigment", {
         if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
         if (hasUpgrade(this.layer, 41)) mult = mult.mul(upgradeEffect(this.layer, 41));
         if (hasUpgrade(this.layer, 42)) mult = mult.mul(upgradeEffect(this.layer, 42));
+        if (hasUpgrade("greenPigment", 32)) mult = mult.mul(upgradeEffect("greenPigment", 32));
 
         return mult;
     },
     gainExp() {
         let exp = new Decimal(1);
 
-        if (hasUpgrade(this.layer, 52)) mult = mult.mul(upgradeEffect(this.layer, 52));
+        if (hasUpgrade(this.layer, 52)) exp = exp.mul(upgradeEffect(this.layer, 52));
 
         return exp;
     },
@@ -123,14 +128,30 @@ addLayer("redPigment", {
     },
 
     canReset() {
-        return this.getResetGain().gte(1) && this.passiveGeneration() == 0;
+        return this.getResetGain().gte(1) && this.passiveGeneration() < 1;
     },
     doReset(layer) {
-        let keep = [];
+        let keep = ALWAYS_KEEP_ON_RESET.slice();
+        let keepUpgrades = [];
+
         switch(layer) {
-            case "orangePigment": 
+            case "orangePigment":
+                if (hasUpgrade("orangePigment", 31)) keep.push("upgrades");
+                keepUpgrades = [31, 33, 43, 53];
+                break;
             case "purplePigment":
-                layerDataReset(this.layer, keep);
+                if (hasUpgrade("purplePigment", 31)) keep.push("upgrades");
+                keepUpgrades = [31, 33, 43, 53];
+                break;
+            default:
+                keep = undefined;
+                break;
+        }
+
+        if (keep != undefined) {
+            keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
+            layerDataReset(this.layer, keep);
+            if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
 
@@ -214,7 +235,7 @@ addLayer("redPigment", {
             onPurchase() {
                 player[this.layer].requiresExponent = 0;
             },
-            cost: new Decimal(10),
+            cost: new Decimal(20000),
         },
         32: {
             title: "Neon Red",
@@ -226,14 +247,14 @@ addLayer("redPigment", {
             effect() {
                 return player.points.add(1).log(1000).add(1);
             },
-            cost: new Decimal(25),
+            cost: new Decimal(40000),
         },
         33: {
             title: "Pastel Red",
-            description: "Lose the ability to prestige, but gain 10% of gain per second.",
+            description: "Gain 10% of red pigment gain per second.",
 
             effect: 0.1,
-            cost: new Decimal(50),
+            cost: new Decimal(250000),
         },
 
         41: {
@@ -246,7 +267,7 @@ addLayer("redPigment", {
             effect() {
                 return player.yellowPigment.points.add(player.bluePigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(50),
+            cost: new Decimal(1000000),
         },
         42: {
             title: "Ruby",
@@ -258,36 +279,44 @@ addLayer("redPigment", {
             effect() {
                 return player.orangePigment.points.add(player.purplePigment.points).add(1).log(10).add(1).log(10).add(1);
             },
-            cost: new Decimal(50),
+            cost: new Decimal(2000000),
         },
         43: {
             title: "Chocolate Cosmos",
-            description: "Gain an additional 90% of red pigment gain per second.",
+            description: "Lose the ability to prestige, but gain an additional 90% of red pigment gain per second.",
+
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 33);
+            },
 
             effect: 0.9,
-            cost: new Decimal(50),
+            cost: new Decimal(10000000),
         },
 
         51: {
             title: "Cerise",
-            description: "Exponate blank pigment gain by 1.1.",
+            description: "Exponate blank pigment gain by 1.05.",
 
-            effect: 1.1,
-            cost: new Decimal(50),
+            effect: 1.05,
+            cost: new Decimal(50000),
         },
         52: {
             title: "Fire Engine Red",
-            description: "Exponate red pigment gain by 1.1.",
+            description: "Exponate red pigment gain by 1.05.",
 
-            effect: 1,
-            cost: new Decimal(50),
+            effect: 1.05,
+            cost: new Decimal(150000),
         },
         53: {
             title: "Cardinal",
             description: "Gain an additional 100% of red pigment gain per second.",
 
+            unlocked() {
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 43);
+            },
+
             effect: 1,
-            cost: new Decimal(50),
+            cost: new Decimal(100000000),
         },
     },
 });

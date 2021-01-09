@@ -1,13 +1,23 @@
+/*
+    www.eggradients.com/shades-of-orange
+    4-4
+
+    #D82
+*/
+
 addLayer("orange", {
     symbol: "O",
     color: "#D82",
-    branches: ["red", "yellow"],
+    branches() {
+        if (inChallenge(this.layer + "Pigment", 12)) return ["blue"]
+        return ["red", "yellow"];
+    },
 
     tooltip() {
         return "You have " + player[this.layer + "Pigment"].points + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(player.points) + ".)";
+        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " red and yellow pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
     },
 
     layerShown() {
@@ -38,18 +48,22 @@ addLayer("orangePigment", {
     },
 
     layerShown() {
-        return player.redPigment.unlocked && player.yellowPigment.unlocked;
+        let unlockCondition = player.redPigment.unlocked && player.yellowPigment.unlocked;
+        let challengeCondition = !(inChallenge("greenPigment", 11) || inChallenge("greenPigment", 12) || inChallenge("purplePigment", 11) || inChallenge("purplePigment", 12));
+        return unlockCondition && challengeCondition;
     },
 
     startData() {
         return {
-            unlocked: false,
             points: new Decimal(0),
+            unlocked: false,
+
+            requiresExponent: 0,
         };
     },
-    unlockOrder() {
+    requiresExponent() {
         if (!player[this.layer].unlocked) {
-            player[this.layer].unlockOrder = Math.max(pigmentsUnlocked()-2, 0);
+            player[this.layer].requiresExponent = calcRequiresExponent(this.layer);
         }
     },
 
@@ -57,17 +71,24 @@ addLayer("orangePigment", {
         "main-display",
         "prestige-button",
         "blank",
-        "upgrades",
-        "challenges",
+        ["upgrades", function() {
+            rows = [];
+            if (player.orangePigment.unlocked) rows.push(1);
+            if (hasUpgrade("orangePigment", 13)) rows.push(2);
+            if (hasChallenge("orangePigment", 12)) rows.push(3);
+            return rows;
+        }],
+        ["challenges", function() {
+            rows = [];
+            if (player.orangePigment.unlocked) rows.push(1);
+            return rows;
+        }],
     ],
 
     type: "custom",
     row: 1,
     prestigeButtonText() {
-        return "Combine red and yellow pigment for " + formatWhole(this.getResetGain()) + " orange pigment.<br>Next at " + format(this.getNextAt()) + " yellow and red pigment.";
-    },
-    resetsNothing() {
-        return hasChallenge(this.layer, 12);
+        return "Combine red and yellow pigment for " + formatWhole(this.getResetGain()) + " orange pigment.<br>Next at " + format(this.getNextAt()) + " red and yellow pigment.";
     },
 
     exponent: 0.5,
@@ -75,13 +96,14 @@ addLayer("orangePigment", {
         return player.redPigment.points.min(player.yellowPigment.points);
     },
     requires() {
-        return new Decimal(1000).mul(Decimal.pow(10, 0.5*(player[this.layer].unlockOrder)*(player[this.layer].unlockOrder+1)));
+        return new Decimal(1000).mul(Decimal.pow(10, player[this.layer].requiresExponent));
     },
     gainMult() {
         let mult = new Decimal(1);
 
         if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
+        if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
         return mult;
     },
@@ -101,8 +123,19 @@ addLayer("orangePigment", {
         return this.getResetGain().gte(1);
     },
     doReset(layer) {
-        let keep = [];
+        let keep = ALWAYS_KEEP_ON_RESET.slice();
+        let keepUpgrades = [];
+
         switch(layer) {
+            default:
+                keep = undefined;
+                break;
+        }
+
+        if (keep != undefined) {
+            keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
+            layerDataReset(this.layer, keep);
+            if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
 
@@ -111,7 +144,7 @@ addLayer("orangePigment", {
             key: "o",
             description: "O : Combine red and yellow pigment to make orange pigment.",
             onPress() {
-                if (player.orangePigment.unlocked) doReset("orangePigment");
+                if (player[this.layer].unlocked) doReset(this.layer);
             },
         }
     ],
@@ -124,10 +157,6 @@ addLayer("orangePigment", {
             title: "Amber",
             description: "Add 1 to base blank pigment gain.",
 
-            unlocked() {
-                return hasUpgrade(this.layer, this.id) || player[this.layer].unlocked;
-            },
-
             effect: 1,
             cost: new Decimal(1),
         },
@@ -135,33 +164,22 @@ addLayer("orangePigment", {
             title: "Peach",
             description: "Multiply blank pigment gain by 2.",
 
-            unlocked() {
-                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 11);
-            },
-
             effect: 2,
-            cost: new Decimal(1),
+            cost: new Decimal(2),
         },
         13: {
-            title: "Burnt Orange",
+            title: "Orange Peel",
             description: "Multiply orange pigment gain by 2.",
-
-            unlocked() {
-                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 12);
-            },
 
             effect: 2,
             cost: new Decimal(5),
         },
+        
         21: {
-            title: "Champagne",
+            title: "Burnt Orange",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
-            },
-
-            unlocked() {
-                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 13);
             },
 
             effect() {
@@ -170,14 +188,10 @@ addLayer("orangePigment", {
             cost: new Decimal(10),
         },
         22: {
-            title: "Apricot",
+            title: "Champagne",
             description: "Boost blank pigment gain based on orange pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
-            },
-
-            unlocked() {
-                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 21);
             },
 
             effect() {
@@ -186,20 +200,47 @@ addLayer("orangePigment", {
             cost: new Decimal(25),
         },
         23: {
-            title: "Neon Orange",
+            title: "Apricot",
             description: "Boost orange pigment gain based on orange pigment amount.",
             effectDisplay() {
                 return "x" + format(this.effect());
-            },
-
-            unlocked() {
-                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 22);
             },
 
             effect() {
                 return player[this.layer].points.add(1).log(20).add(1);
             },
             cost: new Decimal(50),
+        },
+
+        31: {
+            title: "Pastel Orange",
+            description: "Keep red and yellow pigment upgrades on orange pigment reset.",
+
+            cost: new Decimal(200),
+        },
+        32: {
+            title: "Neon Orange",
+            description: "Boost blue pigment gain based on orange pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+
+            effect() {
+                return player[this.layer].points.add(1).log(100).add(1)
+            },
+            cost: new Decimal(500),
+        },
+        33: {
+            title: "Tawny",
+            description: "Boost orange pigment gain based on blue pigment amount.",
+            effectDisplay() {
+                return "x" + format(this.effect());
+            },
+
+            effect() {
+                return player.bluePigment.points.add(1).log(100).add(1);
+            },
+            cost: new Decimal(1000),
         },
     },
 
@@ -213,10 +254,6 @@ addLayer("orangePigment", {
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
 
-            unlocked() {
-                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
-            },
-
             canComplete() {
                 return player.points.gte(250000);
             },
@@ -225,15 +262,11 @@ addLayer("orangePigment", {
             name: "Complementary",
             challengeDescription: "Only have blue and orange pigment.",
             goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Unlock a row of blue and orange upgrades.",
-
-            unlocked() {
-                return hasChallenge(this.layer, this.id) || hasChallenge(this.layer, 11);
-            },
+            rewardDescription: "Unlock a row of blue and orange pigment upgrades.",
 
             canComplete() {
                 return player.points.gte(250000);
             },
         },
     },
-})
+});

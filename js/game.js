@@ -77,10 +77,26 @@ function softcap(value, cap, power = 0.5) {
 // Return true if the layer should be highlighted. By default checks for upgrades only.
 function shouldNotify(layer){
 	if (player.tab == layer || player.navTab == layer) return false
+	let upgradeRows = null;
+	if (tmp[layer].tabFormat instanceof Array) {
+		// ["upgrades", [rows]] only exists if tabFormat is an Array.
+		// This words for tabFormat as an array, and for embeded layers.
+		for (let component of tmp[layer].tabFormat) {
+			if (component[0] == "upgrades") {
+				upgradeRows = component[1];
+				break;
+			}
+		}
+	}
+	// Finds if the ["upgrades", [rows]] exists, and if it does, assign the visible rows to upgradeRows.
 	for (id in tmp[layer].upgrades){
-		if (!isNaN(id)){
-			if (canAffordUpgrade(layer, id) && !hasUpgrade(layer, id) && tmp[layer].upgrades[id].unlocked){
-				return true
+		if (!isNaN(id)) {
+			if (upgradeRows == null || upgradeRows.includes(id.slice(0, -1))) {
+				// If upgradeRows is null, then all rows are visible.
+				// If it exists, then if the row is visible, continue checking.
+				if (canAffordUpgrade(layer, id) && !hasUpgrade(layer, id) && tmp[layer].upgrades[id].unlocked) {
+					return true
+				}
 			}
 		}
 	}
