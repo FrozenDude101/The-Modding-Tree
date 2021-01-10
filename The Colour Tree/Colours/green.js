@@ -10,14 +10,14 @@ addLayer("green", {
     color: "#2D2",
     branches() {
         if (inChallenge(this.layer + "Pigment", 12)) return ["red"]
-        return ["blue", "yellow"];
+        return ["yellow", "blue"];
     },
 
     tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " blue and yellow pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
+        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " yellow and blue pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
     },
 
     layerShown() {
@@ -48,7 +48,7 @@ addLayer("greenPigment", {
     },
 
     layerShown() {
-        let unlockCondition = player.bluePigment.unlocked && player.yellowPigment.unlocked;
+        let unlockCondition = player.yellowPigment.unlocked && player.bluePigment.unlocked;
         let challengeCondition = !(inChallenge("orangePigment", 11) || inChallenge("orangePigment", 12) || inChallenge("purplePigment", 11) || inChallenge("purplePigment", 12));
         return unlockCondition && challengeCondition;
     },
@@ -78,17 +78,13 @@ addLayer("greenPigment", {
             if (hasChallenge("greenPigment", 12)) rows.push(3);
             return rows;
         }],
-        ["challenges", function() {
-            rows = [];
-            if (player.greenPigment.unlocked) rows.push(1);
-            return rows;
-        }],
+        "challenges",
     ],
 
     type: "custom",
     row: 1,
     prestigeButtonText() {
-        return "Combine blue and yellow pigment for " + formatWhole(this.getResetGain()) + " green pigment.<br>Next at " + format(this.getNextAt()) + " blue and yellow pigment.";
+        return "Combine yellow and blue pigment for " + formatWhole(this.getResetGain()) + " green pigment.<br>Next at " + format(this.getNextAt()) + " yellow and blue pigment.";
     },
 
     exponent: 0.5,
@@ -113,10 +109,10 @@ addLayer("greenPigment", {
     },
     getResetGain() {
         if (this.baseAmount().lt(this.requires())) return new Decimal(0);
-        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).floor().max(0);
+        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.achievements.calcEffects(this.layer)/100).floor().max(0);
     },
     getNextAt() {
-        return this.getResetGain().add(1).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+        return this.getResetGain().add(1).div(1+layers.achievements.calcEffects(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
     },
 
     canReset() {
@@ -142,7 +138,7 @@ addLayer("greenPigment", {
     hotkeys: [
         {
             key: "g",
-            description: "G : Combine blue and yellow pigment to make green pigment.",
+            description: "G : Combine yellow and blue pigment to make green pigment.",
             onPress() {
                 if (player[this.layer].unlocked) doReset(this.layer);
             },
@@ -214,7 +210,7 @@ addLayer("greenPigment", {
         
         31: {
             title: "Pastel Green",
-            description: "Keep blue and yellow pigment upgrades on orange pigment reset.",
+            description: "Keep yellow and blue pigment upgrades on orange pigment reset.",
 
             cost: new Decimal(200),
         },
@@ -252,7 +248,7 @@ addLayer("greenPigment", {
             name: "Additive",
             challengeDescription: "Only have blue, green, and yellow pigment.",
             goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Unlock a row of blue and yellow pigment upgrades.",
+            rewardDescription: "Unlock a row of yellow and blue pigment upgrades.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;

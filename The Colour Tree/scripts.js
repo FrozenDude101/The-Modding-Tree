@@ -28,6 +28,37 @@ function formatNumeral(number) {
 
 }
 
+function formatTable(data, {
+    caption = null,
+    headings = null,
+} = {}) {
+
+    let ret = "<table class=formattedTable>";
+
+    if (caption) {
+        ret += "<caption>" + caption + "</caption>";
+    }
+
+    if (headings) {
+        ret += "<tr>";
+        for (let heading of headings) {
+            ret += "<th>" + heading + "</th>";
+        }
+        ret += "</tr>";
+    }
+
+    if (typeof data == "object") {
+        for (let item in data) {
+            ret += "<tr><td>" + item + "</td><td>" + data[item] + "</td></tr>";
+        }
+    }
+
+    ret += "</table>";
+
+    return ret;
+
+}
+
 function filter(arr1, arr2) {
 
     let ret = [];

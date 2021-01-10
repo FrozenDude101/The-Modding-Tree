@@ -1,3 +1,20 @@
+/*
+    Challenge Achievement Ideas
+
+    Dye 2 primary pigments.
+        Unlock secondary pigments.
+    Dye 3 different primary pigments.
+        
+    Dye 3 different secondary pigments.
+        Unlock black and white pigments.
+
+    Enter a secondary challenge.
+    Complete 2 secondary challenges.
+        unlockOrder and passiveGeneration upgrades stay on secondary resets.
+    Complete 6 secondary challenges.
+        Secondary pigments are now based on total primary, rather than minimum.
+*/
+
 addLayer("achievements", {
     symbol: "🏆",
     row: "side",
@@ -22,7 +39,7 @@ addLayer("achievements", {
     points() {
         let points = 0;
         let total = 0;
-        for (let achievement in player.achievements.levels) {
+        for (let achievement in this.achievements) {
             points += player.achievements.levels[achievement];
             total += layers.achievements.achievements[achievement].max;
         }
@@ -33,20 +50,51 @@ addLayer("achievements", {
         "Achievements": {
             content: [
                 "main-display",
-                "achievements",
+                ["display-text", "<h3>Milestones</h3>"],
+                "blank",
+                ["row", [
+                    ["achievement", 11],
+                ]],
+                ["row", [
+                    ["achievement", 21],
+                    ["achievement", 22],
+                    ["achievement", 23],
+                ]],
+                ["row", [
+                    ["achievement", 31],
+                    ["achievement", 32],
+                    ["achievement", 33],
+                ]],
+                "blank",
+                ["display-text", "<h3>Challenges</h3>"],
+                "blank",
+                ["row", [
+                ]],
             ],
         },
         "Effects": {
             content: [
                 "main-display",
-                ["text-display", function() {
-                    let effects = layers.achievements.calcTotalEffect();
+                ["display-text", function() {
+                    let effects = layers.achievements.calcEffects();
+                    let tableData = {};
+                    for (let item in effects) {
+                        let data;
+
+                        if (typeof effects[item] == "number") {
+                            if (effects[item] == 0) continue;
+                            data = "+" + effects[item] + "%";
+                        }
+
+                        tableData[item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g,' $1')] = data;
+                    };
+                    return formatTable(tableData, {headings: ["Point", "Boost"]});
                 }],
             ],
         },
     },
 
-    calcTotalEffect(effect = null) {
+    calcEffects(effect = null) {
         let ret = {};
         switch(effect) {
             case null:
@@ -54,33 +102,30 @@ addLayer("achievements", {
                 ret.blankPigment = achievementEffect(this.layer, 11);
                 if (effect) break;
             case "redPigment":
-                ret.redPigment = achievementEffect(this.layer, 11);
+                ret.redPigment = achievementEffect(this.layer, 21);
                 if (effect) break;
             case "orangePigment":
-                ret.orangePigment = achievementEffect(this.layer, 11);
+                ret.orangePigment = achievementEffect(this.layer, 22);
                 if (effect) break;
             case "yellowPigment":
-                ret.yellowPigment = achievementEffect(this.layer, 11);
+                ret.yellowPigment = achievementEffect(this.layer, 23);
                 if (effect) break;
             case "greenPigment":
-                ret.greenPigment = achievementEffect(this.layer, 11);
+                ret.greenPigment = achievementEffect(this.layer, 31);
                 if (effect) break;
             case "bluePigment":
-                ret.bluePigment = achievementEffect(this.layer, 11);
+                ret.bluePigment = achievementEffect(this.layer, 32);
                 if (effect) break;
             case "purplePigment":
-                ret.purplePigment = achievementEffect(this.layer, 11);
+                ret.purplePigment = achievementEffect(this.layer, 33);
                 if (effect) break;
         }
 
-        if (effect) ret = ret.effect;
+        if (effect) ret = ret[effect];
         return ret;
     },
 
     achievements: {
-        rows: 10,
-        cols: 6,
-
         11: {
             name() {
                 return "A Blank<br>Canvas<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max))
@@ -113,6 +158,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
+
         21: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Red<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
@@ -221,6 +267,7 @@ addLayer("achievements", {
                 return Math.min(player.achievements.levels[this.id]+delta, this.max);
             },
         },
+
         31: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player.achievements.levels[this.id]/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player.achievements.levels[this.id]+1, this.max)%10)
@@ -281,7 +328,7 @@ addLayer("achievements", {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.greenPigment.points.gte(this.goal()) && this.style.opacity;
+                return player.greenPigment.points.gte(this.goal()) && this.style().opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {
@@ -317,7 +364,7 @@ addLayer("achievements", {
                 return new Decimal(1e3).pow(player.achievements.levels[this.id]).max(10);
             },
             done() {
-                return player.purplePigment.points.gte(this.goal()) && this.style.opacity;
+                return player.purplePigment.points.gte(this.goal()) && this.style().opacity;
             },
             onComplete() {
                 if (player.achievements.levels[this.id] != this.max) {

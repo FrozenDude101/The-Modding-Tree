@@ -38,8 +38,8 @@ function canGenPoints(){
 
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints()) return new Decimal(0);
 
+	if(!canGenPoints()) return new Decimal(0);
 
 	let gain = new Decimal(1);
 
@@ -51,26 +51,31 @@ function getPointGen() {
 		if (layers[colour+"Pigment"].layerShown()) colours.push(colour);
 	}
 
-	// Base add.
+	
 	for (let colour of colours) {
 		if (hasUpgrade(colour+"Pigment", 11)) gain = gain.add(upgradeEffect(colour+"Pigment", 11));
 	}
-
-	// Multiply.
+	// Base add.
+	
 	for (let colour of colours) {
 		if (hasUpgrade(colour+"Pigment", 12)) gain = gain.mul(upgradeEffect(colour+"Pigment", 12));
 		if (hasUpgrade(colour+"Pigment", 13)) gain = gain.mul(upgradeEffect(colour+"Pigment", 13));
 		if (hasUpgrade(colour+"Pigment", 22)) gain = gain.mul(upgradeEffect(colour+"Pigment", 22));
 	}
-
-	// Exponation.
+	// Multiply.
+	
 	for (let colour of colours) {
 		if (primary.includes(colour)) {
 			if (hasUpgrade(colour+"Pigment", 51)) gain = gain.pow(upgradeEffect(colour+"Pigment", 51));
 		}
 	}
+	// Exponation.
+
+	gain = gain.mul(1+layers.achievements.calcEffects("blankPigment")/100);
+	// Achievement bonus.
 
 	return gain;
+
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -97,5 +102,13 @@ function maxTickLength() {
 
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
-function fixOldSave(oldVersion){
+function fixOldSave(oldVersion) {
+
+	for (let achievement of layers.achievements.achievements) {
+		if (player.achievements.levels[achievement] == undefined) {
+			players.achievements.levels[achievement] = 0;
+		}
+	}
+	// Adds any new achievements to the levels object.
+
 }

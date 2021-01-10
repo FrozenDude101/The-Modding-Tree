@@ -1,0 +1,5 @@
+.formattedTable, .formattedTable tr th, .formattedTable tr td {
+    border: 2px solid white;
+    border-collapse: collapse;
+    padding: 10px;
+}
