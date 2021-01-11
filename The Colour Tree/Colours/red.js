@@ -104,12 +104,16 @@ addLayer("redPigment", {
     },
     gainMult() {
         let mult = new Decimal(1);
+        
+        mult = mult.mul(layers.milestones.calcEffect(this.layer).div(100).add(1));
+        if (player.firsts.primaryPigment == this.layer) mult = mult.mul(achievementEffect("challenges", 11));
 
         if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
         if (hasUpgrade(this.layer, 41)) mult = mult.mul(upgradeEffect(this.layer, 41));
         if (hasUpgrade(this.layer, 42)) mult = mult.mul(upgradeEffect(this.layer, 42));
+        
         if (layers.greenPigment.layerShown() && hasUpgrade("greenPigment", 32)) mult = mult.mul(upgradeEffect("greenPigment", 32));
 
         return mult;
@@ -123,10 +127,10 @@ addLayer("redPigment", {
     },
     getResetGain() {
         if (this.baseAmount().lt(this.requires())) return new Decimal(0);
-        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.achievements.calcEffects(this.layer)/100).floor().max(0);
+        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.milestones.calcEffect(this.layer)/100).floor().max(0);
     },
     getNextAt() {
-        return this.getResetGain().add(1).div(1+layers.achievements.calcEffects(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+        return this.getResetGain().add(1).div(1+layers.milestones.calcEffect(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
     },
 
     canReset() {
@@ -139,11 +143,11 @@ addLayer("redPigment", {
         switch(layer) {
             case "orangePigment":
                 if (hasUpgrade("orangePigment", 31)) keep.push("upgrades");
-                keepUpgrades = [31, 33, 43, 53];
+                if (hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
                 break;
             case "purplePigment":
                 if (hasUpgrade("purplePigment", 31)) keep.push("upgrades");
-                keepUpgrades = [31, 33, 43, 53];
+                if (hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
                 break;
             default:
                 keep = undefined;

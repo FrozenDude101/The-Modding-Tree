@@ -50,10 +50,12 @@ function getPointGen() {
 	for (let colour of primary.concat(secondary)) {
 		if (layers[colour+"Pigment"].layerShown()) colours.push(colour);
 	}
-
 	
 	for (let colour of colours) {
 		if (hasUpgrade(colour+"Pigment", 11)) gain = gain.add(upgradeEffect(colour+"Pigment", 11));
+		if (secondary.includes(colour)) {
+			if (hasAchievement("challenges", 21)) gain = gain.add(1);
+		}
 	}
 	// Base add.
 	
@@ -71,7 +73,7 @@ function getPointGen() {
 	}
 	// Exponation.
 
-	gain = gain.mul(1+layers.achievements.calcEffects("blankPigment")/100);
+	gain = gain.mul(1+layers.milestones.calcEffect("blankPigment")/100);
 	// Achievement bonus.
 
 	return gain;
@@ -79,8 +81,13 @@ function getPointGen() {
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
-function addedPlayerData() { return {
-}}
+function addedPlayerData() {
+
+	return {
+		firsts: {},
+	};
+
+}
 
 // Display extra things at the top of the page
 var displayThings = [
@@ -104,9 +111,9 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
 
-	for (let achievement of layers.achievements.achievements) {
+	for (let achievement of layers.milestones.achievements) {
 		if (player.achievements.levels[achievement] == undefined) {
-			players.achievements.levels[achievement] = 0;
+			players.milestones.levels[achievement] = 0;
 		}
 	}
 	// Adds any new achievements to the levels object.

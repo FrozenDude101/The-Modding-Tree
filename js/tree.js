@@ -3,7 +3,8 @@ var layoutInfo = {
 	showTree: true,
 
     treeLayout: [
-        ["blank"],
+        [],
+        [],
         ["red"],
         ["purple", "orange"],
         ["blue", "green", "yellow"],

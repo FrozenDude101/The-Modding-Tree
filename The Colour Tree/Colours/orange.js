@@ -89,6 +89,7 @@ addLayer("orangePigment", {
 
     exponent: 0.5,
     baseAmount() {
+        if (hasAchievement("challenges", 23)) return player.redPigment.points.add(player.yellowPigment.points);
         return player.redPigment.points.min(player.yellowPigment.points);
     },
     requires() {
@@ -96,6 +97,9 @@ addLayer("orangePigment", {
     },
     gainMult() {
         let mult = new Decimal(1);
+        
+        mult = mult.mul(layers.milestones.calcEffect(this.layer).div(100).add(1));
+        if (player.firsts.secondaryPigment == this.layer) mult = mult.mul(achievementEffect("challenges", 14));
 
         if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
@@ -109,10 +113,10 @@ addLayer("orangePigment", {
     },
     getResetGain() {
         if (this.baseAmount().lt(this.requires())) return new Decimal(0);
-        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.achievements.calcEffects(this.layer)/100).floor().max(0);
+        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.milestones.calcEffect(this.layer)/100).floor().max(0);
     },
     getNextAt() {
-        return this.getResetGain().add(1).div(1+layers.achievements.calcEffects(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+        return this.getResetGain().add(1).div(1+layers.milestones.calcEffect(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
     },
 
     canReset() {

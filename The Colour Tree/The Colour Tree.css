@@ -1,3 +1,7 @@
+div.achievement {
+    transition-property: box-shadow, z-index;
+}
+
 .formattedTable, .formattedTable tr th, .formattedTable tr td {
     border: 2px solid white;
     border-collapse: collapse;
