@@ -1,5 +1,20 @@
 //vscode-fold=1
 
+addLayer("debug", {
+    symbol: "🐞",
+    row: "side",
+    
+    tooltip: "Debug",
+
+    layerShown() {
+        return gameEnded;
+    },
+
+    tabFormat: [
+        ["display-text", "<button>Test</button>"], 
+    ],
+})
+
 addLayer("achievements", {
     symbol: "🏆",
     row: "side",
