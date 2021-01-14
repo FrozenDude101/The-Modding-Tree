@@ -74,7 +74,7 @@ addLayer("bluePigment", {
         "blank",
         ["upgrades", function() {
             rows = [];
-            if (player.yellowPigment.unlocked) rows.push(1);
+            if (player.bluePigment.unlocked) rows.push(1);
             if (hasUpgrade("bluePigment", 13) || player.greenPigment.unlocked || player.purplePigment.unlocked) rows.push(2);
             if (hasChallenge("greenPigment", 11) || hasChallenge("purplePigment", 11)) rows.push(3);
             if (hasChallenge("greenPigment", 11) && hasChallenge("purplePigment", 11)) rows.push(4);
