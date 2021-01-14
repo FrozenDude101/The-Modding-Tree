@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 addLayer("black", {
     symbol: "B",
     color: "#222",

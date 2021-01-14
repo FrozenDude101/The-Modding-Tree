@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 addLayer("achievements", {
     symbol: "🏆",
     row: "side",

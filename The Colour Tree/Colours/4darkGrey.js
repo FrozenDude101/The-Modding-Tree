@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 addLayer("darkGrey", {
     symbol: "D",
     color: "#666",

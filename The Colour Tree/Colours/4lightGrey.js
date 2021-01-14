@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 addLayer("lightGrey", {
     symbol: "L",
     color: "#AAA",

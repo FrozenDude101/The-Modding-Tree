@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 /*
     www.eggradients.com/shades-of-purple
     3-3

@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 addLayer("white", {
     symbol: "W",
     color: "#DDD",
