@@ -1,6 +1,7 @@
 addLayer("lightGrey", {
     symbol: "L",
     color: "#AAA",
+    branches: ["black", "white"],
 
     /*tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
