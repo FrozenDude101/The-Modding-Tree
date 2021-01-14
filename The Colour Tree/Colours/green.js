@@ -106,7 +106,7 @@ addLayer("greenPigment", {
         if (player.stats.firstSecondary == this.layer) mult = mult.mul(achievementEffect("challenges", 14));
         mult = mult.mul(1+tmp.milestones.effect[this.layer]/100);
 
-        if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
+        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
