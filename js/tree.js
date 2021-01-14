@@ -2,17 +2,20 @@ var layoutInfo = {
     startTab: "none",
 	showTree: true,
 
-    treeLayout: ""
-
-    
+    treeLayout: [
+        [],
+        [],
+        ["red"],
+        ["purple", "orange"],
+        ["blue", "green", "yellow"],
+    ],
 }
 
 
 // A "ghost" layer which offsets other layers in the tree
 addNode("blank", {
     layerShown: "ghost",
-}, 
-)
+})
 
 
 addLayer("tree-tab", {

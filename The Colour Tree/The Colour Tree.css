@@ -1,0 +1,22 @@
+div.achievement {
+    transition-property: box-shadow, z-index;
+
+}
+/* Fixes achievement transitions. */
+
+.hidden {
+	height: 10px !important;
+}
+/* Changes the height of blank layers so the triangle lines up correctly. */
+
+.smallNode {
+    margin: 25%;
+}
+/* Adds a gap between side nodes. */
+
+.formattedTable, .formattedTable tr th, .formattedTable tr td {
+    border: 2px solid white;
+    border-collapse: collapse;
+    padding: 10px;
+}
+/* Adds a border and padding to tables. */
