@@ -17,12 +17,12 @@ addLayer("green", {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " yellow and blue pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
+        return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " yellow and blue pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
     layerShown() {
-        return (layers[this.layer + "Pigment"].layerShown() ? true : "ghost");
-    },    
+        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
+    },   
     unlocked() {
         player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
     },
@@ -56,6 +56,9 @@ addLayer("greenPigment", {
     startData() {
         return {
             points: new Decimal(0),
+            lifetimeBest: new Decimal(0),
+            lifetimeTotal: new Decimal(0),
+            
             unlocked: false,
 
             requiresExponent: 0,
@@ -74,7 +77,7 @@ addLayer("greenPigment", {
         ["upgrades", function() {
             rows = [];
             if (player.greenPigment.unlocked) rows.push(1);
-            if (hasUpgrade("greenPigment", 13)) rows.push(2);
+            if (hasUpgrade("greenPigment", 13) || hasChallenge("greenPigment", 12)) rows.push(2);
             if (hasChallenge("greenPigment", 12)) rows.push(3);
             return rows;
         }],
@@ -84,12 +87,12 @@ addLayer("greenPigment", {
     type: "custom",
     row: 1,
     prestigeButtonText() {
-        return "Combine yellow and blue pigment for " + formatWhole(this.getResetGain()) + " green pigment.<br>Next at " + format(this.getNextAt()) + " yellow and blue pigment.";
+        return "Combine yellow and blue pigment for " + formatWhole(tmp[this.layer].getResetGain) + " green pigment.<br>Next at " + format(tmp[this.layer].getNextAt) + " yellow and blue pigment.";
     },
 
     exponent: 0.5,
     baseAmount() {
-        if (hasAchievement("challenges", 23)) return player.bluePigment.points.add(player.yellowPigment.points);
+        if (hasAchievement("challenges", 24)) return player.bluePigment.points.add(player.yellowPigment.points);
         return player.bluePigment.points.min(player.yellowPigment.points);
     },
     requires() {
@@ -98,8 +101,8 @@ addLayer("greenPigment", {
     gainMult() {
         let mult = new Decimal(1);
         
-        mult = mult.mul(layers.milestones.calcEffect(this.layer).div(100).add(1));
-        if (player.firsts.secondaryPigment == this.layer) mult = mult.mul(achievementEffect("challenges", 14));
+        if (player.stats.firstSecondary == this.layer) mult = mult.mul(achievementEffect("challenges", 14));
+        mult = mult.mul(1+tmp.milestones.effect[this.layer]/100);
 
         if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
@@ -112,15 +115,15 @@ addLayer("greenPigment", {
         return exp;
     },
     getResetGain() {
-        if (this.baseAmount().lt(this.requires())) return new Decimal(0);
-        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.milestones.calcEffect(this.layer)/100).floor().max(0);
+        if (tmp[this.layer].baseAmount.lt(tmp[this.layer].requires)) return new Decimal(0);
+        return tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).mul(tmp[this.layer].gainMult).pow(tmp[this.layer].gainExp).floor().max(0);
     },
     getNextAt() {
-        return this.getResetGain().add(1).div(1+layers.milestones.calcEffect(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+        return tmp[this.layer].getResetGain.add(1).root(tmp[this.layer].gainExp).div(tmp[this.layer].gainMult).root(tmp[this.layer].exponent).times(tmp[this.layer].requires).max(tmp[this.layer].requires);
     },
 
     canReset() {
-        return this.getResetGain().gte(1);
+        return tmp[this.layer].getResetGain.gte(1);
     },
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
@@ -171,7 +174,7 @@ addLayer("greenPigment", {
             title: "Forest Green",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -191,7 +194,7 @@ addLayer("greenPigment", {
             title: "Hunter Green",
             description: "Boost blank pigment gain based on green pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -203,7 +206,7 @@ addLayer("greenPigment", {
             title: "Neon Green",
             description: "Boost green pigment gain based on green pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -222,7 +225,7 @@ addLayer("greenPigment", {
             title: "Mint",
             description: "Boost red pigment gain based on green pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -234,7 +237,7 @@ addLayer("greenPigment", {
             title: "Spring Green",
             description: "Boost green pigment gain based on red pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {

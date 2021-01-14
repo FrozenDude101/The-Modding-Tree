@@ -13,12 +13,12 @@ addLayer("blue", {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
+        return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
     layerShown() {
-        return (layers[this.layer + "Pigment"].layerShown() ? true : "ghost");
-    },    
+        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
+    },   
     unlocked() {
         player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
     },
@@ -52,6 +52,9 @@ addLayer("bluePigment", {
     startData() {
         return {
             points: new Decimal(0),
+            lifetimeBest: new Decimal(0),
+            lifetimeTotal: new Decimal(0),
+            
             unlocked: false,
 
             requiresExponent: 0,
@@ -66,7 +69,7 @@ addLayer("bluePigment", {
     tabFormat: [
         "main-display",
         ["prestige-button", "", function() {
-            return layers.bluePigment.passiveGeneration() < 1 ? {} : {display: "none"};
+            return tmp.bluePigment.passiveGeneration < 1 ? {} : {display: "none"};
         }],
         "blank",
         ["upgrades", function() {
@@ -83,7 +86,7 @@ addLayer("bluePigment", {
     type: "custom",
     row: 0,
     prestigeButtonText() {
-        return "Dye blank pigment blue for " + formatWhole(this.getResetGain()) + " blue pigment.<br>Next at " + format(this.getNextAt()) + " blank pigment.";
+        return "Dye blank pigment blue for " + formatWhole(tmp[this.layer].getResetGain) + " blue pigment.<br>Next at " + format(tmp[this.layer].getNextAt) + " blank pigment.";
     },
     passiveGeneration() {
         let gain = 0;
@@ -100,13 +103,13 @@ addLayer("bluePigment", {
         return player.points;
     },
     requires() {
-        return new Decimal(10).mul(Decimal.pow(10, player[this.layer].requiresExponent));
+        return new Decimal(10).mul(Decimal.pow(10, (hasUpgrade(this.layer, 31) ? 0 : player[this.layer].requiresExponent)));
     },
     gainMult() {
         let mult = new Decimal(1);
         
-        mult = mult.mul(layers.milestones.calcEffect(this.layer).div(100).add(1));
-        if (player.firsts.primaryPigment == this.layer) mult = mult.mul(achievementEffect("challenges", 11));
+        if (player.stats.firstPrimary == this.layer) mult = mult.mul(achievementEffect("challenges", 11));
+        mult = mult.mul(1+tmp.milestones.effect[this.layer]/100);
 
         if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
@@ -114,7 +117,7 @@ addLayer("bluePigment", {
         if (hasUpgrade(this.layer, 41)) mult = mult.mul(upgradeEffect(this.layer, 41));
         if (hasUpgrade(this.layer, 42)) mult = mult.mul(upgradeEffect(this.layer, 42));
 
-        if (layers.orangePigment.layerShown() && hasUpgrade("orangePigment", 32)) mult = mult.mul(upgradeEffect("orangePigment", 32));
+        if (tmp.orangePigment.layerShown && hasUpgrade("orangePigment", 32)) mult = mult.mul(upgradeEffect("orangePigment", 32));
 
         return mult;
     },
@@ -126,15 +129,15 @@ addLayer("bluePigment", {
         return exp;
     },
     getResetGain() {
-        if (this.baseAmount().lt(this.requires())) return new Decimal(0);
-        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.milestones.calcEffect(this.layer)/100).floor().max(0);
+        if (tmp[this.layer].baseAmount.lt(tmp[this.layer].requires)) return new Decimal(0);
+        return tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).mul(tmp[this.layer].gainMult).pow(tmp[this.layer].gainExp).floor().max(0);
     },
     getNextAt() {
-        return this.getResetGain().add(1).div(1+layers.milestones.calcEffect(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+        return tmp[this.layer].getResetGain.add(1).root(tmp[this.layer].gainExp).div(tmp[this.layer].gainMult).root(tmp[this.layer].exponent).times(tmp[this.layer].requires).max(tmp[this.layer].requires);
     },
 
     canReset() {
-        return this.getResetGain().gte(1) && this.passiveGeneration() < 1;
+        return tmp[this.layer].getResetGain.gte(1) && tmp[this.layer].passiveGeneration < 1;
     },
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
@@ -193,7 +196,7 @@ addLayer("bluePigment", {
             title: "Navy Blue",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -213,7 +216,7 @@ addLayer("bluePigment", {
             title: "Baby Blue",
             description: "Boost blank pigment gain based on blue pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -225,7 +228,7 @@ addLayer("bluePigment", {
             title: "Tiffany Blue",
             description: "Boost blue pigment gain based on blue pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -237,17 +240,14 @@ addLayer("bluePigment", {
         31: {
             title: "Midnight Blue",
             description: "Blue pigment acts as if it was bought first.",
-
-            onPurchase() {
-                player[this.layer].requiresExponent = 0;
-            },
+            
             cost: new Decimal(20000),
         },
         32: {
             title: "True Blue",
             description: "Boost blue pigment based on blank pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -267,7 +267,7 @@ addLayer("bluePigment", {
             title: "Cornflower Blue",
             description: "Boost blue pigment gain based on total red and yellow pigment.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -279,7 +279,7 @@ addLayer("bluePigment", {
             title: "Electric Blue",
             description: "Boost blue pigment gain based on total green and purple pigment.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {

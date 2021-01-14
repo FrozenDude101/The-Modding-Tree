@@ -1,4 +1,6 @@
 const ALWAYS_KEEP_ON_RESET = [
+    "lifetimeBest",
+    "lifetimeTotal",
     "requiresExponent",
 ]
 
@@ -47,13 +49,25 @@ function formatTable(data, {
         ret += "</tr>";
     }
 
+    let dataAdded = false;
     if (typeof data == "object") {
-        for (let item in data) {
-            ret += "<tr><td>" + item + "</td><td>" + data[item] + "</td></tr>";
+        for (let lineData in data) {
+            if (data[lineData] instanceof Array) {
+                let line = "<tr><td>" + lineData + "</td>";
+                for (let item of data[lineData]) {
+                    line += "<td>" + item + "</td>";
+                }
+                line += "</tr>";
+                ret += line;
+            } else {
+                ret += "<tr><td>" + lineData + "</td><td>" + data[lineData] + "</td></tr>";
+            }
+            dataAdded = true;
         }
     }
 
     ret += "</table>";
+    if (!dataAdded) ret = "";
 
     return ret;
 

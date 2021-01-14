@@ -12,14 +12,40 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.1",
+	name: "The Colour Triangle",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+let changelog = `
+<h1>Changelog</h1><br>
+<br>
+<h2><u>v0.1: The Colour Triangle</u></h2><br>
+<br>
+<h3>Primary Pigments</h3><br>
+Dye blank pigment to create primary colours.<br>
+15 new upgrades.<br>
+<br>
+<h3>Secondary Pigments</h3><br>
+Combine primary pigments to create secondary colours.<br>
+9 new upgrades.<br>
+2 new challenges.<br>
+<br>
+<h3>Milestone Achievements</h3><br>
+7 milestone achievements added.<br>
+Reach goals to obtain permanent +% bonuses to production!<br>
+<br>
+<h3>Challenge Achievements</h3><br>
+10 challenge achievements added.<br>
+Reach goals to obtain permanent perks!<br>
+<br>
+<h3>Statistics</h3><br>
+Several different statistics added.<br>
+Compare with friends to compete!<br>
+<br>
+<h3>Bugfixes</h3><br>
+Too many to list.<br>
+<br>
+`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -48,7 +74,7 @@ function getPointGen() {
 
 	let colours = [];
 	for (let colour of primary.concat(secondary)) {
-		if (layers[colour+"Pigment"].layerShown()) colours.push(colour);
+		if (tmp[colour+"Pigment"].layerShown) colours.push(colour);
 	}
 	
 	for (let colour of colours) {
@@ -73,7 +99,7 @@ function getPointGen() {
 	}
 	// Exponation.
 
-	gain = gain.mul(1+layers.milestones.calcEffect("blankPigment")/100);
+	gain = gain.mul(1+tmp.milestones.effect["blankPigment"]/100);
 	// Achievement bonus.
 
 	return gain;
@@ -84,13 +110,26 @@ function getPointGen() {
 function addedPlayerData() {
 
 	return {
-		firsts: {},
+		lifetimeBest: new Decimal(0),
+		lifetimeTotal: new Decimal(0),
+
+		stats: {
+			firstPrimary: "",
+			firstSecondary: "",
+
+			startTick: Date.now(),
+
+			resets: 0,
+			upgradesBought: 0,
+			challengesCompleted: 0,
+		}
 	};
 
 }
 
 // Display extra things at the top of the page
 var displayThings = [
+	"Endgame: 10,000,000 of each secondary pigment.",
 ]
 
 // Determines when the game "ends"
@@ -111,9 +150,9 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
 
-	for (let achievement of layers.milestones.achievements) {
-		if (player.achievements.levels[achievement] == undefined) {
-			players.milestones.levels[achievement] = 0;
+	for (let achievement in layers.milestones.achievements) {
+		if (player.milestones.levels[achievement] == undefined) {
+			player.milestones.levels[achievement] = 0;
 		}
 	}
 	// Adds any new achievements to the levels object.

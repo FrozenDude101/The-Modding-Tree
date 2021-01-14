@@ -548,11 +548,11 @@ function canAffordPurchase(layer, thing, cost) {
 	}
 }
 
-function buyUpgrade(layer, id) {
-	buyUpg(layer, id)
+function buyUpgrade(layer, id, auto=false) {
+	buyUpg(layer, id, auto)
 }
 
-function buyUpg(layer, id) {
+function buyUpg(layer, id, auto=false) {
 	if (!tmp[layer].upgrades || !tmp[layer].upgrades[id]) return
 	let upg = tmp[layer].upgrades[id]
 	if (!player[layer].unlocked) return
@@ -588,6 +588,7 @@ function buyUpg(layer, id) {
 		}
 	}
 	player[layer].upgrades.push(id);
+	if (!auto) player.stats.upgradesBought += 1;
 	if (upg.onPurchase != undefined)
 		run(upg.onPurchase, upg)
 }

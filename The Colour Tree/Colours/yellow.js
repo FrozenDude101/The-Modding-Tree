@@ -13,12 +13,12 @@ addLayer("yellow", {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(layers[this.layer + "Pigment"].requires()) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(layers[this.layer + "Pigment"].baseAmount()) + ".)";
+        return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
     layerShown() {
-        return (layers[this.layer + "Pigment"].layerShown() ? true : "ghost");
-    },    
+        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
+    },   
     unlocked() {
         player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
     },
@@ -52,6 +52,9 @@ addLayer("yellowPigment", {
     startData() {
         return {
             points: new Decimal(0),
+            lifetimeBest: new Decimal(0),
+            lifetimeTotal: new Decimal(0),
+            
             unlocked: false,
 
             requiresExponent: 0,
@@ -66,7 +69,7 @@ addLayer("yellowPigment", {
     tabFormat: [
         "main-display",
         ["prestige-button", "", function() {
-            return layers.yellowPigment.passiveGeneration() < 1 ? {} : {display: "none"};
+            return tmp.yellowPigment.passiveGeneration < 1 ? {} : {display: "none"};
         }],
         "blank",
         ["upgrades", function() {
@@ -83,7 +86,7 @@ addLayer("yellowPigment", {
     type: "custom",
     row: 0,
     prestigeButtonText() {
-        return "Dye blank pigment yellow for " + formatWhole(this.getResetGain()) + " yellow pigment.<br>Next at " + format(this.getNextAt()) + " blank pigment.";
+        return "Dye blank pigment yellow for " + formatWhole(tmp[this.layer].getResetGain) + " yellow pigment.<br>Next at " + format(tmp[this.layer].getNextAt) + " blank pigment.";
     },
     passiveGeneration() {
         let gain = 0;
@@ -100,13 +103,13 @@ addLayer("yellowPigment", {
         return player.points;
     },
     requires() {
-        return new Decimal(10).mul(Decimal.pow(10, player[this.layer].requiresExponent));
+        return new Decimal(10).mul(Decimal.pow(10, (hasUpgrade(this.layer, 31) ? 0 : player[this.layer].requiresExponent)));
     },
     gainMult() {
         let mult = new Decimal(1);
         
-        mult = mult.mul(layers.milestones.calcEffect(this.layer).div(100).add(1));
-        if (player.firsts.primaryPigment == this.layer) mult = mult.mul(achievementEffect("challenges", 11));
+        if (player.stats.firstPrimary == this.layer) mult = mult.mul(achievementEffect("challenges", 11));
+        mult = mult.mul(1+tmp.milestones.effect[this.layer]/100);
 
         if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
@@ -114,7 +117,7 @@ addLayer("yellowPigment", {
         if (hasUpgrade(this.layer, 41)) mult = mult.mul(upgradeEffect(this.layer, 41));
         if (hasUpgrade(this.layer, 42)) mult = mult.mul(upgradeEffect(this.layer, 42));
 
-        if (layers.purplePigment.layerShown() && hasUpgrade("purplePigment", 32)) mult = mult.mul(upgradeEffect("purplePigment", 32));
+        if (tmp.purplePigment.layerShown && hasUpgrade("purplePigment", 32)) mult = mult.mul(upgradeEffect("purplePigment", 32));
 
         return mult;
     },
@@ -126,15 +129,15 @@ addLayer("yellowPigment", {
         return exp;
     },
     getResetGain() {
-        if (this.baseAmount().lt(this.requires())) return new Decimal(0);
-        return this.baseAmount().div(this.requires()).pow(this.exponent).mul(this.gainMult()).pow(this.gainExp()).mul(1+layers.milestones.calcEffect(this.layer)/100).floor().max(0);
+        if (tmp[this.layer].baseAmount.lt(tmp[this.layer].requires)) return new Decimal(0);
+        return tmp[this.layer].baseAmount.div(tmp[this.layer].requires).pow(tmp[this.layer].exponent).mul(tmp[this.layer].gainMult).pow(tmp[this.layer].gainExp).floor().max(0);
     },
     getNextAt() {
-        return this.getResetGain().add(1).div(1+layers.milestones.calcEffect(this.layer)/100).root(this.gainExp()).div(this.gainMult()).root(this.exponent).times(this.requires()).max(this.requires());
+        return tmp[this.layer].getResetGain.add(1).root(tmp[this.layer].gainExp).div(tmp[this.layer].gainMult).root(tmp[this.layer].exponent).times(tmp[this.layer].requires).max(tmp[this.layer].requires);
     },
 
     canReset() {
-        return this.getResetGain().gte(1) && this.passiveGeneration() < 1;
+        return tmp[this.layer].getResetGain.gte(1) && tmp[this.layer].passiveGeneration < 1;
     },
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
@@ -193,7 +196,7 @@ addLayer("yellowPigment", {
             title: "Golden Yellow",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -213,7 +216,7 @@ addLayer("yellowPigment", {
             title: "Citrine",
             description: "Boost blank pigment gain based on yellow pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -225,7 +228,7 @@ addLayer("yellowPigment", {
             title: "Mustard Yellow",
             description: "Boost yellow pigment gain based on yellow pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -238,16 +241,13 @@ addLayer("yellowPigment", {
             title: "Saffron Yellow",
             description: "Yellow pigment acts as if it was bought first.",
 
-            onPurchase() {
-                player[this.layer].requiresExponent = 0;
-            },
             cost: new Decimal(20000),
         },
         32: {
             title: "Yellow Chartreuse",
             description: "Boost yellow pigment based on blank pigment amount.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -267,7 +267,7 @@ addLayer("yellowPigment", {
             title: "School Bus Yellow",
             description: "Boost yellow pigment gain based on total red and blue pigment.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
@@ -279,7 +279,7 @@ addLayer("yellowPigment", {
             title: "Sunflower Yellow",
             description: "Boost yellow pigment gain based on total orange and green pigment.",
             effectDisplay() {
-                return "x" + format(this.effect());
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {

@@ -7,6 +7,17 @@ addLayer("achievements", {
 
     layerShown: true,
 
+    startData() {
+        return {
+            effectNotify: false,
+        };
+    },
+    effectNotify() {
+        if (player.tab == this.layer && player.subtabs[this.layer].mainTabs == "Effects") {
+            player[this.layer].effectNotify = false;
+        }
+    },
+
     tabFormat: {
         Milestones: {
             embedLayer: "milestones",
@@ -14,10 +25,43 @@ addLayer("achievements", {
         Challenges: {
             embedLayer: "challenges",
         },
+        Effects: {
+            content: [
+                ["display-text", function() {
+                    let effects = tmp.milestones.effect;
+                    let tableData = {};
+                    for (let item in effects) {
+                        if (effects[item] instanceof Decimal && effects[item].eq(0)) continue;
+                        let data = "+" + format(effects[item]) + "%";
+                        tableData[item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g,' $1')] = data;
+                    };
+                    return formatTable(tableData, {headings: ["Point", "Boost"]});
+                }],
+                "blank",
+                ["display-text", function() {
+                    let ret = "";
+
+                    if (hasAchievement("challenges", 11)) ret += player.stats.firstPrimary.charAt(0).toUpperCase() + player.stats.firstPrimary.slice(1).replace(/([A-Z])/g,' $1') + " is boosted by +10%.<br>";
+                    if (hasAchievement("challenges", 14)) ret += player.stats.firstSecondary.charAt(0).toUpperCase() + player.stats.firstSecondary.slice(1).replace(/([A-Z])/g,' $1') + " is boosted by +10%.<br>";
+                    if (hasAchievement("challenges", 21)) ret += "+" + achievementEffect("challenges", 21) + " base blank pigment gain.<br>";
+                    if (hasAchievement("challenges", 22)) ret += "Keep primary pigment unlock order and automatic gain upgrades on secondary pigment reset.<br>";
+                    if (hasAchievement("challenges", 24)) ret += "Secondary pigments are based on total primary pigments.<br>";
+
+                    if (ret == "") ret = "You haven't unlocked any additional effects yet.";
+                    else           ret = "You also have the following effects.<br><br>" + ret;
+                    return ret;
+                }],
+            ],
+            shouldNotify() {
+                return player.achievements.effectNotify;
+            },
+        },
     },
 });
 
 addLayer("milestones", {
+    resource: "milestones.",
+
     layerShown: true,
 
     startData() {
@@ -43,62 +87,21 @@ addLayer("milestones", {
         player[this.layer].points = points + "/" + total;
     },
 
-    tabFormat: {
-        Achievements: {
-            content: [
-                "main-display",
-                "achievements",
-            ],
-        },
-        Effects: {
-            content: [
-                "main-display",
-                ["display-text", function() {
-                    let effects = layers.milestones.calcEffect();
-                    let tableData = {};
-                    for (let item in effects) {
-                        let data;
-                        if (effects[item] instanceof Decimal) {
-                            if (effects[item].eq(0)) continue;
-                            data = "+" + format(effects[item]) + "%";
-                        }
-                        tableData[item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g,' $1')] = data;
-                    };
-                    return formatTable(tableData, {headings: ["Point", "Boost"]});
-                }],
-            ],
-        },
-    },
+    tabFormat: [
+        "main-display",
+        "achievements",
+    ],
 
-    calcEffect(effect = null) {
-        let ret = {};
-        switch(effect) {
-            case null:
-            case "blankPigment":
-                ret.blankPigment = achievementEffect("milestones", 11);
-                if (effect) break;
-            case "redPigment":
-                ret.redPigment = achievementEffect("milestones", 21);
-                if (effect) break;
-            case "orangePigment":
-                ret.orangePigment = achievementEffect("milestones", 22);
-                if (effect) break;
-            case "yellowPigment":
-                ret.yellowPigment = achievementEffect("milestones", 23);
-                if (effect) break;
-            case "greenPigment":
-                ret.greenPigment = achievementEffect("milestones", 31);
-                if (effect) break;
-            case "bluePigment":
-                ret.bluePigment = achievementEffect("milestones", 32);
-                if (effect) break;
-            case "purplePigment":
-                ret.purplePigment = achievementEffect("milestones", 33);
-                if (effect) break;
-        }
-
-        if (effect) ret = ret[effect];
-        return ret;
+    effect() {
+        return ret = {
+            blankPigment:  achievementEffect("milestones", 11),
+            redPigment:    achievementEffect("milestones", 21),
+            yellowPigment: achievementEffect("milestones", 22),
+            bluePigment:   achievementEffect("milestones", 23),
+            orangePigment: achievementEffect("milestones", 31),
+            greenPigment:  achievementEffect("milestones", 32),
+            purplePigment: achievementEffect("milestones", 33),
+        };
     },
 
     achievements: {
@@ -112,11 +115,11 @@ addLayer("milestones", {
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
-                        return "Have " + formatWhole(this.goal()) + " blank pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blank pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blank pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blank pigment.";
                     case this.max:
-                        return "MAXED\nReward:\n+" + formatWhole(this.effect()) + "% blank pigment.";
+                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blank pigment.";
                     default:
-                        return "Have " + formatWhole(this.goal()) + " blank pigment.\nCurrent Reward:\n+" + formatWhole(this.effect()) + "% blank pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blank pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blank pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blank pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blank pigment.";
                 }
             },
 
@@ -125,7 +128,7 @@ addLayer("milestones", {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
             done() {
-                return player.points.gte(this.goal());
+                return player.points.gte(tmp[this.layer].achievements[this.id].goal);
             },
             onComplete() {
                 if (player[this.layer].levels[this.id] != this.max) {
@@ -134,7 +137,7 @@ addLayer("milestones", {
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(layers.challenges.calcEffect());
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
             },
         },
 
@@ -145,11 +148,11 @@ addLayer("milestones", {
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
-                        return "Have " + formatWhole(this.goal()) + " red pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% red pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " red pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% red pigment.";
                     case this.max:
-                        return "MAXED\nReward:\n+" + formatWhole(this.effect()) + "% red pigment.";
+                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% red pigment.";
                     default:
-                        return "Have " + formatWhole(this.goal()) + " red pigment.\nCurrent Reward:\n+" + formatWhole(this.effect()) + "% red pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% red pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " red pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% red pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% red pigment.";
                 }
             },
 
@@ -162,7 +165,7 @@ addLayer("milestones", {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
             done() {
-                return player.redPigment.points.gte(this.goal()) && this.style().opacity;
+                return player.redPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
                 if (player[this.layer].levels[this.id] != this.max) {
@@ -171,7 +174,7 @@ addLayer("milestones", {
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(layers.challenges.calcEffect());
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
             },
         },
         22: {
@@ -181,11 +184,11 @@ addLayer("milestones", {
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
-                        return "Have " + formatWhole(this.goal()) + " yellow pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% yellow pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " yellow pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% yellow pigment.";
                     case this.max:
-                        return "MAXED\nReward:\n+" + formatWhole(this.effect()) + "% yellow pigment.";
+                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% yellow pigment.";
                     default:
-                        return "Have " + formatWhole(this.goal()) + " yellow pigment.\nCurrent Reward:\n+" + formatWhole(this.effect()) + "% yellow pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% yellow pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " yellow pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% yellow pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% yellow pigment.";
                 }
             },
 
@@ -198,7 +201,7 @@ addLayer("milestones", {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
             done() {
-                return player.yellowPigment.points.gte(this.goal()) && this.style().opacity;
+                return player.yellowPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
                 if (player[this.layer].levels[this.id] != this.max) {
@@ -207,7 +210,7 @@ addLayer("milestones", {
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(layers.challenges.calcEffect());
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
             },
         },
         23: {
@@ -217,11 +220,11 @@ addLayer("milestones", {
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
-                        return "Have " + formatWhole(this.goal()) + " blue pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blue pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blue pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blue pigment.";
                     case this.max:
-                        return "MAXED\nReward:\n+" + formatWhole(this.effect()) + "% blue pigment.";
+                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blue pigment.";
                     default:
-                        return "Have " + formatWhole(this.goal()) + " blue pigment.\nCurrent Reward:\n+" + formatWhole(this.effect()) + "% blue pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blue pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blue pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blue pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blue pigment.";
                 }
             },
 
@@ -234,7 +237,7 @@ addLayer("milestones", {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
             done() {
-                return player.bluePigment.points.gte(this.goal()) && this.style().opacity;
+                return player.bluePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
                 if (player[this.layer].levels[this.id] != this.max) {
@@ -243,7 +246,7 @@ addLayer("milestones", {
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(layers.challenges.calcEffect());
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
             },
         },
 
@@ -254,11 +257,11 @@ addLayer("milestones", {
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
-                        return "Have " + formatWhole(this.goal()) + " orange pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% orange pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " orange pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% orange pigment.";
                     case this.max:
-                        return "MAXED\nReward:\n+" + formatWhole(this.effect()) + "% orange pigment.";
+                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% orange pigment.";
                     default:
-                        return "Have " + formatWhole(this.goal()) + " orange pigment.\nCurrent Reward:\n+" + formatWhole(this.effect()) + "% orange pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% orange pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " orange pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% orange pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% orange pigment.";
                 }
             },
 
@@ -271,7 +274,7 @@ addLayer("milestones", {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
             done() {
-                return player.orangePigment.points.gte(this.goal()) && this.style().opacity;
+                return player.orangePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
                 if (player[this.layer].levels[this.id] != this.max) {
@@ -280,7 +283,7 @@ addLayer("milestones", {
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(layers.challenges.calcEffect());
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
             },
         },
         32: {
@@ -290,11 +293,11 @@ addLayer("milestones", {
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
-                        return "Have " + formatWhole(this.goal()) + " green pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% green pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " green pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% green pigment.";
                     case this.max:
-                        return "MAXED\nReward:\n+" + formatWhole(this.effect()) + "% green pigment.";
+                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% green pigment.";
                     default:
-                        return "Have " + formatWhole(this.goal()) + " green pigment.\nCurrent Reward:\n+" + formatWhole(this.effect()) + "% green pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% green pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " green pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% green pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% green pigment.";
                 }
             },
 
@@ -307,7 +310,7 @@ addLayer("milestones", {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
             done() {
-                return player.greenPigment.points.gte(this.goal()) && this.style().opacity;
+                return player.greenPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
                 if (player[this.layer].levels[this.id] != this.max) {
@@ -316,7 +319,7 @@ addLayer("milestones", {
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(layers.challenges.calcEffect());
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
             },
         },
         33: {
@@ -326,11 +329,11 @@ addLayer("milestones", {
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
-                        return "Have " + formatWhole(this.goal()) + " purple pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% purple pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " purple pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% purple pigment.";
                     case this.max:
-                        return "MAXED\nReward:\n+" + formatWhole(this.effect()) + "% purple pigment.";
+                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% purple pigment.";
                     default:
-                        return "Have " + formatWhole(this.goal()) + " purple pigment.\nCurrent Reward:\n+" + formatWhole(this.effect()) + "% purple pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% purple pigment.";
+                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " purple pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% purple pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% purple pigment.";
                 }
             },
 
@@ -343,7 +346,7 @@ addLayer("milestones", {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
             done() {
-                return player.purplePigment.points.gte(this.goal()) && this.style().opacity;
+                return player.purplePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
                 if (player[this.layer].levels[this.id] != this.max) {
@@ -352,11 +355,11 @@ addLayer("milestones", {
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(layers.challenges.calcEffect());
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
             },
         },
     },
-})
+});
 
 addLayer("challenges", {
     resource: "achievements",
@@ -364,7 +367,7 @@ addLayer("challenges", {
     layerShown: true,
 
     effectDescription() {
-        return "<br>boosting all milestone achievement effects by x" + format(this.calcEffect()) + ".";
+        return "<br>boosting all milestone achievement effects by x" + format(tmp[this.layer].effect) + ".";
     },
 
     startData() {
@@ -381,33 +384,12 @@ addLayer("challenges", {
         player[this.layer].points = player[this.layer].achievements.length + "/" + total;
     },
 
-    tabFormat: {
-        Achievements: {
-            content: [
-                "main-display",
-                "achievements",
-            ],
-        },
-        Effects: {
-            content: [
-                "main-display",
-                ["display-text", function() {
-                    let ret = "";
+    tabFormat: [
+        "main-display",
+        "achievements",
+    ],
 
-                    if (hasAchievement("challenges", 11)) ret += player.firsts.primaryPigment.charAt(0).toUpperCase() + player.firsts.primaryPigment.slice(1).replace(/([A-Z])/g,' $1') + " is boosted by +10%.<br>";
-                    if (hasAchievement("challenges", 14)) ret += player.firsts.secondaryPigment.charAt(0).toUpperCase() + player.firsts.secondaryPigment.slice(1).replace(/([A-Z])/g,' $1') + " is boosted by +10%.<br>";
-                    if (hasAchievement("challenges", 21)) ret += "+" + achievementEffect("challenges", 21) + " base blank pigment gain.<br>";
-                    if (hasAchievement("challenges", 22)) ret += "Keep unlock order and automatic gain upgrades on secondary pigment reset.<br>";
-                    if (hasAchievement("challenges", 23)) ret += "Secondary pigments are based on total primary pigments.<br>";
-
-                    if (ret == "") ret = "You haven't unlocked any additional effects yet.";
-                    return ret;
-                }],
-            ],
-        },
-    },
-
-    calcEffect() {
+    effect() {
         return new Decimal(player.challenges.achievements.length).add(1).log(10).add(1); 
     },
 
@@ -434,9 +416,11 @@ addLayer("challenges", {
                 return player.redPigment.unlocked || player.yellowPigment.unlocked || player.bluePigment.unlocked;
             },
             onComplete() {
-                if (player.redPigment.unlocked)    player.firsts.primaryPigment = "redPigment";
-                if (player.yellowPigment.unlocked) player.firsts.primaryPigment = "yellowPigment";
-                if (player.bluePigment.unlocked)   player.firsts.primaryPigment = "bluePigment";
+                if (player.redPigment.unlocked)    player.stats.firstPrimary = "redPigment";
+                if (player.yellowPigment.unlocked) player.stats.firstPrimary = "yellowPigment";
+                if (player.bluePigment.unlocked)   player.stats.firstPrimary = "bluePigment";
+
+                player.achievements.effectNotify = true;
             },
             effect: 1.1,
         },
@@ -471,9 +455,11 @@ addLayer("challenges", {
                 return player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked;
             },
             onComplete() {
-                if (player.orangePigment.unlocked) player.firsts.secondaryPigment = "orangePigment";
-                if (player.greenPigment.unlocked)  player.firsts.secondaryPigment = "greenPigment";
-                if (player.purplePigment.unlocked) player.firsts.secondaryPigment = "purplePigment";
+                if (player.orangePigment.unlocked) player.stats.firstSecondary = "orangePigment";
+                if (player.greenPigment.unlocked)  player.stats.firstSecondary = "greenPigment";
+                if (player.purplePigment.unlocked) player.stats.firstSecondary = "purplePigment";
+
+                player.achievements.effectNotify = true;
             },
             effect: 1.1,
         },
@@ -497,8 +483,11 @@ addLayer("challenges", {
             done() {
                 return hasChallenge("orangePigment", 11) || hasChallenge("greenPigment", 11) || hasChallenge("purplePigment", 11);
             },
+            onComplete() {
+                player.achievements.effectNotify = true;
+            },
             effect() {
-                return hasChallenge("orangePigment", 11) + hasChallenge("greenPigment", 11) + hasChallenge("purplePigment", 11);
+                return tmp.orangePigment.layerShown + tmp.greenPigment.layerShown + tmp.purplePigment.layerShown;
             },
         },
         22: {
@@ -512,14 +501,13 @@ addLayer("challenges", {
             done() {
                 return hasChallenge("orangePigment", 12) || hasChallenge("greenPigment", 12) || hasChallenge("purplePigment", 12);
             },
+            onComplete() {
+                player.achievements.effectNotify = true;
+            },
         },
         23: {
             name: "Repetition",
-            tooltip: "Complete four secondary challenges.\nReward:\nSecondary pigments are now based on total primary pigments.",
-
-            style: {
-                color: "#FD0",
-            },
+            tooltip: "Complete four secondary challenges.",
 
             done() {
                 return hasChallenge("orangePigment", 11) + hasChallenge("orangePigment", 12) + hasChallenge("greenPigment", 11) + hasChallenge("greenPigment", 12) + hasChallenge("purplePigment", 11) + hasChallenge("purplePigment", 12) >= 4;
@@ -527,10 +515,17 @@ addLayer("challenges", {
         },
         24: {
             name: "Out Of<br>Order",
-            tooltip: "Complete a Complementary challenge before an Addition challenge.",
+            tooltip: "Complete a Complementary challenge before an Addition challenge.\nReward:\nSecondary pigments are now based on total primary pigments.",
+
+            style: {
+                color: "#FD0",
+            },
 
             done() {
                 return (!hasChallenge("orangePigment", 11) && hasChallenge("orangePigment", 12)) || (!hasChallenge("greenPigment", 11) && hasChallenge("greenPigment", 12)) || (!hasChallenge("purplePigment", 11) && hasChallenge("purplePigment", 12));
+            },
+            onComplete() {
+                player.achievements.effectNotify = true;
             },
         },
         25: {
@@ -542,4 +537,35 @@ addLayer("challenges", {
             },
         },
     },
-})
+});
+
+addLayer("statistics", {
+    symbol: "📊",
+    row: "side",
+    
+    tooltip: "Statistics",
+
+    layerShown: true,
+
+    tabFormat: {
+        "Misc Stats": {
+            content: [
+                ["display-text", function() {
+                    let ret = "";
+        
+                    ret += "You started playing " + formatTime(Math.floor((Date.now()-player.stats.startTick)/1000)).slice(0, -4) + "s ago.<br>";
+                    ret += "You have " + formatTime(Math.floor(player.timePlayed)).slice(0, -4) + "s of play time.<br><br>";
+                    
+                    ret += "You have prestiged " + formatWhole(player.stats.resets) + " time" + (player.stats.resets != 1 ? "s" : "") + ".<br>";
+                    ret += "You have bought " + formatWhole(player.stats.upgradesBought) + " upgrade" + (player.stats.upgradesBought != 1 ? "s" : "") + ".<br>";
+                    ret += "You have completed " + formatWhole(player.stats.challengesCompleted) + " challenge" + (player.stats.challengesCompleted != 1 ? "s" : "") + ".<br>";
+        
+                    return ret;
+                }],
+            ],
+        },
+        "Layer Data": {
+            unlocked: false
+        },
+    },
+});

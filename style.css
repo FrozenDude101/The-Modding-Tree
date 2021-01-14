@@ -408,7 +408,7 @@ a {
 
 .hidden {
 	visibility: hidden;
-	height: 10px !important;
+	height: 50px !important;
 }
 
 .canvas {

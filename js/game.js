@@ -83,7 +83,7 @@ function shouldNotify(layer){
 		// This words for tabFormat as an array, and for embeded layers.
 		for (let component of tmp[layer].tabFormat) {
 			if (component[0] == "upgrades") {
-				upgradeRows = component[1];
+				upgradeRows = component[1].map(String);
 				break;
 			}
 		}
@@ -150,10 +150,11 @@ function rowReset(row, layer) {
 
 function layerDataReset(layer, keep = []) {
 	let storedData = {unlocked: player[layer].unlocked} // Always keep unlocked
-
+	
 	for (thing in keep) {
 		if (player[layer][keep[thing]] !== undefined)
-			storedData[keep[thing]] = player[layer][keep[thing]]
+			if (player[layer][keep[thing]] instanceof Decimal) storedData[keep[thing]] = new Decimal(player[layer][keep[thing]])
+			else storedData[keep[thing]] = player[layer][keep[thing]]
 	}
 	Vue.set(player[layer], "buyables", getStartBuyables(layer))
 	Vue.set(player[layer], "clickables", getStartClickables(layer))
@@ -184,6 +185,8 @@ function addPoints(layer, gain) {
 	player[layer].points = player[layer].points.add(gain).max(0)
 	if (player[layer].best) player[layer].best = player[layer].best.max(player[layer].points)
 	if (player[layer].total) player[layer].total = player[layer].total.add(gain)
+	if (player[layer].lifetimeBest) player[layer].lifetimeBest = player[layer].lifetimeBest.max(player[layer].points);
+	if (player[layer].lifetimeTotal) player[layer].lifetimeTotal = player[layer].lifetimeTotal.add(gain);
 }
 
 function generatePoints(layer, diff) {
@@ -243,6 +246,7 @@ function doReset(layer, force=false) {
 	prevOnReset = undefined
 
 	player[layer].resetTime = 0
+	player.stats.resets += 1;
 
 	updateTemp()
 	updateTemp()
@@ -308,12 +312,13 @@ function completeChallenge(layer, x) {
 	var x = player[layer].activeChallenge
 	if (!x) return
 	if (! canCompleteChallenge(layer, x)){
-		 player[layer].activeChallenge = null
+		player[layer].activeChallenge = null
 		return
 	}
 	if (player[layer].challenges[x] < tmp[layer].challenges[x].completionLimit) {
 		needCanvasUpdate = true
 		player[layer].challenges[x] += 1
+		player.stats.challengesCompleted += 1;
 		if (layers[layer].challenges[x].onComplete) run(layers[layer].challenges[x].onComplete, layers[layer].challenges[x])
 	}
 	player[layer].activeChallenge = null
@@ -328,7 +333,7 @@ function autobuyUpgrades(layer){
 	if (!tmp[layer].upgrades) return
 	for (id in tmp[layer].upgrades)
 		if (isPlainObject(tmp[layer].upgrades[id]) && (layers[layer].upgrades[id].canAfford === undefined || layers[layer].upgrades[id].canAfford() === true))
-			buyUpg(layer, id) 
+			buyUpg(layer, id, true) 
 }
 
 function gameLoop(diff) {
@@ -348,6 +353,8 @@ function gameLoop(diff) {
 	}
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
+	player.lifetimeBest = player.lifetimeBest.max(player.points.add(tmp.pointGen.times(diff)).max(0));
+	player.lifetimeTotal = player.lifetimeTotal.add(tmp.pointGen.times(diff)).max(0);
 
 	for (x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
