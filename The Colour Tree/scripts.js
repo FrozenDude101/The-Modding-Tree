@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 const ALWAYS_KEEP_ON_RESET = [
     "lifetimeBest",
     "lifetimeTotal",
