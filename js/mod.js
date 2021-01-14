@@ -12,12 +12,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.0.1",
+	num: "0.1.0.2",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
+<br>
+<h3>v0.1.0.2</h3><br>
+<br>
+Fixed secondary upgrades (31) having an incorrect description.
 <br>
 <h3>v0.1.0.1</h3><br>
 <br>

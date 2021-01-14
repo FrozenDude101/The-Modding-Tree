@@ -217,7 +217,7 @@ addLayer("greenPigment", {
         
         31: {
             title: "Pastel Green",
-            description: "Keep yellow and blue pigment upgrades on orange pigment reset.",
+            description: "Keep yellow and blue pigment upgrades on green pigment reset.",
 
             cost: new Decimal(200),
         },
