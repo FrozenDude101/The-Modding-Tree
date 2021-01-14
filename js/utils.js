@@ -57,7 +57,6 @@ function format(decimal, precision=2,) {
 }
 
 function formatWhole(decimal) {
-	if (typeof decimal == "string") return decimal;
 	decimal = new Decimal(decimal)
 	if (decimal.gte(1e9)) return format(decimal, 2)
 	if (decimal.lte(0.98) && !decimal.eq(0)) return format(decimal, 2)
@@ -548,11 +547,11 @@ function canAffordPurchase(layer, thing, cost) {
 	}
 }
 
-function buyUpgrade(layer, id, auto=false) {
-	buyUpg(layer, id, auto)
+function buyUpgrade(layer, id) {
+	buyUpg(layer, id)
 }
 
-function buyUpg(layer, id, auto=false) {
+function buyUpg(layer, id) {
 	if (!tmp[layer].upgrades || !tmp[layer].upgrades[id]) return
 	let upg = tmp[layer].upgrades[id]
 	if (!player[layer].unlocked) return
@@ -588,7 +587,6 @@ function buyUpg(layer, id, auto=false) {
 		}
 	}
 	player[layer].upgrades.push(id);
-	if (!auto) player.stats.upgradesBought += 1;
 	if (upg.onPurchase != undefined)
 		run(upg.onPurchase, upg)
 }
