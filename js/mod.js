@@ -13,13 +13,13 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "0.1",
-	name: "The Colour Triangle",
+	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h2><u>v0.1: The Colour Triangle</u></h2><br>
+<h2><u>v0.1: Full Spectrum</u></h2><br>
 <br>
 <h3>Primary Pigments</h3><br>
 Dye blank pigment to create primary colours.<br>
@@ -41,9 +41,6 @@ Reach goals to obtain permanent perks!<br>
 <h3>Statistics</h3><br>
 Several different statistics added.<br>
 Compare with friends to compete!<br>
-<br>
-<h3>Bugfixes</h3><br>
-Too many to list.<br>
 <br>
 `
 
@@ -134,7 +131,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return false;
 }
 
 
@@ -149,12 +146,4 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
-
-	for (let achievement in layers.milestones.achievements) {
-		if (player.milestones.levels[achievement] == undefined) {
-			player.milestones.levels[achievement] = 0;
-		}
-	}
-	// Adds any new achievements to the levels object.
-
 }

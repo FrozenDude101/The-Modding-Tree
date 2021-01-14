@@ -278,6 +278,7 @@ function startChallenge(layer, x) {
 		enter = true
 	}	
 	doReset(layer, true)
+	player.stats.resets -= 1;
 	if(enter) player[layer].activeChallenge = x
 
 	updateChallengeTemp(layer)
@@ -321,6 +322,7 @@ function completeChallenge(layer, x) {
 		player.stats.challengesCompleted += 1;
 		if (layers[layer].challenges[x].onComplete) run(layers[layer].challenges[x].onComplete, layers[layer].challenges[x])
 	}
+	player.stats.resets -= 1;
 	player[layer].activeChallenge = null
 	updateChallengeTemp(layer)
 }
