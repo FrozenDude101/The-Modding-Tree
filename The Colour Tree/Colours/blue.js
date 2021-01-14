@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 /*
     www.eggradients.com/shades-of-blue-color
     3-1
