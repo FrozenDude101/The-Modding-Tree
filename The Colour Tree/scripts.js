@@ -4,6 +4,10 @@ const ALWAYS_KEEP_ON_RESET = [
     "requiresExponent",
 ]
 
+/*
+    Formatting functions.
+*/
+
 function formatNumeral(number) {
 
     let numerals = {
@@ -73,6 +77,10 @@ function formatTable(data, {
 
 }
 
+/*
+    Misc functions.
+*/
+
 function filter(arr1, arr2) {
 
     let ret = [];
@@ -84,6 +92,10 @@ function filter(arr1, arr2) {
     return ret;
 
 }
+
+/*
+    Multiple layer functions.
+*/
 
 function calcRequiresExponent(layer, delta=0) {
 

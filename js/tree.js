@@ -5,9 +5,9 @@ var layoutInfo = {
     treeLayout: [
         [],
         [],
-        ["red"],
-        ["purple", "orange"],
-        ["blue", "green", "yellow"],
+        ["red", "blank", "blank", "white"],
+        ["purple", "orange", "blank", "lightGrey", "darkGrey"],
+        ["blue", "green", "yellow", "blank", "black", "blank"],
     ],
 }
 
