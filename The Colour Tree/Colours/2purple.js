@@ -219,7 +219,7 @@ addLayer("purplePigment", {
         
         31: {
             title: "Electric Indigo",
-            description: "Keep red and blue pigment upgrades on purple pigment reset.",
+            description: "Keep red and blue pigment upgrades on orange pigment reset.",
 
             cost: new Decimal(200),
         },
