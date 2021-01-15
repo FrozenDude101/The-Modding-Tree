@@ -12,21 +12,6 @@ addLayer("lightGrey", {
         return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },*/
 
-    x() {
-        let ret = -0.5;
-        return ret;
-    },
-    y() {
-        let ret = 0;
-        return ret;
-    },
-    nodeStyle() {
-        return {
-            position: "absolute",
-            left: "calc(50% - 115px/2 + " + tmp[this.layer].x + "*115px)",
-            top: "calc(50%  - 115px*2 + " + tmp[this.layer].y + "*115px)",
-        }
-    },
     layerShown() {
         return true //(tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
     }, 
@@ -45,4 +30,14 @@ addLayer("lightGrey", {
             embedLayer: "yellowPigment",
         },*/
     },
+});
+
+addLayer("lightGreyPigment", {
+
+    startData() {
+        return {
+            points: new Decimal(0),
+        };
+    },
+    
 });

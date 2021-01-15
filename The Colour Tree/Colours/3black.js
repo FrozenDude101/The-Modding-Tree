@@ -15,23 +15,8 @@ addLayer("black", {
         return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
-    x() {
-        let ret = 1.5;
-        return ret;
-    },
-    y() {
-        let ret = 0;
-        return ret;
-    },
-    nodeStyle() {
-        return {
-            position: "absolute",
-            left: "calc(50% - 115px/2 + " + tmp[this.layer].x + "*115px)",
-            top: "calc(50%  - 115px*2 + " + tmp[this.layer].y + "*115px)",
-        }
-    },
     layerShown() {
-        return true //(tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
+        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
     },
 
     startData() {
@@ -40,13 +25,13 @@ addLayer("black", {
         };
     },   
     unlocked() {
-        player[this.layer].unlocked = true //player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
+        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
     },
 
     tabFormat: {
-        /*"Pigment": {
-            embedLayer: "yellowPigment",
-        },*/
+        Pigment: {
+            embedLayer: "blackPigment",
+        },
     },
 });
 
@@ -68,6 +53,10 @@ addLayer("blackPigment", {
             points: new Decimal(0),
             lifetimeBest: new Decimal(0),
             lifetimeTotal: new Decimal(0),
+
+            light: new Decimal(0),
+            lifetimeBestLight: new Decimal(0),
+            lifetimeTotalLight: new Decimal(0),
             
             unlocked: false,
 

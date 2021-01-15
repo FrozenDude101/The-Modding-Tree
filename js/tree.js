@@ -1,10 +1,6 @@
 var layoutInfo = {
     startTab: "none",
 	showTree: true,
-
-    treeLayout: [
-        ["red", "yellow", "blue", "orange", "green", "purple", "black", "white", "lightGrey", "darkGrey", "pink"],
-    ],
 }
 
 
@@ -15,5 +11,14 @@ addNode("blank", {
 
 
 addLayer("tree-tab", {
-    tabFormat: [["tree", function() {return (layoutInfo.treeLayout ? layoutInfo.treeLayout : TREE_LAYERS)}]]
-})
+    tabFormat: [
+        ["tree", function() {
+            return [
+                ["white", "lightGrey", "darkGrey", "black"],
+                ["pink", "red", "blank"],
+                ["purple", "orange"],
+                ["blue", "green", "yellow"],
+            ];
+        }],
+    ],
+});
