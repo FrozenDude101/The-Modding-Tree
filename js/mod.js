@@ -25,7 +25,7 @@ let changelog = `
 Reach endgame to unlock the debug menu.<br>
 Your saves are kept safe, even if you use the debug options!<br>
 <br>
-<h3>Milestone Achievementss</h3><br>
+<h3>Milestone Achievements</h3><br>
 Increased max achievement level to 40.<br>
 Fixed maxed achievements containing undefined.<br>
 <br>
