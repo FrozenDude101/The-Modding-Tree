@@ -657,7 +657,10 @@ addLayer("challenges", {
     achievements: {
         rows() {
             let rows = 1;
-            if (player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked || player.debugOptions.showAll) rows ++;
+            if (tmp.milestones) {
+                if (tmp.milestones.achievements.row >= 2 || player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked || player.debugOptions.showAll) rows ++;
+                if (tmp.milestones.achievements.row >= 3 || player.blackPigment.unlocked || player.whitePigment.unlocked) rows ++;
+            }
             return rows;
         },
         cols: 5,
@@ -665,7 +668,7 @@ addLayer("challenges", {
         11: {
             name: "Monochrome",
             tooltip() {
-                let colour = (player.firstSecondary ? player.firstPrimaryPigment : "First primary colour");
+                let colour = (player.stats.firstPrimary ? player.stats.firstPrimary : "First primary colour");
                 return  "Combine two colours.\nReward:\n" + colour + " is permanently boosted by +10%.";
             },
 
@@ -704,7 +707,7 @@ addLayer("challenges", {
         14: {
             name: "Colour<br>Mixer",
             tooltip() {
-                let colour = (player.firstSecondary ? player.firstSecondaryPigment : "First secondary colour");
+                let colour = (player.stats.firstSecondary ? player.stats.firstSecondary : "First secondary colour");
                 return  "Combine two colours.\nReward:\n" + colour + " is permanently boosted by +10%.";
             },
 
@@ -796,6 +799,35 @@ addLayer("challenges", {
             done() {
                 return hasChallenge("orangePigment", 11) && hasChallenge("orangePigment", 12) && hasChallenge("greenPigment", 11) && hasChallenge("greenPigment", 12) && hasChallenge("purplePigment", 11) && hasChallenge("purplePigment", 12);
             },
+        },
+
+        31: {
+            name() {
+                switch (player.stats.firstShade) {
+                    case "blackPigment": return "Darkest Night";
+                    case "whitePigment": return "Well That Doesn't Make Any Sense";
+                    default:             return "True Monochrome";
+                }
+            },
+            tooltip() {
+                let colour = (player.stats.firstShade ? player.stats.firstShade : "First shade");
+                return  "Combine two colours.\nReward:\n" + colour + " is permanently boosted by +10%.";
+            },
+
+            style: {
+                color: "#FD0",
+            },
+
+            done() {
+                return player.blackPigment.unlocked || player.whitePigment.unlocked;
+            },
+            onComplete() {
+                if (player.blackPigment.unlocked) player.stats.firstShade = "blackPigment";
+                if (player.whitePigment.unlocked) player.stats.firstShade = "whitePigment";
+
+                player.achievements.effectNotify = true;
+            },
+            effect: 1.1,
         },
     },
 });

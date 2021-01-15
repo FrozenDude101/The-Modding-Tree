@@ -127,8 +127,9 @@ function addedPlayerData() {
 		lifetimeTotal: new Decimal(0),
 
 		stats: {
-			firstPrimary: "Nothing",
-			firstSecondary: "Nothing",
+			firstPrimary: "",
+			firstSecondary: "",
+			firstShade: "",
 
 			startTick: Date.now(),
 
