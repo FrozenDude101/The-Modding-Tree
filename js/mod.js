@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Colour Tree",
-	id: "FD101/TheColourTreeMinor",
+	id: "FD101/TheColourTree",
 	author: "FrozenDude101",
 	pointsName: "blank pigment",
 	discordName: "",
@@ -19,7 +19,11 @@ let VERSION = {
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h2><u>v0.1.1</u></h2><br>
+<h3>v0.1.1.1</h3><br>
+<br>
+Fixed the save file pointing to the Minor build.<br>
+<br>
+<h2><u>v0.1.1.1</u></h2><br>
 <br>
 <h3>Debug Menu</h3><br>
 Reach endgame to unlock the debug menu.<br>
