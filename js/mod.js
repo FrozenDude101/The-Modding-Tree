@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Colour Tree",
-	id: "FD101/TheColourTree",
+	id: "FD101/TheColourTreeMinor",
 	author: "FrozenDude101",
 	pointsName: "blank pigment",
 	discordName: "",
@@ -12,12 +12,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.0.3",
+	num: "0.1.1",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
+<br>
+<h2><u>v0.1.1</u></h2><br>
+<br>
+<h3>Debug Menu</h3><br>
+Reach endgame to unlock the debug menu.<br>
+Your saves are kept safe, even if you use the debug options!<br>
+<br>
+<h3>Milestone Achievementss</h3><br>
+Increased max achievement level to 40.<br>
+Fixed maxed achievements containing undefined.<br>
 <br>
 <h3>v0.1.0.1 - v0.1.0.3</h3><br>
 <br>
@@ -25,7 +35,7 @@ Fixed row 1 of blue pigment upgrades visibility relying on yellow pigment.<br>
 Fixed secondary upgrades (31) having an incorrect description.<br>
 Fixed green pigment being boosted by 13 instead of 21.<br>
 <br>
-<h2><u>v0.1: Full Spectrum</u></h2><br>
+<h2 style='color: #D22'><u>v0.1: Full Spectrum</u></h2><br>
 <br>
 <h3>Primary Pigments</h3><br>
 Dye blank pigment to create primary colours.<br>

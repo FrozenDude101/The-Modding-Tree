@@ -9,13 +9,35 @@ addLayer("debug", {
     layerShown() {
         return gameEnded || player.forceDebug;
     },
+    autoSave() {
+        if (player.autosave) save();
+        if (tmp[this.layer].layerShown) player.autosave = false;
+    },
 
     tabFormat: {
+        Information: {
+            content: [
+                ["display-text", `
+                Welcome to the debug screen!<br>
+                Feel free to play around with any of these debug settings!<br>
+                <br>
+                Don't worry about your save.<br>
+                Anything you do won't be kept after you refresh.<br>
+                <br>
+                Feel free to use the console to edit any values.<br>
+                You can use the Layers tab to view and edit data about a layer.<br>
+                You can use the Options tab to toggle various debug options.<br>
+                <br>
+                This is mainly for my use.<br>
+                So these screens are unlikely to be updated frequently.<br>
+                `],
+            ],
+        },
         Layers: {
             embedLayer: "debugLayers",
         },
-        Saves: {
-            embedLayer: "debugSaves",
+        Options: {
+            embedLayer: "debugOptions",
         },
     },
 });
@@ -23,7 +45,7 @@ addLayer("debug", {
 addLayer("debugLayers", {
     startData() {
         return {
-            activeLayer: "milestones",
+            activeLayer: "none",
         };
     },
     activeLayer() {
@@ -32,8 +54,8 @@ addLayer("debugLayers", {
 
     createDropDownMenu() {
         let ret = "<select id=selectLayer>";
-        for (let LAYER of LAYERS) {
-            if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "statistics", "debug", "debugLayers", "debugSaves", "red", "yellow", "blue", "orange", "green", "purple"].includes(LAYER)) continue;
+        for (let LAYER of ["none"].concat(LAYERS)) {
+            if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "statistics", "debug", "debugOptions", "debugSaves", "red", "yellow", "blue", "orange", "green", "purple"].includes(LAYER)) continue;
             let selected = (LAYER == player[this.layer].activeLayer ? "selected='selected'" : "");
             ret += "<option value=" + LAYER + " " + selected + ">" + LAYER.charAt(0).toUpperCase() + LAYER.slice(1).replace(/([A-Z])/g,' $1') + "</option>";
         }
@@ -42,10 +64,10 @@ addLayer("debugLayers", {
     },
 
     componentEditor() {
-        let ret = "";;
+        let ret = "";
+        let layerName = player[this.layer].activeLayer;
 
-        if (typeof player[this.layer].activeLayer == "string") {
-            let layerName = player[this.layer].activeLayer;
+        if (typeof player[this.layer].activeLayer == "string" && player[this.layer].activeLayer != "none") {
             let layer = tmp[layerName];
 
             if (layer.achievements) {
@@ -143,12 +165,31 @@ addLayer("debugLayers", {
 
         let layer = player[this.layer].activeLayer;
 
-        for (let attribute in player[layer]) {
-            if (["achievements", "buyables", "challenges", "clickables", "milestones", "upgrades", "levels"].includes(attribute)) continue;
-            
-            if (["points", "best", "total", "lifetimeBest", "lifetimeTotal"].includes(attribute)) tableData[attribute.charAt(0).toUpperCase() + attribute.slice(1).replace(/([A-Z])/g,' $1')] = formatWhole(player[layer][attribute]) + " (Decimal)";
-            else if (["resetTime"].includes(attribute)) tableData[attribute.charAt(0).toUpperCase() + attribute.slice(1).replace(/([A-Z])/g,' $1')] = formatTime(player[layer][attribute]);
-            else tableData[attribute.charAt(0).toUpperCase() + attribute.slice(1).replace(/([A-Z])/g,' $1')] = player[layer][attribute];
+        if (layer == "none") {
+            for (let attribute in player) {
+                if (typeof player[attribute] == "object" && !(player[attribute] instanceof Decimal)) continue;
+                if (player[attribute] == undefined) continue;
+                if (["navTab"].includes(attribute)) continue;
+
+                let name = attribute.charAt(0).toUpperCase() + attribute.slice(1).replace(/([A-Z])/g,' $1');
+                if (name == "Has Na N") name = "Has NaN";   
+
+                if ((player[attribute] instanceof Decimal)) tableData[name] = formatWhole(player[attribute]) + " (Decimal)";
+                else if (["timePlayed"].includes(attribute)) tableData[name] = formatTime(player[attribute]) + " (Integer)";
+                else if (["time"].includes(attribute)) tableData[name] = formatTime(player[attribute]/1000);
+                else tableData[name] = player[attribute];
+            }
+
+        } else {
+            for (let attribute in player[layer]) {
+                if (["achievements", "buyables", "challenges", "clickables", "milestones", "upgrades", "levels"].includes(attribute)) continue;
+
+                let name = attribute.charAt(0).toUpperCase() + attribute.slice(1).replace(/([A-Z])/g,' $1');
+                
+                if ((player[layer][attribute] instanceof Decimal)) tableData[name] = formatWhole(player[layer][attribute]) + " (Decimal)";
+                else if (["resetTime"].includes(attribute)) tableData[name] = formatTime(player[layer][attribute]);
+                else tableData[name] = player[layer][attribute];
+            }
         }
 
         ret += formatTable(tableData, {
@@ -175,8 +216,38 @@ addLayer("debugLayers", {
     ],
 });
 
-addLayer("debugSaves", {
-    tabFormat: [
+addLayer("debugOptions", {
+    startData() {
+        return {
+            showAll: false,
+            infinitePoints: false,
+        };
+    },
+    infinitePoints() {
+        if (!player[this.layer].infinitePoints) return;
+        player.points = new Decimal("1eeeeeeeeee1");
+        player.redPigment.points = new Decimal("1eeeeeeeeee1");
+        player.yellowPigment.points = new Decimal("1eeeeeeeeee1");
+        player.bluePigment.points = new Decimal("1eeeeeeeeee1");
+        player.orangePigment.points = new Decimal("1eeeeeeeeee1");
+        player.greenPigment.points = new Decimal("1eeeeeeeeee1");
+        player.purplePigment.points = new Decimal("1eeeeeeeeee1");
+    },
 
+    tabFormat: [
+        ["row", [
+            ["column", [
+                ["display-text", "Show All"],
+                ["toggle", ["debugOptions", "showAll"]],
+            ]],
+            "blank",
+            "blank",
+            "blank",
+            "blank",
+            ["column", [
+                ["display-text", "Infinite Points"],
+                ["toggle", ["debugOptions", "infinitePoints"]],
+            ]],
+        ]],
     ],
 });

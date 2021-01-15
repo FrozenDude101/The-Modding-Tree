@@ -33,7 +33,7 @@ addLayer("achievements", {
                     let effects = tmp.milestones.effect;
                     let tableData = {};
                     for (let item in effects) {
-                        if (effects[item] instanceof Decimal && effects[item].eq(0)) continue;
+                        if (effects[item] instanceof Decimal && effects[item].eq(0) && !player.debugOptions.showAll) continue;
                         let data = "+" + format(effects[item]) + "%";
                         tableData[item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g,' $1')] = data;
                     };
@@ -145,7 +145,7 @@ addLayer("milestones", {
 
         21: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -159,7 +159,7 @@ addLayer("milestones", {
             },
 
             style() {
-                return {opacity: (player.redPigment.unlocked ? 1 : 0)};
+                return {opacity: (player.redPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
             max: 40,
@@ -181,7 +181,7 @@ addLayer("milestones", {
         },
         22: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Yellow<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Yellow<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -195,7 +195,7 @@ addLayer("milestones", {
             },
 
             style() {
-                return {opacity: (player.yellowPigment.unlocked ? 1 : 0)};
+                return {opacity: (player.yellowPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
             max: 40,
@@ -217,7 +217,7 @@ addLayer("milestones", {
         },
         23: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Blue<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Blue<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -231,7 +231,7 @@ addLayer("milestones", {
             },
 
             style() {
-                return {opacity: (player.bluePigment.unlocked ? 1 : 0)};
+                return {opacity: (player.bluePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
             max: 40,
@@ -254,7 +254,7 @@ addLayer("milestones", {
 
         31: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -268,7 +268,7 @@ addLayer("milestones", {
             },
 
             style() {
-                return {opacity: (player.orangePigment.unlocked ? 1 : 0)};
+                return {opacity: (player.orangePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
             max: 40,
@@ -290,7 +290,7 @@ addLayer("milestones", {
         },
         32: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Green<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Green<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -304,7 +304,7 @@ addLayer("milestones", {
             },
 
             style() {
-                return {opacity: (player.greenPigment.unlocked ? 1 : 0)};
+                return {opacity: (player.greenPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
             max: 40,
@@ -326,7 +326,7 @@ addLayer("milestones", {
         },
         33: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Purple<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Purple<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -340,7 +340,7 @@ addLayer("milestones", {
             },
 
             style() {
-                return {opacity: (player.purplePigment.unlocked ? 1 : 0)};
+                return {opacity: (player.purplePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
             max: 40,
@@ -398,7 +398,7 @@ addLayer("challenges", {
     achievements: {
         rows() {
             let rows = 1;
-            if (player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked) rows ++;
+            if (player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked || player.debugOptions.showAll) rows ++;
             return rows;
         },
         cols: 5,

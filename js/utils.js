@@ -97,12 +97,10 @@ function startPlayerBase() {
 		offlineProd: true,
 		versionType: modInfo.id,
 		version: VERSION.num,
-		beta: VERSION.beta,
 		timePlayed: 0,
 		keepGoing: false,
 		hasNaN: false,
 		hideChallenges: false,
-		showStory: true,
 		points: modInfo.initialStartPoints,
 		subtabs: {},
 		lastSafeTab: (layoutInfo.showTree ? "none" : layoutInfo.startTab)
@@ -347,7 +345,6 @@ function versionCheck() {
 		} 
 		player.versionType = getStartPlayer().versionType
 		player.version = VERSION.num
-		player.beta = VERSION.beta
 	}
 }
 
