@@ -125,7 +125,7 @@ addLayer("milestones", {
                 }
             },
 
-            max: 30,
+            max: 40,
             goal() {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
@@ -133,8 +133,8 @@ addLayer("milestones", {
                 return player.points.gte(tmp[this.layer].achievements[this.id].goal);
             },
             onComplete() {
-                if (player[this.layer].levels[this.id] != this.max) {
-                    player[this.layer].levels[this.id] += 1;
+                player[this.layer].levels[this.id] += 1;
+                if (player[this.layer].levels[this.id] < this.max) {
                     player[this.layer].achievements.pop();
                 }
             },
@@ -145,7 +145,7 @@ addLayer("milestones", {
 
         21: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant", "Vibrant"][Math.floor(player[this.layer].levels[this.id]/10)] + "<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -162,7 +162,7 @@ addLayer("milestones", {
                 return {opacity: (player.redPigment.unlocked ? 1 : 0)};
             },
 
-            max: 30,
+            max: 40,
             goal() {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
@@ -170,8 +170,8 @@ addLayer("milestones", {
                 return player.redPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
-                if (player[this.layer].levels[this.id] != this.max) {
-                    player[this.layer].levels[this.id] += 1;
+                player[this.layer].levels[this.id] += 1;
+                if (player[this.layer].levels[this.id] < this.max) {
                     player[this.layer].achievements.pop();
                 }
             },
@@ -198,7 +198,7 @@ addLayer("milestones", {
                 return {opacity: (player.yellowPigment.unlocked ? 1 : 0)};
             },
 
-            max: 30,
+            max: 40,
             goal() {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
@@ -206,8 +206,8 @@ addLayer("milestones", {
                 return player.yellowPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
-                if (player[this.layer].levels[this.id] != this.max) {
-                    player[this.layer].levels[this.id] += 1;
+                player[this.layer].levels[this.id] += 1;
+                if (player[this.layer].levels[this.id] < this.max) {
                     player[this.layer].achievements.pop();
                 }
             },
@@ -234,7 +234,7 @@ addLayer("milestones", {
                 return {opacity: (player.bluePigment.unlocked ? 1 : 0)};
             },
 
-            max: 30,
+            max: 40,
             goal() {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
@@ -242,8 +242,8 @@ addLayer("milestones", {
                 return player.bluePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
-                if (player[this.layer].levels[this.id] != this.max) {
-                    player[this.layer].levels[this.id] += 1;
+                player[this.layer].levels[this.id] += 1;
+                if (player[this.layer].levels[this.id] < this.max) {
                     player[this.layer].achievements.pop();
                 }
             },
@@ -271,7 +271,7 @@ addLayer("milestones", {
                 return {opacity: (player.orangePigment.unlocked ? 1 : 0)};
             },
 
-            max: 30,
+            max: 40,
             goal() {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
@@ -279,8 +279,8 @@ addLayer("milestones", {
                 return player.orangePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
-                if (player[this.layer].levels[this.id] != this.max) {
-                    player[this.layer].levels[this.id] += 1;
+                player[this.layer].levels[this.id] += 1;
+                if (player[this.layer].levels[this.id] < this.max) {
                     player[this.layer].achievements.pop();
                 }
             },
@@ -307,7 +307,7 @@ addLayer("milestones", {
                 return {opacity: (player.greenPigment.unlocked ? 1 : 0)};
             },
 
-            max: 30,
+            max: 40,
             goal() {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
@@ -315,8 +315,8 @@ addLayer("milestones", {
                 return player.greenPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
-                if (player[this.layer].levels[this.id] != this.max) {
-                    player[this.layer].levels[this.id] += 1;
+                player[this.layer].levels[this.id] += 1;
+                if (player[this.layer].levels[this.id] < this.max) {
                     player[this.layer].achievements.pop();
                 }
             },
@@ -343,7 +343,7 @@ addLayer("milestones", {
                 return {opacity: (player.purplePigment.unlocked ? 1 : 0)};
             },
 
-            max: 30,
+            max: 40,
             goal() {
                 return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
             },
@@ -351,8 +351,8 @@ addLayer("milestones", {
                 return player.purplePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
             },
             onComplete() {
-                if (player[this.layer].levels[this.id] != this.max) {
-                    player[this.layer].levels[this.id] += 1;
+                player[this.layer].levels[this.id] += 1;
+                if (player[this.layer].levels[this.id] < this.max) {
                     player[this.layer].achievements.pop();
                 }
             },

@@ -97,6 +97,8 @@ addLayer("redPigment", {
         if (hasUpgrade(this.layer, 43)) gain += upgradeEffect(this.layer, 43);
         if (hasUpgrade(this.layer, 53)) gain += upgradeEffect(this.layer, 53);
 
+        gain *= player[this.layer].unlocked;
+
         return gain;
     },
 

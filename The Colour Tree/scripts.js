@@ -4,7 +4,9 @@ const ALWAYS_KEEP_ON_RESET = [
     "lifetimeBest",
     "lifetimeTotal",
     "requiresExponent",
-]
+];
+
+// ---- Formatting ----
 
 function formatNumeral(number) {
 
@@ -46,7 +48,7 @@ function formatTable(data, {
     if (headings) {
         ret += "<tr>";
         for (let heading of headings) {
-            ret += "<th>" + heading + "</th>";
+            ret += "<th><b>" + heading + "</b></th>";
         }
         ret += "</tr>";
     }
@@ -75,6 +77,8 @@ function formatTable(data, {
 
 }
 
+// ---- Misc ----
+
 function filter(arr1, arr2) {
 
     let ret = [];
@@ -86,6 +90,8 @@ function filter(arr1, arr2) {
     return ret;
 
 }
+
+// ---- Multi-Layer ----
 
 function calcRequiresExponent(layer, delta=0) {
 

@@ -117,8 +117,8 @@ function addedPlayerData() {
 		lifetimeTotal: new Decimal(0),
 
 		stats: {
-			firstPrimary: "",
-			firstSecondary: "",
+			firstPrimary: "Nothing",
+			firstSecondary: "Nothing",
 
 			startTick: Date.now(),
 
@@ -132,12 +132,11 @@ function addedPlayerData() {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Endgame: 10,000,000 of each secondary pigment.",
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return false;
+	return player.orangePigment.points.gte(10000000) && player.greenPigment.points.gte(10000000) && player.purplePigment.points.gte(10000000);
 }
 
 
@@ -152,4 +151,10 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
+
+	for (let achievement of player.milestones.achievements.slice()) {
+		if (player.milestones.levels[achievement] >= layers.milestones.achievements[achievement].max) continue;
+		player.milestones.achievements.splice(player.milestones.achievements.indexOf(achievement), 1);
+	}
+
 }

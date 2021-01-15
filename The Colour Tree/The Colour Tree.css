@@ -20,3 +20,28 @@ div.achievement {
     padding: 10px;
 }
 /* Adds a border and padding to tables. */
+
+select {
+    border: none;
+
+    font-family: "Inconsolata", monospace;
+    font-size: 2em;
+    color: inherit;
+
+    background-color: inherit;
+}
+
+option {
+    background-color: #222;
+}
+
+.resetButton {
+    color: inherit;
+    
+    background-color: #444;
+}
+
+.debugButton {
+    width: 60px;
+    height: 60px;
+}

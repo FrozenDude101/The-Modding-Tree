@@ -309,10 +309,10 @@ function canCompleteChallenge(layer, x)
 
 }
 
-function completeChallenge(layer, x) {
-	var x = player[layer].activeChallenge
+function completeChallenge(layer, x, force=false) {
+	if (!force) var x = player[layer].activeChallenge
 	if (!x) return
-	if (! canCompleteChallenge(layer, x)){
+	if (! canCompleteChallenge(layer, x) && !force){
 		player[layer].activeChallenge = null
 		return
 	}
@@ -322,7 +322,7 @@ function completeChallenge(layer, x) {
 		player.stats.challengesCompleted += 1;
 		if (layers[layer].challenges[x].onComplete) run(layers[layer].challenges[x].onComplete, layers[layer].challenges[x])
 	}
-	player.stats.resets -= 1;
+	if (!force) player.stats.resets -= 1;
 	player[layer].activeChallenge = null
 	updateChallengeTemp(layer)
 }
