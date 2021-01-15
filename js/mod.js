@@ -12,16 +12,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.0.1",
+	num: "0.1.0.3",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h3>v0.1.0.1</h3><br>
+<h3>v0.1.0.1 - v0.1.0.3</h3><br>
 <br>
-Fixed row 1 of blue pigment upgrades visibility relying on yellow pigment.
+Fixed row 1 of blue pigment upgrades visibility relying on yellow pigment.<br>
+Fixed secondary upgrades (31) having an incorrect description.<br>
+Fixed green pigment being boosted by 13 instead of 21.<br>
 <br>
 <h2><u>v0.1: Full Spectrum</u></h2><br>
 <br>
