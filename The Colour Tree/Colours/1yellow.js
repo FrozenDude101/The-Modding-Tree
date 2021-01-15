@@ -18,10 +18,21 @@ addLayer("yellow", {
         return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
-    nodeStyle: {
-        position: "absolute",
-        top: "calc(50% - 3*115px/2 + 2.0*115px)",
-        left: "calc(50% - 115px/2  + 1.0*115px)",
+    x() {
+        let ret = 1;
+        return ret;
+    },
+    y() {
+        let ret = 2;
+        if (player.blackPigment.unlocked || player.whitePigment.unlocked) ret += 1;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc(50% - 115px/2 + " + tmp[this.layer].x + "*115px)",
+            top: "calc(50%  - 115px*2 + " + tmp[this.layer].y + "*115px)",
+        }
     },
     layerShown() {
         return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
