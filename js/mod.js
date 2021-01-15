@@ -12,18 +12,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1.1",
+	num: "0.1.1",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h3>v0.1.1.1</h3><br>
-<br>
-Fixed the save file pointing to the Minor build.<br>
-<br>
-<h2><u>v0.1.1.1</u></h2><br>
+<h2><u>v0.1.1</u></h2><br>
 <br>
 <h3>Debug Menu</h3><br>
 Reach endgame to unlock the debug menu.<br>
