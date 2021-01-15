@@ -19,10 +19,10 @@ addLayer("yellow", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
+        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
     },   
     unlocked() {
-        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
+        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment") || player.debugOptions.showAll;
     },
 
     startData() {
@@ -48,7 +48,7 @@ addLayer("yellowPigment", {
 
     layerShown() {
         let challengeCondition = !(inChallenge("purplePigment", 11) || inChallenge("orangePigment", 12) || inChallenge("greenPigment", 12));
-        return challengeCondition;
+        return challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -71,16 +71,16 @@ addLayer("yellowPigment", {
     tabFormat: [
         "main-display",
         ["prestige-button", "", function() {
-            return tmp.yellowPigment.passiveGeneration < 1 ? {} : {display: "none"};
+            return tmp.yellowPigment.passiveGeneration < 1 || player.debugOptions.showAll ? {} : {display: "none"};
         }],
         "blank",
         ["upgrades", function() {
             rows = [];
-            if (player.yellowPigment.unlocked) rows.push(1);
-            if (hasUpgrade("yellowPigment", 13) || player.orangePigment.unlocked || player.greenPigment.unlocked) rows.push(2);
-            if (hasChallenge("orangePigment", 11) || hasChallenge("greenPigment", 11)) rows.push(3);
-            if (hasChallenge("orangePigment", 11) && hasChallenge("greenPigment", 11)) rows.push(4);
-            if (hasChallenge("purplePigment", 12)) rows.push(5);
+            if (player.yellowPigment.unlocked || player.debugOptions.showAll) rows.push(1);
+            if (hasUpgrade("yellowPigment", 13) || player.orangePigment.unlocked || player.greenPigment.unlocked || player.debugOptions.showAll) rows.push(2);
+            if (hasChallenge("orangePigment", 11) || hasChallenge("greenPigment", 11) || player.debugOptions.showAll) rows.push(3);
+            if (hasChallenge("orangePigment", 11) && hasChallenge("greenPigment", 11) || player.debugOptions.showAll) rows.push(4);
+            if (hasChallenge("purplePigment", 12) || player.debugOptions.showAll) rows.push(5);
             return rows;
         }],
     ],
@@ -96,6 +96,8 @@ addLayer("yellowPigment", {
         if (hasUpgrade(this.layer, 33)) gain += upgradeEffect(this.layer, 33);
         if (hasUpgrade(this.layer, 43)) gain += upgradeEffect(this.layer, 43);
         if (hasUpgrade(this.layer, 53)) gain += upgradeEffect(this.layer, 53);
+
+        gain *= player[this.layer].unlocked;
 
         return gain;
     },
@@ -294,7 +296,7 @@ addLayer("yellowPigment", {
             description: "Lose the ability to prestige, but gain an additional 90% of yellow pigment gain per second.",
 
             unlocked() {
-                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 33);
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 33) || player.debugOptions.showAll;
             },
 
             effect: 0.9,
@@ -320,7 +322,7 @@ addLayer("yellowPigment", {
             description: "Gain an additional 100% of yellow pigment gain per second.",
 
             unlocked() {
-                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 43);
+                return hasUpgrade(this.layer, this.id) || hasUpgrade(this.layer, 43) || player.debugOptions.showAll;
             },
 
             effect: 1,

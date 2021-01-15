@@ -97,12 +97,10 @@ function startPlayerBase() {
 		offlineProd: true,
 		versionType: modInfo.id,
 		version: VERSION.num,
-		beta: VERSION.beta,
 		timePlayed: 0,
 		keepGoing: false,
 		hasNaN: false,
 		hideChallenges: false,
-		showStory: true,
 		points: modInfo.initialStartPoints,
 		subtabs: {},
 		lastSafeTab: (layoutInfo.showTree ? "none" : layoutInfo.startTab)
@@ -347,7 +345,6 @@ function versionCheck() {
 		} 
 		player.versionType = getStartPlayer().versionType
 		player.version = VERSION.num
-		player.beta = VERSION.beta
 	}
 }
 
@@ -548,21 +545,21 @@ function canAffordPurchase(layer, thing, cost) {
 	}
 }
 
-function buyUpgrade(layer, id, auto=false) {
-	buyUpg(layer, id, auto)
+function buyUpgrade(layer, id, auto=false, force=false) {
+	buyUpg(layer, id, auto, force)
 }
 
-function buyUpg(layer, id, auto=false) {
-	if (!tmp[layer].upgrades || !tmp[layer].upgrades[id]) return
+function buyUpg(layer, id, auto=false, force=false) {
+	if (!tmp[layer].upgrades || !tmp[layer].upgrades[id] && !force) return
 	let upg = tmp[layer].upgrades[id]
-	if (!player[layer].unlocked) return
-	if (!tmp[layer].upgrades[id].unlocked) return
-	if (player[layer].upgrades.includes(id)) return
-	if (upg.canAfford === false) return
+	if (!player[layer].unlocked && !force) return
+	if (!tmp[layer].upgrades[id].unlocked && !force) return
+	if (player[layer].upgrades.includes(id) && !force) return
+	if (upg.canAfford === false && !force) return
 	let pay = layers[layer].upgrades[id].pay
 	if (pay !== undefined)
 		run(pay, layers[layer].upgrades[id])
-	else 
+	else if (!force)
 		{
 		let cost = tmp[layer].upgrades[id].cost
 
@@ -735,9 +732,9 @@ function updateMilestones(layer){
 	}
 }
 
-function updateAchievements(layer){
+function updateAchievements(layer, force=false){
 	for (id in layers[layer].achievements){
-		if (isPlainObject(layers[layer].achievements[id]) && !(hasAchievement(layer, id)) && layers[layer].achievements[id].done()) {
+		if (isPlainObject(layers[layer].achievements[id]) && !(hasAchievement(layer, id)) && (layers[layer].achievements[id].done() || force == id)) {
 			player[layer].achievements.push(id)
 			if (layers[layer].achievements[id].onComplete) layers[layer].achievements[id].onComplete()
 			if (tmp[layer].achievementPopups || tmp[layer].achievementPopups === undefined) doPopup("achievement", tmp[layer].achievements[id].name, "Achievement Gotten!", 3, tmp[layer].color);

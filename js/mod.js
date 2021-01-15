@@ -12,18 +12,30 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.0.1",
+	num: "0.1.1",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h3>v0.1.0.1</h3><br>
+<h2><u>v0.1.1</u></h2><br>
 <br>
-Fixed row 1 of blue pigment upgrades visibility relying on yellow pigment.
+<h3>Debug Menu</h3><br>
+Reach endgame to unlock the debug menu.<br>
+Your saves are kept safe, even if you use the debug options!<br>
 <br>
-<h2><u>v0.1: Full Spectrum</u></h2><br>
+<h3>Milestone Achievementss</h3><br>
+Increased max achievement level to 40.<br>
+Fixed maxed achievements containing undefined.<br>
+<br>
+<h3>v0.1.0.1 - v0.1.0.3</h3><br>
+<br>
+Fixed row 1 of blue pigment upgrades visibility relying on yellow pigment.<br>
+Fixed secondary upgrades (31) having an incorrect description.<br>
+Fixed green pigment being boosted by 13 instead of 21.<br>
+<br>
+<h2 style='color: #D22'><u>v0.1: Full Spectrum</u></h2><br>
 <br>
 <h3>Primary Pigments</h3><br>
 Dye blank pigment to create primary colours.<br>
@@ -115,8 +127,8 @@ function addedPlayerData() {
 		lifetimeTotal: new Decimal(0),
 
 		stats: {
-			firstPrimary: "",
-			firstSecondary: "",
+			firstPrimary: "Nothing",
+			firstSecondary: "Nothing",
 
 			startTick: Date.now(),
 
@@ -130,12 +142,11 @@ function addedPlayerData() {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Endgame: 10,000,000 of each secondary pigment.",
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return false;
+	return player.orangePigment.points.gte(10000000) && player.greenPigment.points.gte(10000000) && player.purplePigment.points.gte(10000000);
 }
 
 
@@ -150,4 +161,10 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
+
+	for (let achievement of player.milestones.achievements.slice()) {
+		if (player.milestones.levels[achievement] >= layers.milestones.achievements[achievement].max) continue;
+		player.milestones.achievements.splice(player.milestones.achievements.indexOf(achievement), 1);
+	}
+
 }

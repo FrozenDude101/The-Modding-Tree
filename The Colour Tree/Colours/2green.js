@@ -23,10 +23,10 @@ addLayer("green", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
+        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
     },   
     unlocked() {
-        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
+        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment") || player.debugOptions.showAll;
     },
 
     startData() {
@@ -52,7 +52,7 @@ addLayer("greenPigment", {
     layerShown() {
         let unlockCondition = player.yellowPigment.unlocked && player.bluePigment.unlocked;
         let challengeCondition = !(inChallenge("orangePigment", 11) || inChallenge("orangePigment", 12) || inChallenge("purplePigment", 11) || inChallenge("purplePigment", 12));
-        return unlockCondition && challengeCondition;
+        return unlockCondition && challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -78,9 +78,9 @@ addLayer("greenPigment", {
         "blank",
         ["upgrades", function() {
             rows = [];
-            if (player.greenPigment.unlocked) rows.push(1);
-            if (hasUpgrade("greenPigment", 13) || hasChallenge("greenPigment", 12)) rows.push(2);
-            if (hasChallenge("greenPigment", 12)) rows.push(3);
+            if (player.greenPigment.unlocked || player.debugOptions.showAll) rows.push(1);
+            if (hasUpgrade("greenPigment", 13) || hasChallenge("greenPigment", 12) || player.debugOptions.showAll) rows.push(2);
+            if (hasChallenge("greenPigment", 12) || player.debugOptions.showAll) rows.push(3);
             return rows;
         }],
         "challenges",
@@ -260,7 +260,7 @@ addLayer("greenPigment", {
             rewardDescription: "Unlock a row of yellow and blue pigment upgrades.",
 
             unlocked() {
-                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
             },
 
             canComplete() {
@@ -274,7 +274,7 @@ addLayer("greenPigment", {
             rewardDescription: "Unlock a row of red and green pigment upgrades.",
 
             unlocked() {
-                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked;
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
             },
 
             canComplete() {
