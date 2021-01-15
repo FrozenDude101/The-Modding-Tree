@@ -22,17 +22,22 @@ addLayer("green", {
         return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " yellow and blue pigment to unlock the colour " + this.layer + ".\n(You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
+    nodeStyle: {
+        position: "absolute",
+        top: "calc(50% - 3*115px/2 + 2.0*115px)",
+        left: "calc(50% - 115px/2  + 0.0*115px)",
+    },
     layerShown() {
         return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
-    },   
-    unlocked() {
-        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment") || player.debugOptions.showAll;
     },
 
     startData() {
         return {
             unlocked: false,
         };
+    },
+    unlocked() {
+        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment") || player.debugOptions.showAll;
     },
 
     tabFormat: {

@@ -3,9 +3,7 @@ var layoutInfo = {
 	showTree: true,
 
     treeLayout: [
-        ["red", "blank", "white"],
-        ["purple", "orange", "lightGrey", "darkGrey"],
-        ["blue", "green", "yellow", "black", "blank"],
+        ["red", "yellow", "blue", "orange", "green", "purple", "black", "white", "lightGrey", "darkGrey", "pink"],
     ],
 }
 
