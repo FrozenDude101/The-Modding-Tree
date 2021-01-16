@@ -86,6 +86,16 @@ addLayer("orangePigment", {
         "challenges",
     ],
 
+    hotkeys: [
+        {
+            key: "o",
+            description: "O : Combine red and yellow pigment to make orange pigment.",
+            onPress() {
+                if (player[this.layer].unlocked) doReset(this.layer);
+            },
+        }
+    ],
+
     type: "custom",
     row: 1,
     prestigeButtonText() {
@@ -143,16 +153,6 @@ addLayer("orangePigment", {
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
-
-    hotkeys: [
-        {
-            key: "o",
-            description: "O : Combine red and yellow pigment to make orange pigment.",
-            onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
-            },
-        }
-    ],
 
     upgrades: {
         rows: 2,

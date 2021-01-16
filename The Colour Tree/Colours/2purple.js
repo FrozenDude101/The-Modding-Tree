@@ -86,6 +86,16 @@ addLayer("purplePigment", {
         "challenges",
     ],
 
+    hotkeys: [
+        {
+            key: "p",
+            description: "P : Combine red and blue pigment to make purple pigment.",
+            onPress() {
+                if (player[this.layer].unlocked) doReset(this.layer);
+            },
+        }
+    ],
+
     type: "custom",
     row: 1,
     prestigeButtonText() {
@@ -143,16 +153,6 @@ addLayer("purplePigment", {
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
-
-    hotkeys: [
-        {
-            key: "p",
-            description: "P : Combine red and blue pigment to make purple pigment.",
-            onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
-            },
-        }
-    ],
 
     upgrades: {
         rows: 2,

@@ -71,6 +71,16 @@ addLayer("whitePigment", {
         "blank",
     ],
 
+    hotkeys: [
+        {
+            key: "w",
+            description: "W : Combine coloured pigment to make white pigment.",
+            onPress() {
+                if (player[this.layer].unlocked) doReset(this.layer);
+            },
+        }
+    ],
+
     type: "custom",
     row: 2,
     prestigeButtonText() {
@@ -131,14 +141,4 @@ addLayer("whitePigment", {
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
-
-    hotkeys: [
-        {
-            key: "B",
-            description: "Shift+B : Combine coloured pigment to make white pigment.",
-            onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
-            },
-        }
-    ],
 });

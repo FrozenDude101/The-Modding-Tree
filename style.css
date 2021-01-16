@@ -620,7 +620,7 @@ ul {
 
 .overlayThing {
 	pointer-events:auto;
-	background-color: var(--background);
+	background-color: rgba(0, 0, 0, 0);
 }
 
 .sideLayers {

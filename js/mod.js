@@ -146,7 +146,9 @@ function addedPlayerData() {
 			resets: 0,
 			upgradesBought: 0,
 			challengesCompleted: 0,
-		}
+		},
+
+		forceDebug: true,
 	};
 
 }

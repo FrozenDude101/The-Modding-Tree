@@ -85,6 +85,16 @@ addLayer("redPigment", {
         }],
     ],
 
+    hotkeys: [
+        {
+            key: "r",
+            description: "R : Dye blank pigment red.",
+            onPress() {
+                if (player[this.layer].unlocked) doReset(this.layer);
+            },
+        }
+    ],
+
     type: "custom",
     row: 0,
     prestigeButtonText() {
@@ -167,16 +177,6 @@ addLayer("redPigment", {
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
-
-    hotkeys: [
-        {
-            key: "r",
-            description: "R : Dye blank pigment red.",
-            onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
-            },
-        }
-    ],
 
     upgrades: {
         rows: 2,

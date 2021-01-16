@@ -85,6 +85,16 @@ addLayer("bluePigment", {
         }],
     ],
 
+    hotkeys: [
+        {
+            key: "b",
+            description: "B : Dye blank pigment blue.",
+            onPress() {
+                if (player[this.layer].unlocked) doReset(this.layer);
+            },
+        }
+    ],
+
     type: "custom",
     row: 0,
     prestigeButtonText() {
@@ -167,16 +177,6 @@ addLayer("bluePigment", {
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
-
-    hotkeys: [
-        {
-            key: "b",
-            description: "B : Dye blank pigment blue.",
-            onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
-            },
-        }
-    ],
 
     upgrades: {
         rows: 2,

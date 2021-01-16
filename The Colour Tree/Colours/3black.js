@@ -37,7 +37,7 @@ addLayer("black", {
 
 addLayer("blackPigment", {
     color: "#222",
-    resource: "black pigment.",
+    resource: "black pigment",
     shouldNotify() {
         return !player[this.layer].unlocked && canReset(this.layer);
     },
@@ -46,6 +46,10 @@ addLayer("blackPigment", {
         let unlockCondition = player.redPigment.unlocked && player.yellowPigment.unlocked;
         let challengeCondition = !(inChallenge("greenPigment", 11) || inChallenge("greenPigment", 12) || inChallenge("purplePigment", 11) || inChallenge("purplePigment", 12));
         return unlockCondition && challengeCondition || player.debugOptions.showAll;
+    },
+
+    effectDescription() {
+        return "absorbing " + formatWhole(tmp[this.layer].effect) + " light per second.";
     },
 
     startData() {
@@ -73,6 +77,16 @@ addLayer("blackPigment", {
         "main-display",
         "prestige-button",
         "blank",
+    ],
+
+    hotkeys: [
+        {
+            key: "B",
+            description: "Shift+B : Combine coloured pigment to make black pigment.",
+            onPress() {
+                if (player[this.layer].unlocked) doReset(this.layer);
+            },
+        }
     ],
 
     type: "custom",
@@ -136,13 +150,9 @@ addLayer("blackPigment", {
         }
     },
 
-    hotkeys: [
-        {
-            key: "B",
-            description: "Shift+B : Combine coloured pigment to make black pigment.",
-            onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
-            },
-        }
-    ],
+    effect() {
+        ret = player[this.layer].points;
+
+        return ret;
+    }
 });

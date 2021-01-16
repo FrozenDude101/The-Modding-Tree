@@ -85,6 +85,16 @@ addLayer("yellowPigment", {
         }],
     ],
 
+    hotkeys: [
+        {
+            key: "y",
+            description: "Y : Dye blank pigment yellow.",
+            onPress() {
+                if (player[this.layer].unlocked) doReset(this.layer);
+            },
+        }
+    ],
+
     type: "custom",
     row: 0,
     prestigeButtonText() {
@@ -167,16 +177,6 @@ addLayer("yellowPigment", {
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
     },
-
-    hotkeys: [
-        {
-            key: "y",
-            description: "Y : Dye blank pigment yellow.",
-            onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
-            },
-        }
-    ],
 
     upgrades: {
         rows: 2,
