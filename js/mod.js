@@ -12,21 +12,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1.4",
+	num: "0.1.1.5",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h3>v0.1.1.1 - v0.1.1.4</h3><br>
+<h3>v0.1.1.1 - v0.1.1.5</h3><br>
 <br>
 Added an outline to big nodes.<br>
 Reduced the opacity of all node text.<br>
 All displayed points are now floored to hide rounding errors.<br>
 Fixed the outline causing tooltips to be impossible to read.<br>
 Changed node symbols again to be slightly transparent with a glow.<br>
-Fixed challenge achievement 11 tooltip.<br>
+Fixed challenge achievement 11, 14 tooltip.<br>
 <br>
 <h2><u>v0.1.1</u></h2><br>
 <br>
