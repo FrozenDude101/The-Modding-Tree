@@ -668,8 +668,8 @@ addLayer("challenges", {
         11: {
             name: "Monochrome",
             tooltip() {
-                let colour = (player.stats.firstPrimary ? player.stats.firstPrimary : "First primary colour");
-                return  "Combine two colours.\nReward:\n" + colour + " is permanently boosted by +10%.";
+                let colour = (player.stats.firstPrimary ? player.stats.firstPrimary.charAt(0).toUpperCase() + player.stats.firstPrimary.slice(1).replace(/([A-Z])/g,' $1') : "First primary colour");
+                return  "Dye a primary colour.\nReward:\n" + colour + " is permanently boosted by +10%.";
             },
 
             style: {
@@ -707,7 +707,7 @@ addLayer("challenges", {
         14: {
             name: "Colour<br>Mixer",
             tooltip() {
-                let colour = (player.stats.firstSecondary ? player.stats.firstSecondary : "First secondary colour");
+                let colour = (player.stats.firstSecondary ? player.stats.firstSecondary.charAt(0).toUpperCase() + player.stats.firstSecondary.slice(1).replace(/([A-Z])/g,' $1') : "First secondary colour")
                 return  "Combine two colours.\nReward:\n" + colour + " is permanently boosted by +10%.";
             },
 
