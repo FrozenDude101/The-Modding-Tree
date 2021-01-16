@@ -545,7 +545,6 @@ ul {
 
 [tooltip] {
 	position: relative;
-	z-index: 99999999 !important
 }
 
 [tooltip]:before,
@@ -557,6 +556,7 @@ ul {
 	pointer-events: none;
 	white-space: pre-wrap;
 	-webkit-transform:translate3d(0,0,0);
+	z-index: 99999999 !important;
 }
 
 [tooltip]:before {
@@ -578,6 +578,7 @@ ul {
 	line-height: 1.2;
 	transition-duration: 0.5s;
 	white-space: pre-wrap;
+	z-index: 99999999 !important;
 }
 
 [tooltip]:after {
@@ -594,6 +595,11 @@ ul {
 	line-height: 0;
 	transition-duration: 0.5s;
 	white-space: pre-wrap;
+	z-index: 99999999 !important;
+}
+
+.treeNode:hover {
+	z-index: 99999999 !important;
 }
 
 [tooltip]:hover:before,
@@ -603,6 +609,7 @@ ul {
 	opacity: 1;
 	white-space: pre-wrap;
 	-webkit-transform:translate3d(0,0,0);
+	z-index: 99999999 !important;
 
 }
 

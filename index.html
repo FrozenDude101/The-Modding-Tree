@@ -76,16 +76,16 @@
 				</ul>
 			</div>
 			<overlay-head v-if="!(gameEnded && !player.keepGoing)"></overlay-head>
-			<div class="sideLayers" >
-				<div v-for="(node, index) in OTHER_LAYERS['side']"><tree-node :layer='node' :abb='tmp[node].symbol' :size="'small'" :key="'side' + index"></tree-node></div>
-			</div>
 		</div>
 
 		<div v-if="!(gameEnded && !player.keepGoing)" id="treeTab" style="z-index: 99" onscroll="resizeCanvas()" v-bind:class="{ fullWidth: (player.tab == 'none' || player.navTab == 'none'), col: (player.tab !== 'none' && player.navTab !== 'none'), left: (player.tab !== 'none' && player.navTab !== 'none')}">
 			<br><br><br><br>
 			<overlay-head id="fakeHead" style="visibility: hidden;">
 			</overlay-head>
-			<layer-tab :layer="player.navTab == 'none' ? player.tab : player.navTab" :key="'left'"></layer-tab>
+			<layer-tab style="z-index:99" :layer="player.navTab == 'none' ? player.tab : player.navTab" :key="'left'"></layer-tab>
+			<div class="sideLayers" style="z-index:100">
+				<div v-for="(node, index) in OTHER_LAYERS['side']"><tree-node :layer='node' :abb='tmp[node].symbol' :size="'small'" :key="'side' + index"></tree-node></div>
+			</div>
 
 		</div>
 
