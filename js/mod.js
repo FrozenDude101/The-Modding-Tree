@@ -12,12 +12,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1",
+	num: "0.1.1.3",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
+<br>
+<h3>v0.1.1.1 - v0.1.1.3</h3><br>
+<br>
+Added an outline to big nodes.<br>
+Reduced the opacity of all node text.<br>
+All displayed points are now floored to hide rounding errors.<br>
+Fixed the outline causing tooltips to be impossible to read.<br>
+Changed node symbols again to be slightly transparent with a glow.<br>
 <br>
 <h2><u>v0.1.1</u></h2><br>
 <br>
@@ -25,7 +33,7 @@ let changelog = `
 Reach endgame to unlock the debug menu.<br>
 Your saves are kept safe, even if you use the debug options!<br>
 <br>
-<h3>Milestone Achievementss</h3><br>
+<h3>Milestone Achievements</h3><br>
 Increased max achievement level to 40.<br>
 Fixed maxed achievements containing undefined.<br>
 <br>
