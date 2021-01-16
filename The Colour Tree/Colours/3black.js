@@ -16,7 +16,7 @@ addLayer("black", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
+        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
     },
 
     startData() {
@@ -25,7 +25,7 @@ addLayer("black", {
         };
     },   
     unlocked() {
-        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
+        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment") || player.debugOptions.showAll;
     },
 
     tabFormat: {
@@ -36,7 +36,7 @@ addLayer("black", {
 });
 
 addLayer("blackPigment", {
-    color: "#222",
+    color: "#444",
     resource: "black pigment",
     shouldNotify() {
         return !player[this.layer].unlocked && canReset(this.layer);
@@ -75,6 +75,10 @@ addLayer("blackPigment", {
 
     tabFormat: [
         "main-display",
+        ["display-text", function() {
+            return "You have absorbed <span style=\"color: '#444', text-shadow: '0px 0px 10px #444'\">" + player.blackPigment.light + "</span> light.";
+        }],
+        "blank",
         "prestige-button",
         "blank",
     ],
