@@ -43,7 +43,7 @@ var systemComponents = {
 				can: ((player[layer].unlocked || tmp[layer].isLayer) && tmp[layer].isLayer) || (!tmp[layer].isLayer && tmp[layer].canClick),
 			}"
 			v-bind:style="tmp[layer].computedNodeStyle">
-			{{(abb !== '' && tmp[layer].image === undefined) ? abb : '&nbsp;'}}
+			<span class="nodeSymbol">{{(abb !== '' && tmp[layer].image === undefined) ? abb : '&nbsp;'}}</span>
 		</button>
 		`
 	},
