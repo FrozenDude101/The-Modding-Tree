@@ -12,20 +12,21 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1.3",
+	num: "0.1.1.4",
 	name: "Full Spectrum",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h3>v0.1.1.1 - v0.1.1.3</h3><br>
+<h3>v0.1.1.1 - v0.1.1.4</h3><br>
 <br>
 Added an outline to big nodes.<br>
 Reduced the opacity of all node text.<br>
 All displayed points are now floored to hide rounding errors.<br>
 Fixed the outline causing tooltips to be impossible to read.<br>
 Changed node symbols again to be slightly transparent with a glow.<br>
+Fixed challenge achievement 11 tooltip.<br>
 <br>
 <h2><u>v0.1.1</u></h2><br>
 <br>
@@ -40,8 +41,8 @@ Fixed maxed achievements containing undefined.<br>
 <h3>v0.1.0.1 - v0.1.0.3</h3><br>
 <br>
 Fixed row 1 of blue pigment upgrades visibility relying on yellow pigment.<br>
-Fixed secondary upgrades (31) having an incorrect description.<br>
-Fixed green pigment being boosted by 13 instead of 21.<br>
+Fixed secondary upgrades 31 having an incorrect description.<br>
+Fixed green pigment being boosted by upgrade 13 instead of upgrade 21.<br>
 <br>
 <h2 style='color: #D22'><u>v0.1: Full Spectrum</u></h2><br>
 <br>

@@ -407,7 +407,7 @@ addLayer("challenges", {
             name: "Monochrome",
             tooltip() {
                 let colour = (player.firstSecondary ? player.firstPrimaryPigment : "First primary colour");
-                return  "Combine two colours.\nReward:\n" + colour + " is permanently boosted by +10%.";
+                return  "Dye a primary colour.\nReward:\n" + colour + " is permanently boosted by +10%.";
             },
 
             style: {
