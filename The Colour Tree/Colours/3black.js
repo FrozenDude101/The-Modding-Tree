@@ -75,9 +75,7 @@ addLayer("blackPigment", {
 
     tabFormat: [
         "main-display",
-        ["display-text", function() {
-            return "You have absorbed <span style=\"color: '#444', text-shadow: '0px 0px 10px #444'\">" + player.blackPigment.light + "</span> light.";
-        }],
+        ["point-display", ["You have absorbed ", function() { return player.blackPigment.light; }, "light."]],
         "blank",
         "prestige-button",
         "blank",

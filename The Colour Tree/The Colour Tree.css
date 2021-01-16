@@ -1,8 +1,7 @@
 /* vscode-fold=1 */
 
-div.achievement {
-    transition-property: box-shadow, z-index;
-
+.overlayThing {
+    z-index: 100;
 }
 
 .hidden {
@@ -19,6 +18,11 @@ div.achievement {
 .smallNode {
     margin: 25%;
     color: rgba(0, 0, 0, 0.8);
+}
+
+div.achievement {
+    transition-property: box-shadow, z-index;
+
 }
 
 .formattedTable, .formattedTable tr th, .formattedTable tr td {
