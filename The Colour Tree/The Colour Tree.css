@@ -9,8 +9,16 @@ div.achievement {
 }
 /* Changes the height of blank layers so the triangle lines up correctly. */
 
+.treeNode:not(.smallNode) {
+    color: rgba(255, 255, 255, 0.75);
+    -webkit-text-stroke: 2px #000;
+    -ms-text-stroke: 2px #000;
+    -moz-text-stroke: 2px #000;
+}
+
 .smallNode {
     margin: 25%;
+    color: rgba(0, 0, 0, 0.8);
 }
 /* Adds a gap between side nodes. */
 
