@@ -148,6 +148,8 @@ function addedPlayerData() {
 			challengesCompleted: 0,
 		},
 
+		animations: true,
+		hqTree: true,
 		forceDebug: true,
 	};
 

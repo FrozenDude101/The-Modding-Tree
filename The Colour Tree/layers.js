@@ -95,19 +95,21 @@ addLayer("milestones", {
     ],
 
     effect() {
-        return ret = {
-            blankPigment:  achievementEffect("milestones", 11),
+        return {
+            blankPigment:   achievementEffect("milestones", 11),
 
-            redPigment:    achievementEffect("milestones", 21),
-            yellowPigment: achievementEffect("milestones", 22),
-            bluePigment:   achievementEffect("milestones", 23),
+            redPigment:     achievementEffect("milestones", 21),
+            yellowPigment:  achievementEffect("milestones", 22),
+            bluePigment:    achievementEffect("milestones", 23),
 
-            orangePigment: achievementEffect("milestones", 31),
-            greenPigment:  achievementEffect("milestones", 32),
-            purplePigment: achievementEffect("milestones", 33),
+            orangePigment:  achievementEffect("milestones", 31),
+            greenPigment:   achievementEffect("milestones", 32),
+            purplePigment:  achievementEffect("milestones", 33),
 
-            blackPigment:  achievementEffect("milestones", 41),
-            whitePigment:  achievementEffect("milestones", 42),
+            blackPigment:   achievementEffect("milestones", 41),
+            absorbedLight:  achievementEffect("milestones", 42),
+            whitePigment:   achievementEffect("milestones", 44),
+            reflectedLight: achievementEffect("milestones", 43),
         };
     },
 

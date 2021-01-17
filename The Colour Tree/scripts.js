@@ -34,6 +34,33 @@ function formatNumeral(number) {
 
 }
 
+function formatNth(number) {
+
+    let n = parseInt(number);
+    if (number instanceof Decimal && number.neq(n) || formatWhole(n).includes("e")) {
+        return "n<sup>th</sup>";
+    }
+
+    let prefix;
+    switch(n%10) {
+        case 1:
+            prefix = "st";
+            break;
+        case 2:
+            prefix = "nd";
+            break;
+        case 3:
+            prefix = "rd";
+            break;
+        default:
+            prefix = "th";
+            break;
+    }
+
+    return formatWhole(n) + "<sup>" + prefix + "</sup>";
+
+}
+
 function formatTable(data, {
     caption = null,
     headings = null,

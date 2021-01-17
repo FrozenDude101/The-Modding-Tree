@@ -41,15 +41,15 @@ addLayer("blackPigment", {
     shouldNotify() {
         return !player[this.layer].unlocked && canReset(this.layer);
     },
+
+    effectDescription() {
+        return "absorbing " + formatWhole(tmp[this.layer].effect) + " light per second.";
+    },
     
     layerShown() {
         let unlockCondition = player.redPigment.unlocked && player.yellowPigment.unlocked;
         let challengeCondition = !(inChallenge("greenPigment", 11) || inChallenge("greenPigment", 12) || inChallenge("purplePigment", 11) || inChallenge("purplePigment", 12));
         return unlockCondition && challengeCondition || player.debugOptions.showAll;
-    },
-
-    effectDescription() {
-        return "absorbing " + formatWhole(tmp[this.layer].effect) + " light per second.";
     },
 
     startData() {
@@ -75,10 +75,16 @@ addLayer("blackPigment", {
 
     tabFormat: [
         "main-display",
-        ["point-display", ["You have absorbed ", function() { return player.blackPigment.light; }, "light."]],
-        "blank",
+        ["point-display", [
+            "You have absorbed ",
+            function() {
+                return player.blackPigment.light;
+            },
+            " light."
+        ]],
         "prestige-button",
         "blank",
+        "buyables",
     ],
 
     hotkeys: [
@@ -114,8 +120,8 @@ addLayer("blackPigment", {
     gainMult() {
         let mult = new Decimal(1);
         
-        if (player.stats.firstTertiary == this.layer) mult = mult.mul(1.1);
-        mult = mult.mul(1+tmp.milestones.effect[this.layer]/100);
+        if (player.stats.firstShade == this.layer) mult = mult.mul(1.1);
+        mult = mult.mul(tmp.milestones.effect[this.layer].div(100).add(1));
 
         return mult;
     },
@@ -152,9 +158,97 @@ addLayer("blackPigment", {
         }
     },
 
+    update(diff) {
+
+        player[this.layer].light = player[this.layer].light.add(tmp[this.layer].effect.mul(diff));
+
+    },
+
     effect() {
         ret = player[this.layer].points;
 
+        ret = ret.mul(tmp.milestones.effect.absorbedLight.div(100).add(1));
+
         return ret;
-    }
+    },
+
+    buyables: {
+        rows: 1,
+        cols: 2,
+
+        11: {
+            title: "Shades",
+            display() {
+                return `
+                Multiply all primary and secondary pigment gain by x` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
+                Discover a new shade for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` absorbed light.<br>
+                You have discovered ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` different shade` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying all primary and secondary pigment gain by x` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                `
+            },
+
+            unlocked() {
+                return player.blackPigment.unlocked || player.debugOptions.showAll;
+            },
+            
+            baseCost: new Decimal(10),
+            exponent() {
+                return new Decimal(10);
+            },
+            cost() {
+                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+            },
+            canAfford() {
+                return true;
+            },
+            buy() {
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+            },
+
+            baseEffect() {
+                let ret = new Decimal(1.5);
+                return ret;
+            },
+            effect() {
+                return tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+            },
+        },
+        12: {
+            title() {
+                return formatNth(getBuyableAmount(this.layer, this.id).add(2)) + " Coat"
+            },
+            display() {
+                return `
+                Each layer of paint increases the absorption rate by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
+                Add another layer of black paint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` black pigment.<br>
+                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying absorption rate by x` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                `
+            },
+
+            unlocked() {
+                return player.blackPigment.unlocked || player.debugOptions.showAll;
+            },
+            
+            baseCost: new Decimal(10),
+            exponent() {
+                return new Decimal(2);
+            },
+            cost() {
+                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+            },
+            canAfford() {
+                return true;
+            },
+            buy() {
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+            },
+
+            baseEffect() {
+                let ret = new Decimal(1);
+                return ret;
+            },
+            effect() {
+                return tmp[this.layer].buyables[this.id].baseEffect.mul(getBuyableAmount(this.layer, this.id));
+            },
+        }
+    },
 });

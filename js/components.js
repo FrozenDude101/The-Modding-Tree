@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 var app;
 
 function loadVue() {
@@ -224,7 +226,7 @@ function loadVue() {
 	
 	Vue.component('point-display', {
 		props: ['layer', 'data'],
-		template: `<div><span v-html:"data[0]"></span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px' + tmp[layer].color}" v-html="data[1]"></h2><span v-html:"data[2]"></span><br><br></div>
+		template: `<div><span v-html="data[0]"></span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px' + tmp[layer].color}" v-html="formatWhole(data[1])"></h2><span v-html="data[2]"></span><br><br></div>
 		`
 	})
 

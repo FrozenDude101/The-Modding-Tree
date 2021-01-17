@@ -123,7 +123,7 @@ addLayer("yellowPigment", {
         let mult = new Decimal(1);
         
         if (player.stats.firstPrimary == this.layer) mult = mult.mul(achievementEffect("challenges", 11));
-        mult = mult.mul(1+tmp.milestones.effect[this.layer]/100);
+        mult = mult.mul(tmp.milestones.effect[this.layer].div(100).add(1));
 
         if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));

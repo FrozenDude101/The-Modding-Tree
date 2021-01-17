@@ -4,10 +4,6 @@
     z-index: 100;
 }
 
-.hidden {
-	height: 10px !important;
-}
-
 .treeNode:not(.smallNode) .nodeSymbol {
     font: inherit;
     font-size: 50px;
