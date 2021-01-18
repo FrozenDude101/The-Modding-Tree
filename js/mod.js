@@ -92,37 +92,47 @@ function getPointGen() {
 
 	let gain = new Decimal(1);
 
-	const primary = ["red", "yellow", "blue"];
-	const secondary = ["orange", "green", "purple"];
+	const primary = ["redPigment", "yellowPigment", "bluePigment"];
+	const secondary = ["orangePigment", "greenPigment", "purplePigment"];
+	const shades = ["blackPigment", "whitePigment"];
 
 	let colours = [];
-	for (let colour of primary.concat(secondary)) {
-		if (tmp[colour+"Pigment"].layerShown) colours.push(colour);
+	for (let colour of primary.concat(secondary).concat(shades)) {
+		if (tmp[colour].layerShown) colours.push(colour);
 	}
 	
 	for (let colour of colours) {
-		if (hasUpgrade(colour+"Pigment", 11)) gain = gain.add(upgradeEffect(colour+"Pigment", 11));
-		if (secondary.includes(colour)) {
-			if (hasAchievement("challenges", 21)) gain = gain.add(1);
+		if (primary.concat(secondary).includes(colour)) {
+			if (hasUpgrade(colour, 11)) gain = gain.add(upgradeEffect(colour, 11));
 		}
 	}
+	if (hasAchievement("challenges", 21)) gain = gain.add(achievementEffect("challenges", 21));
 	// Base add.
+
+	for (let colour of colours) {
+		if (shades.includes(colour)) {
+			if (hasUpgrade(colour, 11)) {
+				gain = gain.pow(upgradeEffect(colour, 11));
+			}
+		}
+	}
+	// Base exponation.
 	
 	for (let colour of colours) {
-		if (hasUpgrade(colour+"Pigment", 12)) gain = gain.mul(upgradeEffect(colour+"Pigment", 12));
-		if (hasUpgrade(colour+"Pigment", 13)) gain = gain.mul(upgradeEffect(colour+"Pigment", 13));
-		if (hasUpgrade(colour+"Pigment", 22)) gain = gain.mul(upgradeEffect(colour+"Pigment", 22));
+		if (hasUpgrade(colour, 12)) gain = gain.mul(upgradeEffect(colour, 12));
+		if (hasUpgrade(colour, 13)) gain = gain.mul(upgradeEffect(colour, 13));
+		if (hasUpgrade(colour, 22)) gain = gain.mul(upgradeEffect(colour, 22));
 	}
 	// Multiply.
 	
 	for (let colour of colours) {
 		if (primary.includes(colour)) {
-			if (hasUpgrade(colour+"Pigment", 51)) gain = gain.pow(upgradeEffect(colour+"Pigment", 51));
+			if (hasUpgrade(colour, 51)) gain = gain.pow(upgradeEffect(colour, 51));
 		}
 	}
 	// Exponation.
 
-	gain = gain.mul(1+tmp.milestones.effect["blankPigment"]/100);
+	gain = gain.mul(tmp.milestones.effect["blankPigment"].div(100).add(1));
 	// Achievement bonus.
 
 	return gain;

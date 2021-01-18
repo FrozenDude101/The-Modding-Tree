@@ -723,7 +723,7 @@ addLayer("challenges", {
         },
         22: {
             name: "Ditching<br>Your Roots",
-            tooltip: "Complete a Complementary challenge.\nReward:\nKeep unlock order and automatic gain upgrades on secondary pigment resets.",
+            tooltip: "Complete a Complementary challenge.\nReward:\nKeep unlock order and automatic gain upgrades when dying secondary pigments.",
 
             style: {
                 color: "#FD0",

@@ -103,16 +103,13 @@ addLayer("blackPigment", {
         "blank",
         "buyables",
         "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
         ["upgrades", function() {
             let rows = [];
-            if (player.blackPigment.unlocked || player.debugOptions.showAll) rows.push(1);
+            if (getBuyableAmount("blackPigment", 11).gte(2) || player.debugOptions.showAll) rows.push(1);
+            if (hasUpgrade("blackPigment", 13) || player.debugOptions.showAll) rows.push(2);
             return rows;
         }],
+        "challenges",
     ],
 
     hotkeys: [
@@ -143,7 +140,7 @@ addLayer("blackPigment", {
         return player.redPigment.points.min(player.bluePigment.points).min(player.yellowPigment.points).min(player.orangePigment.points).min(player.greenPigment.points).min(player.purplePigment.points);
     },
     requires() {
-        return new Decimal(1e7).mul(Decimal.pow(10, (hasUpgrade(this.layer, 31) ? 0 : player[this.layer].requiresExponent)));
+        return new Decimal(1e7).mul(Decimal.pow(1000, player[this.layer].requiresExponent));
     },
     gainMult() {
         let mult = new Decimal(1);
@@ -289,7 +286,116 @@ addLayer("blackPigment", {
         cols: 3,
 
         11: {
-            title: "Tada",
-        }
-    }
+            title: "Maroon",
+            description: "Exponate base black pigment gain by 1.5.",
+
+            effect: 1.5,
+            cost: new Decimal(1),
+        },
+        12: {
+            title: "Burgundy",
+            description: "Multiply blank pigment gain by 2.",
+
+            effect: 2,
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Auburn",
+            description: "Boost blank pigment gain based on blank pigment amount.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                return player.points.add(1).log(10).add(1)
+            },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Blood Red",
+            description: "Multiply black pigment gain by 2.",
+
+            effect: 2,
+            cost: new Decimal(10),
+        },
+        22: {
+            title: "Candy Apple Red",
+            description: "Boost blank pigment gain based on black pigment amount.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                return player[this.layer].points.add(1).log(10).add(1);
+            },
+            cost: new Decimal(25),
+        },
+        23: {
+            title: "Alizarin Crimson",
+            description: "Boost black pigment gain based on black pigment amount.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                return player[this.layer].points.add(1).log(20).add(1);
+            },
+            cost: new Decimal(50),
+        },
+
+    },
+
+    challenges: {
+        rows: 1,
+        cols: 3,
+
+        11: {
+            name: "Additive",
+            challengeDescription: "Only have red, yellow, blue, and white pigment.",
+            goalDescription: "Reach 250,000 blank pigment.",
+            rewardDescription: "Keep primary pigment upgrades when dying white pigment.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
+            },
+
+            canComplete() {
+                return player.points.gte(250000);
+            },
+        },
+        12: {
+            name: "Favoritism",
+            challengeDescription() {
+                return "Only have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
+            },
+            goalDescription: "Reach 250,000 blank pigment.",
+            rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked && player.stats.firstShade == this.layer  || player.debugOptions.showAll;
+            },
+
+            canComplete() {
+                return player.points.gte(250000);
+            },
+        },
+        13: {
+            name: "Favoritism+",
+            challengeDescription() {
+
+                return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
+            },
+            goalDescription: "Reach 250,000 blank pigment.",
+            rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked && player.stats.firstShade != this.layer || player.debugOptions.showAll;
+            },
+
+            canComplete() {
+                return player.points.gte(250000);
+            },
+        },
+    },
 });

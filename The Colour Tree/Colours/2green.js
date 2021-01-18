@@ -138,7 +138,8 @@ addLayer("greenPigment", {
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
-        mult = mult.mul(tmp.blackPigment.buyables[11].effect);
+        mult = mult.mul(buyableEffect("blackPigment", 11));
+        mult = mult.mul(buyableEffect("whitePigment", 11));
 
         return mult;
     },
@@ -164,6 +165,8 @@ addLayer("greenPigment", {
         switch(layer) {
             case "blackPigment":
                 break;
+            case "whitePigment":
+                break;
             default:
                 keep = undefined;
                 break;
@@ -177,7 +180,7 @@ addLayer("greenPigment", {
     },
 
     upgrades: {
-        rows: 2,
+        rows: 3,
         cols: 3,
 
         11: {

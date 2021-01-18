@@ -124,22 +124,21 @@ function calcRequiresExponent(layer, delta=0) {
 
     let primary =   player.redPigment.unlocked + player.yellowPigment.unlocked + player.bluePigment.unlocked;
     let secondary = player.orangePigment.unlocked + player.greenPigment.unlocked + player.purplePigment.unlocked;
-    //let tertiary = player.blackPigment.unlocked + player.whitePigment.unlocked;
-    //let quaternary = player.lightGreyPigment.unlocked + player.darkGreyPigment.unlocked + player.pinkPigment.unlocked;
+    let shades = player.blackPigment.unlocked + player.whitePigment.unlocked;
 
-    if (["redPigment", "yellowPigment", "bluePigment"].includes(layer)) {
-        return Math.max(0.5 * (primary+delta) * (primary+delta+1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0)
+    switch(layer) {
+        case "redPigment":
+        case "yellowPigment":
+        case "bluePigment":
+            return Math.max(0.5 * (primary+delta) * (primary+delta+1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0);
+        case "orangePigment":
+        case "greenPigment":
+        case "purplePigment":
+            return Math.max(0.5 * (primary+delta) * (primary+delta+1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0);
+        case "blackPigment":
+        case "whitePigment":
+            return shades+delta;
+        default:
+            alert("Invalid layer '" + layer + "' called to calcUnlock.");
     }
-    if (["orangePigment", "greenPigment", "purplePigment"].includes(layer)) {
-        return Math.max(0.5 * (primary+delta-2) * (primary+delta-1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0)
-    }
-    if (["blackPigment", "whitePigment"].includes(layer)) {
-        return 0;
-    }
-    if (["lightGreyPigment", "darkGreyPigment", "pinkPigment"].includes(layer)) {
-        return 0;
-    }
-    alert("Invalid layer '" + layer + "' called to calcUnlock.");
-    return 0;
-
 }
