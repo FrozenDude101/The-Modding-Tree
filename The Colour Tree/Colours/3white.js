@@ -61,7 +61,7 @@ addLayer("whitePigment", {
     
     layerShown() {
         let unlockCondition = player.orangePigment.unlocked && player.greenPigment.unlocked && player.purplePigment.unlocked;
-        let challengeCondition = !inChallenge();
+        let challengeCondition = !inChallenge() || inChallenge("whitePigment");
         return unlockCondition && challengeCondition || player.debugOptions.showAll;
     },
 
@@ -347,17 +347,17 @@ addLayer("whitePigment", {
         cols: 3,
 
         11: {
-            name: "Additive",
+            name: "Subtractive",
             challengeDescription: "Only have red, yellow, blue, and white pigment.",
-            goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Keep primary pigment upgrades when dying white pigment.",
+            goalDescription: "Reach 100,000,000 blank pigment.",
+            rewardDescription: "Keep primary pigment upgrades when dying white or secondary pigments.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
             },
 
             canComplete() {
-                return player.points.gte(250000);
+                return player.points.gte(100000000);
             },
         },
         12: {
@@ -377,7 +377,7 @@ addLayer("whitePigment", {
             },
         },
         13: {
-            name: "Favoritism+",
+            name: "Anti-Favoritism",
             challengeDescription() {
 
                 return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";

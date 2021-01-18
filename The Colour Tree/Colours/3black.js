@@ -65,7 +65,7 @@ addLayer("blackPigment", {
     
     layerShown() {
         let unlockCondition = player.orangePigment.unlocked && player.greenPigment.unlocked && player.purplePigment.unlocked;
-        let challengeCondition = !inChallenge();
+        let challengeCondition = !inChallenge() || inChallenge("blackPigment");
         return unlockCondition && challengeCondition || player.debugOptions.showAll;
     },
 
@@ -371,6 +371,10 @@ addLayer("blackPigment", {
             },
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
+            
+            style() {
+                return (player.stats.firstShade == this.layer ? undefined : {height: "0px", width: "0px"});
+            },
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked && player.stats.firstShade == this.layer  || player.debugOptions.showAll;
@@ -381,10 +385,9 @@ addLayer("blackPigment", {
             },
         },
         13: {
-            name: "Favoritism+",
+            name: "Anti-Favoritism",
             challengeDescription() {
-
-                return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
+                return "Have all pigments except " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of red and yellow pigment upgrades.",

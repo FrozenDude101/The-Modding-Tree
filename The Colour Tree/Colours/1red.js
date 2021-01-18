@@ -65,8 +65,8 @@ addLayer("redPigment", {
     },
 
     layerShown() {
-        let challengeCondition = !inChallenge() || inChallenge("orangePigment", 11) || inChallenge("purplePigment", 11) || inChallenge("greenPigment", 12);
-        return challengeCondition;
+        let challengeCondition = !inChallenge() || inChallenge("orangePigment", 11) || inChallenge("purplePigment", 11) || inChallenge("greenPigment", 12) || inChallenge("blackPigment", 11) || inChallenge("whitePigment", 11) || player.stats.firstPrimary == this.layer && inChallenge("whitePigment", 12) || player.stats.firstPrimary == this.layer && inChallenge("blackPigment", 12) || player.stats.firstPrimary != this.layer && inChallenge("whitePigment", 13) || player.stats.firstPrimary != this.layer && inChallenge("blackPigment", 13);
+        return challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -151,8 +151,8 @@ addLayer("redPigment", {
         
         if (tmp.greenPigment.layerShown && hasUpgrade("greenPigment", 32)) mult = mult.mul(upgradeEffect("greenPigment", 32));
 
-        mult = mult.mul(buyableEffect("blackPigment", 11));
-        mult = mult.mul(buyableEffect("whitePigment", 11));
+        if (tmp.blackPigment.layerShown) mult = mult.mul(buyableEffect("blackPigment", 11));
+        if (tmp.whitePigment.layerShown) mult = mult.mul(buyableEffect("whitePigment", 11));
 
         return mult;
     },

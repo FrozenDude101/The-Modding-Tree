@@ -69,7 +69,7 @@ addLayer("purplePigment", {
 
     layerShown() {
         let unlockCondition = player.redPigment.unlocked && player.bluePigment.unlocked;
-        let challengeCondition = !inChallenge() || inChallenge(this.layer);
+        let challengeCondition = !inChallenge() || inChallenge(this.layer) || player.stats.firstSecondary == this.layer && inChallenge("whitePigment", 12) || player.stats.firstSecondary == this.layer && inChallenge("blackPigment", 12) || player.stats.firstSecondary != this.layer && inChallenge("whitePigment", 13) || player.stats.firstSecondary != this.layer && inChallenge("blackPigment", 13);
         return unlockCondition && challengeCondition || player.debugOptions.showAll;
     },
 
@@ -138,8 +138,8 @@ addLayer("purplePigment", {
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
-        mult = mult.mul(buyableEffect("blackPigment", 11));
-        mult = mult.mul(buyableEffect("whitePigment", 11));
+        if (tmp.blackPigment.layerShown) mult = mult.mul(buyableEffect("blackPigment", 11));
+        if (tmp.whitePigment.layerShown) mult = mult.mul(buyableEffect("whitePigment", 11));
 
         return mult;
     },
