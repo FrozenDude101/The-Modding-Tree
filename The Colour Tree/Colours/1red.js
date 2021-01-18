@@ -11,6 +11,23 @@ addLayer("red", {
     symbol: "R",
     color: "#D22",
 
+    x() {
+        let ret = 1.5;
+        if (player.black.shown) ret += 0.5;
+        return ret;
+    },
+    y() {
+        let ret = 0;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+        };
+    },
+
     tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
@@ -19,8 +36,9 @@ addLayer("red", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
-    },   
+        if (tmp[this.layer]) player[this.layer].shown = true;
+        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+    },  
 
     startData() {
         return {
@@ -47,7 +65,7 @@ addLayer("redPigment", {
     },
 
     layerShown() {
-        let challengeCondition = !(inChallenge("greenPigment", 11) || inChallenge("orangePigment", 12) || inChallenge("purplePigment", 12));
+        let challengeCondition = !inChallenge() || inChallenge("orangePigment", 11) || inChallenge("purplePigment", 11) || inChallenge("greenPigment", 12);
         return challengeCondition;
     },
 
@@ -133,6 +151,8 @@ addLayer("redPigment", {
         
         if (tmp.greenPigment.layerShown && hasUpgrade("greenPigment", 32)) mult = mult.mul(upgradeEffect("greenPigment", 32));
 
+        mult = mult.mul(tmp.blackPigment.buyables[11].effect);
+
         return mult;
     },
     gainExp() {
@@ -165,6 +185,8 @@ addLayer("redPigment", {
             case "purplePigment":
                 if (hasUpgrade("purplePigment", 31)) keep.push("upgrades");
                 if (hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
+                break;
+            case "blackPigment":
                 break;
             default:
                 keep = undefined;

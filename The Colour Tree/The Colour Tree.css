@@ -9,6 +9,11 @@
     font-size: 50px;
     color: rgba(0, 0, 0, 0.6);
     text-shadow: 0 0 10px #FFF;
+    transition-duration: 0s;
+}
+
+.treeNode {
+    transition-property: transform, border-color, box-shadow, left, top;
 }
 
 .smallNode {

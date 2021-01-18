@@ -281,6 +281,8 @@ function startChallenge(layer, x) {
 	player.stats.resets -= 1;
 	if(enter) player[layer].activeChallenge = x
 
+	needCanvasUpdate = true;
+
 	updateChallengeTemp(layer)
 }
 
@@ -316,8 +318,8 @@ function completeChallenge(layer, x, force=false) {
 		player[layer].activeChallenge = null
 		return
 	}
+	needCanvasUpdate = true
 	if (player[layer].challenges[x] < tmp[layer].challenges[x].completionLimit) {
-		needCanvasUpdate = true
 		player[layer].challenges[x] += 1
 		player.stats.challengesCompleted += 1;
 		if (layers[layer].challenges[x].onComplete) run(layers[layer].challenges[x].onComplete, layers[layer].challenges[x])
@@ -399,6 +401,8 @@ function gameLoop(diff) {
 		if (layers[layer].achievements) updateAchievements(layer)
 	}
 
+	if (needCanvasUpdate) drawTree();
+
 }
 
 function hardReset() {
@@ -428,8 +432,8 @@ var interval = setInterval(function() {
 	}
 	if (player.devSpeed) diff *= player.devSpeed
 	player.time = now
-	if (needCanvasUpdate){ resizeCanvas();
-		needCanvasUpdate = false;
+	if (needCanvasUpdate){ 
+		resizeCanvas();
 	}
 	updateTemp();
 	gameLoop(diff)

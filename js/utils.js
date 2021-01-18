@@ -620,6 +620,14 @@ function clickClickable(layer, id) {
 
 // Function to determine if the player is in a challenge
 function inChallenge(layer, id){
+	if (!layer && !id) {
+		for (let LAYER of LAYERS) {
+			if (player[LAYER].activeChallenge) return true;
+		}
+		return false;
+	} else if (!id) {
+		return Boolean(player[layer].activeChallenge);
+	}
 	let challenge = player[layer].activeChallenge
 	if (!challenge) return false
 	id = toNumber(id)
@@ -627,6 +635,7 @@ function inChallenge(layer, id){
 
 	if (layers[layer].challenges[challenge].countsAs)
 		return tmp[layer].challenges[challenge].countsAs.includes(id)
+	return false;
 }
 
 // ************ Misc ************

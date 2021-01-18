@@ -15,6 +15,23 @@ addLayer("purple", {
         return ["red", "blue"];
     },
 
+    x() {
+        let ret = 1;
+        if (player.black.shown) ret += 0.5;
+        return ret;
+    },
+    y() {
+        let ret = 1;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+        };
+    },
+
     tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
@@ -23,8 +40,9 @@ addLayer("purple", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
-    },
+        if (tmp[this.layer]) player[this.layer].shown = true;
+        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+    },  
 
     startData() {
         return {
@@ -51,7 +69,7 @@ addLayer("purplePigment", {
 
     layerShown() {
         let unlockCondition = player.redPigment.unlocked && player.bluePigment.unlocked;
-        let challengeCondition = !(inChallenge("orangePigment", 11) || inChallenge("orangePigment", 12) || inChallenge("greenPigment", 11) || inChallenge("greenPigment", 12));
+        let challengeCondition = !inChallenge() || inChallenge(this.layer);
         return unlockCondition && challengeCondition || player.debugOptions.showAll;
     },
 
@@ -120,6 +138,8 @@ addLayer("purplePigment", {
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
+        mult = mult.mul(tmp.blackPigment.buyables[11].effect);
+
         return mult;
     },
     gainExp() {
@@ -142,6 +162,8 @@ addLayer("purplePigment", {
         let keepUpgrades = [];
 
         switch(layer) {
+            case "blackPigment":
+                break;
             default:
                 keep = undefined;
                 break;

@@ -14,10 +14,7 @@ addLayer("tree-tab", {
     tabFormat: [
         ["tree", function() {
             return [
-                ["white", "lightGrey", "darkGrey", "black"],
-                ["pink", "red", "blank"],
-                ["purple", "orange"],
-                ["blue", "green", "yellow"],
+                ["red", "yellow", "blue", "orange", "green", "purple", "black", "white", "grey", "pink"],
             ];
         }],
     ],

@@ -147,10 +147,9 @@ function addedPlayerData() {
 			upgradesBought: 0,
 			challengesCompleted: 0,
 		},
-
-		animations: true,
+		
 		hqTree: true,
-		forceDebug: true,
+		forceDebug: false,
 	};
 
 }

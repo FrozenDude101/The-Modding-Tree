@@ -4,6 +4,22 @@ addLayer("white", {
     symbol: "W",
     color: "#DDD",
 
+    x() {
+        let ret = 0;
+        return ret;
+    },
+    y() {
+        let ret = 0;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+        };
+    },
+
     tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
@@ -12,8 +28,9 @@ addLayer("white", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
-    }, 
+        if (tmp[this.layer]) player[this.layer].shown = true;
+        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+    },  
 
     startData() {
         return {

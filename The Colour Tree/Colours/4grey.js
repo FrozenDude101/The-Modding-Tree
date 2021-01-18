@@ -1,9 +1,25 @@
 //vscode-fold=1
 
-addLayer("darkGrey", {
-    symbol: "D",
+addLayer("grey", {
+    symbol: "G",
     color: "#666",
-    branches: ["lightGrey", "black"],
+    branches: ["black", "white"],
+
+    x() {
+        let ret = 0;
+        return ret;
+    },
+    y() {
+        let ret = 1;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+        };
+    },
 
     /*tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
@@ -13,8 +29,9 @@ addLayer("darkGrey", {
     },*/
 
     layerShown() {
-        return true //(tmp[this.layer + "Pigment"].layerShown ? true : "ghost");
-    }, 
+        if (tmp[this.layer]) player[this.layer].shown = true;
+        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+    },  
 
     startData() {
         return {
@@ -27,12 +44,12 @@ addLayer("darkGrey", {
 
     tabFormat: {
         /*"Pigment": {
-            embedLayer: "yellowPigment",
+            embedLayer: "greyPigment",
         },*/
     },
 });
 
-addLayer("darkGreyPigment", {
+addLayer("greyPigment", {
 
     startData() {
         return {

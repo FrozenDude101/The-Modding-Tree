@@ -10,6 +10,7 @@ addLayer("debug", {
         return gameEnded || player.forceDebug;
     },
     autoSave() {
+        if (player.forceDebug) return;
         if (player.autosave) save();
         if (tmp[this.layer].layerShown) player.autosave = false;
     },
@@ -55,7 +56,7 @@ addLayer("debugLayers", {
     createDropDownMenu() {
         let ret = "<select id=selectLayer>";
         for (let LAYER of ["none"].concat(LAYERS)) {
-            if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "statistics", "debug", "debugLayers", "debugOptions", "red", "yellow", "blue", "orange", "green", "purple"].includes(LAYER)) continue;
+            if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "statistics", "debug", "debugLayers", "debugOptions", "red", "yellow", "blue", "orange", "green", "purple", "black", "white", "grey", "pink"].includes(LAYER)) continue;
             let selected = (LAYER == player[this.layer].activeLayer ? "selected='selected'" : "");
             ret += "<option value=" + LAYER + " " + selected + ">" + LAYER.charAt(0).toUpperCase() + LAYER.slice(1).replace(/([A-Z])/g,' $1') + "</option>";
         }
@@ -219,7 +220,7 @@ addLayer("debugLayers", {
 addLayer("debugOptions", {
     startData() {
         return {
-            showAll: true,
+            showAll: false,
             infinitePoints: false,
         };
     },

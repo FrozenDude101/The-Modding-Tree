@@ -15,6 +15,23 @@ addLayer("green", {
         return ["yellow", "blue"];
     },
 
+    x() {
+        let ret = 1.5;
+        if (player.black.shown) ret += 0.5;
+        return ret;
+    },
+    y() {
+        let ret = 2;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+        };
+    },
+
     tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
@@ -23,8 +40,9 @@ addLayer("green", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
-    },
+        if (tmp[this.layer]) player[this.layer].shown = true;
+        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+    },  
 
     startData() {
         return {
@@ -51,8 +69,8 @@ addLayer("greenPigment", {
 
     layerShown() {
         let unlockCondition = player.yellowPigment.unlocked && player.bluePigment.unlocked;
-        let challengeCondition = !(inChallenge("orangePigment", 11) || inChallenge("orangePigment", 12) || inChallenge("purplePigment", 11) || inChallenge("purplePigment", 12));
-        return unlockCondition && challengeCondition || player.debugOptions.showAll;
+        let challengeCondition = !inChallenge() || inChallenge(this.layer);
+         return unlockCondition && challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -116,9 +134,11 @@ addLayer("greenPigment", {
         if (player.stats.firstSecondary == this.layer) mult = mult.mul(achievementEffect("challenges", 14));
         mult = mult.mul(tmp.milestones.effect[this.layer].div(100).add(1));
 
-        if (hasUpgrade(this.layer, 13)) mult = mult.mul(upgradeEffect(this.layer, 13));
+        if (hasUpgrade(this.layer, 21)) mult = mult.mul(upgradeEffect(this.layer, 21));
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
+
+        mult = mult.mul(tmp.blackPigment.buyables[11].effect);
 
         return mult;
     },
@@ -142,6 +162,8 @@ addLayer("greenPigment", {
         let keepUpgrades = [];
 
         switch(layer) {
+            case "blackPigment":
+                break;
             default:
                 keep = undefined;
                 break;

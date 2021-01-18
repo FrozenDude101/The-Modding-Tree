@@ -11,16 +11,34 @@ addLayer("yellow", {
     symbol: "Y",
     color: "#DD2",
 
+    x() {
+        let ret = 2.5;
+        if (player.black.shown) ret += 0.5;
+        return ret;
+    },
+    y() {
+        let ret = 2;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+        };
+    },
+
     tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
         return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
-    
+
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
-    }, 
+        if (tmp[this.layer]) player[this.layer].shown = true;
+        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+    },  
 
     startData() {
         return {
@@ -47,7 +65,7 @@ addLayer("yellowPigment", {
     },
 
     layerShown() {
-        let challengeCondition = !(inChallenge("purplePigment", 11) || inChallenge("orangePigment", 12) || inChallenge("greenPigment", 12));
+        let challengeCondition = !inChallenge() || inChallenge("orangePigment", 11) || inChallenge("greenPigment", 11) || inChallenge("purplePigment", 12);
         return challengeCondition || player.debugOptions.showAll;
     },
 
@@ -133,6 +151,8 @@ addLayer("yellowPigment", {
 
         if (tmp.purplePigment.layerShown && hasUpgrade("purplePigment", 32)) mult = mult.mul(upgradeEffect("purplePigment", 32));
 
+        mult = mult.mul(tmp.blackPigment.buyables[11].effect);
+
         return mult;
     },
     gainExp() {
@@ -165,6 +185,8 @@ addLayer("yellowPigment", {
             case "greenPigment":
                 if (hasUpgrade("greenPigment", 31)) keep.push("upgrades");
                 if (hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
+                break;
+            case "blackPigment":
                 break;
             default:
                 keep = undefined;

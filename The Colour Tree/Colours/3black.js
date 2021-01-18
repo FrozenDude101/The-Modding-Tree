@@ -8,6 +8,22 @@ addLayer("black", {
     symbol: "B",
     color: "#222",
 
+    x() {
+        let ret = 0;
+        return ret;
+    },
+    y() {
+        let ret = 2;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+        };
+    },
+
     tooltip() {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
@@ -16,8 +32,9 @@ addLayer("black", {
     },
 
     layerShown() {
-        return (tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll ? true : "ghost");
-    },
+        if (tmp[this.layer].layerShown && typeof tmp[this.layer].layerShown != "object") player[this.layer].shown = true;
+        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+    },  
 
     startData() {
         return {
@@ -36,7 +53,7 @@ addLayer("black", {
 });
 
 addLayer("blackPigment", {
-    color: "#444",
+    color: "#333",
     resource: "black pigment",
     shouldNotify() {
         return !player[this.layer].unlocked && canReset(this.layer);
@@ -47,8 +64,8 @@ addLayer("blackPigment", {
     },
     
     layerShown() {
-        let unlockCondition = player.redPigment.unlocked && player.yellowPigment.unlocked;
-        let challengeCondition = !(inChallenge("greenPigment", 11) || inChallenge("greenPigment", 12) || inChallenge("purplePigment", 11) || inChallenge("purplePigment", 12));
+        let unlockCondition = player.orangePigment.unlocked && player.greenPigment.unlocked && player.purplePigment.unlocked;
+        let challengeCondition = !inChallenge();
         return unlockCondition && challengeCondition || player.debugOptions.showAll;
     },
 
@@ -85,6 +102,17 @@ addLayer("blackPigment", {
         "prestige-button",
         "blank",
         "buyables",
+        "blank",
+        "blank",
+        "blank",
+        "blank",
+        "blank",
+        "blank",
+        ["upgrades", function() {
+            let rows = [];
+            if (player.blackPigment.unlocked || player.debugOptions.showAll) rows.push(1);
+            return rows;
+        }],
     ],
 
     hotkeys: [
@@ -169,6 +197,8 @@ addLayer("blackPigment", {
 
         ret = ret.mul(tmp.milestones.effect.absorbedLight.div(100).add(1));
 
+        ret = ret.mul(tmp[this.layer].buyables[12].effect);
+
         return ret;
     },
 
@@ -190,7 +220,7 @@ addLayer("blackPigment", {
                 return player.blackPigment.unlocked || player.debugOptions.showAll;
             },
             
-            baseCost: new Decimal(10),
+            baseCost: new Decimal(1),
             exponent() {
                 return new Decimal(10);
             },
@@ -198,9 +228,10 @@ addLayer("blackPigment", {
                 return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
             },
             canAfford() {
-                return true;
+                return player[this.layer].light.gte(tmp[this.layer].buyables[this.id].cost);
             },
             buy() {
+                player[this.layer].light = player[this.layer].light.sub(tmp[this.layer].buyables[this.id].cost);
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
             },
 
@@ -236,9 +267,10 @@ addLayer("blackPigment", {
                 return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
             },
             canAfford() {
-                return true;
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost);
             },
             buy() {
+                player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
             },
 
@@ -247,8 +279,17 @@ addLayer("blackPigment", {
                 return ret;
             },
             effect() {
-                return tmp[this.layer].buyables[this.id].baseEffect.mul(getBuyableAmount(this.layer, this.id));
+                return tmp[this.layer].buyables[this.id].baseEffect.mul(getBuyableAmount(this.layer, this.id)).add(1);
             },
         }
     },
+
+    upgrades: {
+        rows: 2,
+        cols: 3,
+
+        11: {
+            title: "Tada",
+        }
+    }
 });
