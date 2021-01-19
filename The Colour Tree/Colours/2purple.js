@@ -119,6 +119,15 @@ addLayer("purplePigment", {
     prestigeButtonText() {
         return "Combine red and blue pigment for " + formatWhole(tmp[this.layer].getResetGain) + " purple pigment.<br>Next at " + format(tmp[this.layer].getNextAt) + " red and blue pigment.";
     },
+    passiveGeneration() {
+        let gain = 0;
+
+        if (hasUpgrade("whitePigment", 22)) gain += upgradeEffect("whitePigment", 22);
+
+        gain *= player[this.layer].unlocked;
+
+        return gain;
+    },
 
     exponent: 0.5,
     baseAmount() {
@@ -126,7 +135,8 @@ addLayer("purplePigment", {
         return player.redPigment.points.min(player.bluePigment.points);
     },
     requires() {
-        return new Decimal(1000).mul(Decimal.pow(10, player[this.layer].requiresExponent));
+        let multiplier = (hasAchievement("challenges", 32) ? 1 : Decimal.pow(10, player[this.layer].requiresExponent));
+        return new Decimal(1000).mul(multiplier);
     },
     gainMult() {
         let mult = new Decimal(1);
@@ -161,16 +171,23 @@ addLayer("purplePigment", {
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
         let keepUpgrades = [];
+        let forceUpgrades = [];
 
-        if (layer == "blackPigment" && hasChallenge("blackPigment", 11)) keep.push("challenges");
-        if (layer == "whitePigment" && hasChallenge("whitePigment", 11)) keep.push("challenges");
+        if (layer == "blackPigment" && hasChallenge("blackPigment", 11)) {
+            keep.push("challenges");
+            forceUpgrades.push("31");
+        }
+        if (layer == "whitePigment" && hasChallenge("whitePigment", 11)) { 
+            keep.push("challenges");
+            forceUpgrades.push("31");
+        }
         if (layer == "blackPigment" && hasChallenge("blackPigment", 12)) keep.push("upgrades");
         if (layer == "whitePigment" && hasChallenge("whitePigment", 12)) keep.push("upgrades");
         if (layer == "blackPigment" && hasChallenge("blackPigment", 13)) keep.push("upgrades");
         if (layer == "whitePigment" && hasChallenge("whitePigment", 13)) keep.push("upgrades");
 
         if (["blackPigment", "whitePigment"].includes(layer)) {
-            keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
+            keepUpgrades = merge(filter(player[this.layer].upgrades, keepUpgrades), forceUpgrades);
             layerDataReset(this.layer, keep);
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
@@ -265,7 +282,10 @@ addLayer("purplePigment", {
             },
 
             effect() {
-                return player.yellowPigment.points.add(1).log(100).add(1);
+                let base = new Decimal(0);
+                if (tmp.bluePigment.layerShown) base = base.add(player.bluePigment.points);
+
+                return base.add(1).log(100).add(1);
             },
             cost: new Decimal(1000),
         },
@@ -282,7 +302,9 @@ addLayer("purplePigment", {
             rewardDescription: "Unlock a row of red and blue pigment upgrades.",
 
             unlocked() {
-                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
+                let unlockCondition = player[this.layer].unlocked;
+                let challengeCondition = !inChallenge() || inChallenge(this.layer);
+                return unlockCondition && challengeCondition || player.debugOptions.showAll;
             },
 
             canComplete() {
@@ -296,7 +318,9 @@ addLayer("purplePigment", {
             rewardDescription: "Unlock a row of purple and yellow pigment upgrades.",
 
             unlocked() {
-                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
+                let unlockCondition = player[this.layer].unlocked;
+                let challengeCondition = !inChallenge() || inChallenge(this.layer);
+                return unlockCondition && challengeCondition || player.debugOptions.showAll;
             },
 
             canComplete() {

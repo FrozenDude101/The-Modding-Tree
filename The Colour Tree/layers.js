@@ -119,13 +119,13 @@ addLayer("milestones", {
 
         11: {
             name() {
-                return "A Blank<br>Canvas<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max))
+                return "A Blank<br>Canvas<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blank pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blank pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blank pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blank pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blank pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blank pigment.";
@@ -141,24 +141,24 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
 
         21: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " red pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% red pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% red pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " red pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% red pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% red pigment.";
@@ -178,23 +178,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         22: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Yellow<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Yellow<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " yellow pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% yellow pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% yellow pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " yellow pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% yellow pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% yellow pigment.";
@@ -214,23 +214,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         23: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Blue<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Blue<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blue pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blue pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blue pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " blue pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% blue pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% blue pigment.";
@@ -250,24 +250,24 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
 
         31: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " orange pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% orange pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% orange pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " orange pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% orange pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% orange pigment.";
@@ -287,23 +287,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         32: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Green<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Green<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " green pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% green pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% green pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " green pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% green pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% green pigment.";
@@ -323,23 +323,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         33: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Purple<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Purple<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " purple pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% purple pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% purple pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " purple pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% purple pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% purple pigment.";
@@ -359,24 +359,24 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
 
         41: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Black<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Black<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " black pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% black pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% black pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " black pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% black pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% black pigment.";
@@ -396,23 +396,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         42: {
             name() {
-                return "Absorbed<br>Light<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max));
+                return "Absorbed<br>Light<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max));
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " absorbed light.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% absorbed light.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% absorbed light.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " absorbed light.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% absorbed light.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% absorbed light.";
@@ -432,23 +432,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         43: {
             name() {
-                return "Reflected<br>Light<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max))
+                return "Reflected<br>Light<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " reflected light.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% reflected light.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% reflected light.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " reflected light.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% reflected light.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% reflected light.";
@@ -468,23 +468,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         44: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>White<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>White<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " white pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% white pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% white pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " white pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% green pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% white pigment.";
@@ -504,24 +504,24 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
 
         /*51: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Grey<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Grey<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " grey pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% grey pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% grey pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " grey pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% grey pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% grey pigment.";
@@ -541,23 +541,23 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
         52: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], this.max-1)/10)] + "<br>Pink<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, this.max)%10)
+                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Pink<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
                     case 0:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " pink pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% pink pigment.";
-                    case this.max:
+                    case tmp[this.layer].achievements[this.id].max:
                         return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% pink pigment.";
                     default:
                         return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " pink pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% pink pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% pink pigment.";
@@ -577,12 +577,12 @@ addLayer("milestones", {
             },
             onComplete() {
                 player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < this.max) {
+                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
                     player[this.layer].achievements.pop();
                 }
             },
             effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(this.max).mul(tmp.challenges.effect);
+                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },*/
     },
@@ -811,7 +811,7 @@ addLayer("challenges", {
             },
 
             done() {
-                return player.blackPigment.unlocked && player.whitePigment.unlocked;
+                return getBuyableAmount(player.stats.firstShade, 12).gt(getBuyableAmount(player.stats.firstShade, 11));
             },
             onComplete() {
                 player.achievements.effectNotify = true;

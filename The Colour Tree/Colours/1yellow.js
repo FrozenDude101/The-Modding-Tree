@@ -135,7 +135,8 @@ addLayer("yellowPigment", {
         return player.points;
     },
     requires() {
-        return new Decimal(10).mul(Decimal.pow(10, (hasUpgrade(this.layer, 31) ? 0 : player[this.layer].requiresExponent)));
+        let multiplier = (hasUpgrade(this.layer, 31) || hasAchievement("challenges", 32) ? 1 : Decimal.pow(10, player[this.layer].requiresExponent));
+        return new Decimal(10).mul(multiplier);
     },
     gainMult() {
         let mult = new Decimal(1);
@@ -182,6 +183,9 @@ addLayer("yellowPigment", {
         if (layer == "greenPigment" && hasUpgrade("greenPigment", 31)) keep.push("upgrades");
         if (layer == "orangePigment" || layer == "greenPigment" && hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
 
+        if (layer == "blackPigment" && hasChallenge("blackPigment", 11)) keep.push("upgrades");
+        if (layer == "whitePigment" && hasChallenge("whitePigment", 11)) keep.push("upgrades");
+        
         if (["orangePigment", "greenPigment", "blackPigment", "whitePigment"].includes(layer)) {
             keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
             layerDataReset(this.layer, keep);
@@ -286,7 +290,11 @@ addLayer("yellowPigment", {
             },
 
             effect() {
-                return player.redPigment.points.add(player.bluePigment.points).add(1).log(10).add(1).log(10).add(1);
+                let base = new Decimal(0);
+                if (tmp.redPigment.layerShown)  base = base.add(player.redPigment.points);
+                if (tmp.bluePigment.layerShown) base = base.add(player.bluePigment.points);
+
+                return base.add(1).log(10).add(1).log(10).add(1);
             },
             cost: new Decimal(100000000),
         },
@@ -298,7 +306,11 @@ addLayer("yellowPigment", {
             },
 
             effect() {
-                return player.orangePigment.points.add(player.greenPigment.points).add(1).log(10).add(1).log(10).add(1);
+                let base = new Decimal(0);
+                if (tmp.orangePigment.layerShown) base = base.add(player.orangePigment.points);
+                if (tmp.purplePigment.layerShown) base = base.add(player.purplePigment.points);
+
+                return base.add(1).log(10).add(1).log(10).add(1);
             },
             cost: new Decimal(200000000),
         },

@@ -126,6 +126,18 @@ function filter(arr1, arr2) {
 
 }
 
+function merge(arr1, arr2) {
+
+    let ret = arr1.slice();
+    for(let item of arr2) {
+        if (!arr1.includes(item)) {
+            ret.push(item);
+        }
+    }
+    return ret;
+
+}
+
 // ---- Multi-Layer ----
 
 function calcRequiresExponent(layer, delta=0) {

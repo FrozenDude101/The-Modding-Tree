@@ -53,14 +53,14 @@ addLayer("black", {
 });
 
 addLayer("blackPigment", {
-    color: "#333",
+    color: "#DDD",
     resource: "black pigment",
     shouldNotify() {
         return !player[this.layer].unlocked && canReset(this.layer);
     },
 
     effectDescription() {
-        return "absorbing " + formatWhole(tmp[this.layer].effect) + " light per second.";
+        return "absorbing " + format(tmp[this.layer].effect) + " light per second.";
     },
     
     layerShown() {
@@ -107,6 +107,7 @@ addLayer("blackPigment", {
             let rows = [];
             if (getBuyableAmount("blackPigment", 11).gte(2) || player.debugOptions.showAll) rows.push(1);
             if (hasUpgrade("blackPigment", 13) || player.debugOptions.showAll) rows.push(2);
+            if (hasUpgrade("blackPigment", 23) || player.debugOptions.showAll) rows.push(3);
             return rows;
         }],
         "challenges",
@@ -140,13 +141,16 @@ addLayer("blackPigment", {
         return player.redPigment.points.min(player.bluePigment.points).min(player.yellowPigment.points).min(player.orangePigment.points).min(player.greenPigment.points).min(player.purplePigment.points);
     },
     requires() {
-        return new Decimal(1e7).mul(Decimal.pow(1000, player[this.layer].requiresExponent));
+        let multiplier = (false ? 1 : Decimal.pow(1e9, player[this.layer].requiresExponent));
+        return new Decimal(1e7).mul(multiplier);
     },
     gainMult() {
         let mult = new Decimal(1);
         
         if (player.stats.firstShade == this.layer) mult = mult.mul(1.1);
         mult = mult.mul(tmp.milestones.effect[this.layer].div(100).add(1));
+
+        if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
 
         return mult;
     },
@@ -219,7 +223,11 @@ addLayer("blackPigment", {
             
             baseCost: new Decimal(1),
             exponent() {
-                return new Decimal(10);
+                let ret = new Decimal(10);
+
+                if (hasUpgrade(this.layer, 21)) ret = ret.pow(upgradeEffect(this.layer, 21));
+
+                return ret;
             },
             cost() {
                 return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
@@ -256,9 +264,9 @@ addLayer("blackPigment", {
                 return player.blackPigment.unlocked || player.debugOptions.showAll;
             },
             
-            baseCost: new Decimal(10),
+            baseCost: new Decimal(2),
             exponent() {
-                return new Decimal(2);
+                return new Decimal(1.5);
             },
             cost() {
                 return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
@@ -314,34 +322,31 @@ addLayer("blackPigment", {
 
         21: {
             title: "Blood Red",
-            description: "Multiply black pigment gain by 2.",
+            description: "Exponate Shades cost exponent by 0.5.",
 
-            effect: 2,
+            effect: 0.5,
             cost: new Decimal(10),
         },
         22: {
             title: "Candy Apple Red",
-            description: "Boost blank pigment gain based on black pigment amount.",
-            effectDisplay() {
-                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
-            },
+            description: "Gain 50% of secondary pigment gain per second.",
 
-            effect() {
-                return player[this.layer].points.add(1).log(10).add(1);
-            },
+            effect: 0.5,
             cost: new Decimal(25),
         },
         23: {
             title: "Alizarin Crimson",
-            description: "Boost black pigment gain based on black pigment amount.",
+            description: "Boost black pigment gain based on absorbed light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
-                return player[this.layer].points.add(1).log(20).add(1);
+                return player[this.layer].light.add(1).log(10).add(1);
             },
-            cost: new Decimal(50),
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
+            },
         },
 
     },
@@ -351,17 +356,17 @@ addLayer("blackPigment", {
         cols: 3,
 
         11: {
-            name: "Additive",
-            challengeDescription: "Only have red, yellow, blue, and white pigment.",
-            goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Keep primary pigment upgrades when dying white pigment.",
+            name: "Subtractive",
+            challengeDescription: "Only have red, yellow, blue, and black pigment.",
+            goalDescription: "Reach 100,000,000 blank pigment.",
+            rewardDescription: "Keep primary pigment upgrades when dying black or secondary pigments.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
             },
 
             canComplete() {
-                return player.points.gte(250000);
+                return player.points.gte(100000000);
             },
         },
         12: {
@@ -369,28 +374,25 @@ addLayer("blackPigment", {
             challengeDescription() {
                 return "Only have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
-            goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
-            
-            style() {
-                return (player.stats.firstShade == this.layer ? undefined : {height: "0px", width: "0px"});
-            },
+            goalDescription: "Reach 1,000,000 blank pigment.",
+            rewardDescription: "Keep secondary pigment upgrades and challenges when dying black pigment.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked && player.stats.firstShade == this.layer  || player.debugOptions.showAll;
             },
 
             canComplete() {
-                return player.points.gte(250000);
+                return player.points.gte(1000000);
             },
         },
         13: {
             name: "Anti-Favoritism",
             challengeDescription() {
-                return "Have all pigments except " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
+
+                return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
             goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
+            rewardDescription: "Keep secondary pigment upgrades and challenges when dying black pigment.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked && player.stats.firstShade != this.layer || player.debugOptions.showAll;

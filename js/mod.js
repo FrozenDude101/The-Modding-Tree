@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1.6",
-	name: "Full Spectrum",
+	num: "0.2",
+	name: "Expanded Gamut",
 }
 
 let changelog = `
@@ -121,7 +121,9 @@ function getPointGen() {
 	for (let colour of colours) {
 		if (hasUpgrade(colour, 12)) gain = gain.mul(upgradeEffect(colour, 12));
 		if (hasUpgrade(colour, 13)) gain = gain.mul(upgradeEffect(colour, 13));
-		if (hasUpgrade(colour, 22)) gain = gain.mul(upgradeEffect(colour, 22));
+		if (primary.concat(secondary).includes(colour)) {
+			if (hasUpgrade(colour, 22)) gain = gain.mul(upgradeEffect(colour, 22));
+		}
 	}
 	// Multiply.
 	

@@ -56,7 +56,7 @@ addLayer("whitePigment", {
     },
 
     effectDescription() {
-        return "reflecting " + formatWhole(tmp[this.layer].effect) + " light per second.";
+        return "reflecting " + format(tmp[this.layer].effect) + " light per second.";
     },
     
     layerShown() {
@@ -89,7 +89,7 @@ addLayer("whitePigment", {
     tabFormat: [
         "main-display",
         ["point-display", [
-            "You have absorbed ",
+            "You have reflected ",
             function() {
                 return player.whitePigment.light;
             },
@@ -103,6 +103,7 @@ addLayer("whitePigment", {
             let rows = [];
             if (getBuyableAmount("whitePigment", 11).gte(2) || player.debugOptions.showAll) rows.push(1);
             if (hasUpgrade("whitePigment", 13) || player.debugOptions.showAll) rows.push(2);
+            if (hasUpgrade("whitePigment", 23) || player.debugOptions.showAll) rows.push(3);
             return rows;
         }],
         "challenges",
@@ -136,13 +137,16 @@ addLayer("whitePigment", {
         return player.redPigment.points.min(player.bluePigment.points).min(player.yellowPigment.points).min(player.orangePigment.points).min(player.greenPigment.points).min(player.purplePigment.points);
     },
     requires() {
-        return new Decimal(1e7).mul(Decimal.pow(1000, player[this.layer].requiresExponent));
+        let multiplier = (false ? 1 : Decimal.pow(1e9, player[this.layer].requiresExponent));
+        return new Decimal(1e7).mul(multiplier);
     },
     gainMult() {
         let mult = new Decimal(1);
         
         if (player.stats.firstShade == this.layer) mult = mult.mul(1.1);
         mult = mult.mul(tmp.milestones.effect[this.layer].div(100).add(1));
+
+        if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
 
         return mult;
     },
@@ -215,7 +219,11 @@ addLayer("whitePigment", {
             
             baseCost: new Decimal(1),
             exponent() {
-                return new Decimal(10);
+                let ret = new Decimal(10);
+
+                if (hasUpgrade(this.layer, 21)) ret = ret.pow(upgradeEffect(this.layer, 21));
+
+                return ret;
             },
             cost() {
                 return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
@@ -242,9 +250,9 @@ addLayer("whitePigment", {
             },
             display() {
                 return `
-                Each layer of paint increases the absorption rate by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
+                Each layer of paint increases the reflectivity by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
                 Add another layer of white paint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` white pigment.<br>
-                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying absorption rate by x` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying reflectivity by x` + format(tmp[this.layer].buyables[this.id].effect) + `.
                 `
             },
 
@@ -252,9 +260,9 @@ addLayer("whitePigment", {
                 return player.whitePigment.unlocked || player.debugOptions.showAll;
             },
             
-            baseCost: new Decimal(10),
+            baseCost: new Decimal(2),
             exponent() {
-                return new Decimal(2);
+                return new Decimal(1.5);
             },
             cost() {
                 return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
@@ -310,34 +318,60 @@ addLayer("whitePigment", {
 
         21: {
             title: "Blood Red",
-            description: "Multiply white pigment gain by 2.",
+            description: "Exponate Tint cost exponent by 0.5.",
 
-            effect: 2,
+            effect: 0.5,
             cost: new Decimal(10),
         },
         22: {
             title: "Candy Apple Red",
-            description: "Boost blank pigment gain based on white pigment amount.",
-            effectDisplay() {
-                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
-            },
+            description: "Gain 50% of secondary pigment gain per second.",
 
-            effect() {
-                return player[this.layer].points.add(1).log(10).add(1);
-            },
+            effect: 0.5,
             cost: new Decimal(25),
         },
         23: {
             title: "Alizarin Crimson",
-            description: "Boost white pigment gain based on white pigment amount.",
+            description: "Boost black pigment gain based on absorbed light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
-                return player[this.layer].points.add(1).log(20).add(1);
+                return player[this.layer].light.add(1).log(10).add(1);
             },
-            cost: new Decimal(50),
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
+            },
+        },
+
+        31: {
+            title: "Blood Red",
+            description: "Exponate Tint cost exponent by 0.5.",
+
+            effect: 0.5,
+            cost: new Decimal(10),
+        },
+        32: {
+            title: "Candy Apple Red",
+            description: "Gain 50% of secondary pigment gain per second.",
+
+            effect: 0.5,
+            cost: new Decimal(25),
+        },
+        33: {
+            title: "Alizarin Crimson",
+            description: "Boost black pigment gain based on absorbed light.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                return player[this.layer].light.add(1).log(10).add(1);
+            },
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
+            },
         },
 
     },
@@ -365,15 +399,15 @@ addLayer("whitePigment", {
             challengeDescription() {
                 return "Only have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
-            goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
+            goalDescription: "Reach 1,000,000 blank pigment.",
+            rewardDescription: "Keep secondary pigment upgrades and challenges when dying white pigment.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked && player.stats.firstShade == this.layer  || player.debugOptions.showAll;
             },
 
             canComplete() {
-                return player.points.gte(250000);
+                return player.points.gte(1000000);
             },
         },
         13: {
@@ -383,7 +417,7 @@ addLayer("whitePigment", {
                 return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
             goalDescription: "Reach 250,000 blank pigment.",
-            rewardDescription: "Unlock a row of red and yellow pigment upgrades.",
+            rewardDescription: "Keep secondary pigment upgrades and challenges when dying white pigment.",
 
             unlocked() {
                 return hasChallenge(this.layer, this.id) || player[this.layer].unlocked && player.stats.firstShade != this.layer || player.debugOptions.showAll;
