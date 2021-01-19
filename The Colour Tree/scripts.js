@@ -36,25 +36,33 @@ function formatNumeral(number) {
 
 function formatNth(number) {
 
-    let n = parseInt(number);
+    let n = toNumber(number);
     if (number instanceof Decimal && number.neq(n) || formatWhole(n).includes("e")) {
         return "n<sup>th</sup>";
     }
 
     let prefix;
-    switch(n%10) {
-        case 1:
-            prefix = "st";
-            break;
-        case 2:
-            prefix = "nd";
-            break;
-        case 3:
-            prefix = "rd";
-            break;
-        default:
+    switch (n%100) {
+        case 11:
+        case 12:
+        case 13:
             prefix = "th";
             break;
+        default:
+            switch(n%10) {
+                case 1:
+                    prefix = "st";
+                    break;
+                case 2:
+                    prefix = "nd";
+                    break;
+                case 3:
+                    prefix = "rd";
+                    break;
+                default:
+                    prefix = "th";
+                    break;
+    }
     }
 
     return formatWhole(n) + "<sup>" + prefix + "</sup>";

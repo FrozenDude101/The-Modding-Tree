@@ -178,25 +178,11 @@ addLayer("redPigment", {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
         let keepUpgrades = [];
 
-        switch(layer) {
-            case "orangePigment":
-                if (hasUpgrade("orangePigment", 31)) keep.push("upgrades");
-                if (hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
-                break;
-            case "purplePigment":
-                if (hasUpgrade("purplePigment", 31)) keep.push("upgrades");
-                if (hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
-                break;
-            case "blackPigment":
-                break;
-            case "whitePigment":
-                break;
-            default:
-                keep = undefined;
-                break;
-        }
+        if (layer == "orangePigment" && hasUpgrade("orangePigment", 31)) keep.push("upgrades");
+        if (layer == "purplePigment" && hasUpgrade("purplePigment", 31)) keep.push("upgrades");
+        if (layer == "orangePigment" || layer == "purplePigment" && hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
 
-        if (keep != undefined) {
+        if (["orangePigment", "purplePigment", "blackPigment", "whitePigment", "pinkPigment"].includes(layer)) {
             keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
             layerDataReset(this.layer, keep);
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;

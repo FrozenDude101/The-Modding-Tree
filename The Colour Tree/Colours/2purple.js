@@ -162,17 +162,14 @@ addLayer("purplePigment", {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
         let keepUpgrades = [];
 
-        switch(layer) {
-            case "blackPigment":
-                break;
-            case "whitePigment":
-                break;
-            default:
-                keep = undefined;
-                break;
-        }
+        if (layer == "blackPigment" && hasChallenge("blackPigment", 11)) keep.push("challenges");
+        if (layer == "whitePigment" && hasChallenge("whitePigment", 11)) keep.push("challenges");
+        if (layer == "blackPigment" && hasChallenge("blackPigment", 12)) keep.push("upgrades");
+        if (layer == "whitePigment" && hasChallenge("whitePigment", 12)) keep.push("upgrades");
+        if (layer == "blackPigment" && hasChallenge("blackPigment", 13)) keep.push("upgrades");
+        if (layer == "whitePigment" && hasChallenge("whitePigment", 13)) keep.push("upgrades");
 
-        if (keep != undefined) {
+        if (["blackPigment", "whitePigment"].includes(layer)) {
             keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
             layerDataReset(this.layer, keep);
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
