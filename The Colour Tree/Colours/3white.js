@@ -1,5 +1,12 @@
 //vscode-fold=1
 
+/*
+    www.eggradients.com/shades-of-white
+    4-2
+
+    #DDD
+*/
+
 addLayer("white", {
     symbol: "W",
     color: "#DDD",
@@ -24,7 +31,7 @@ addLayer("white", {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
+        return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " coloured pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
     layerShown() {
@@ -38,7 +45,7 @@ addLayer("white", {
         };
     },  
     unlocked() {
-        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment");
+        player[this.layer].unlocked = player[this.layer + "Pigment"].unlocked || canReset(this.layer + "Pigment") || player.debugOptions.showAll;
     },
 
     tabFormat: {
@@ -107,6 +114,7 @@ addLayer("whitePigment", {
             return rows;
         }],
         "challenges",
+        "blank",
     ],
 
     hotkeys: [
@@ -292,21 +300,21 @@ addLayer("whitePigment", {
         cols: 3,
 
         11: {
-            title: "Maroon",
+            title: "Snow White",
             description: "Exponate base black pigment gain by 1.5.",
 
             effect: 1.5,
             cost: new Decimal(1),
         },
         12: {
-            title: "Burgundy",
+            title: "Ivory",
             description: "Multiply blank pigment gain by 2.",
 
             effect: 2,
             cost: new Decimal(2),
         },
         13: {
-            title: "Auburn",
+            title: "Platinum",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
@@ -319,21 +327,21 @@ addLayer("whitePigment", {
         },
 
         21: {
-            title: "Blood Red",
+            title: "White Smoke",
             description: "Exponate Tint cost exponent by 0.5.",
 
             effect: 0.5,
             cost: new Decimal(10),
         },
         22: {
-            title: "Candy Apple Red",
+            title: "Linen",
             description: "Gain 50% of secondary pigment gain per second.",
 
             effect: 0.5,
             cost: new Decimal(25),
         },
         23: {
-            title: "Alizarin Crimson",
+            title: "Magnolia",
             description: "Boost blank pigment gain based on reflected light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
@@ -348,7 +356,7 @@ addLayer("whitePigment", {
         },
 
         31: {
-            title: "Blood Red",
+            title: "Honeydew",
             description: "Boost white pigment gain based on reflected light.",
 
             effect() {
@@ -359,7 +367,7 @@ addLayer("whitePigment", {
             },
         },
         32: {
-            title: "Candy Apple Red",
+            title: "Old Lace",
             description: "Boost white pigment gain based on absorbed light.",
 
             effect() {
@@ -372,7 +380,7 @@ addLayer("whitePigment", {
             },
         },
         33: {
-            title: "Alizarin Crimson",
+            title: "Seashell",
             description: "Boost white pigment gain based on white pigment.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);

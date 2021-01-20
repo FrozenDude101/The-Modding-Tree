@@ -102,6 +102,7 @@ addLayer("greenPigment", {
             return rows;
         }],
         "challenges",
+        "blank",
     ],
 
     hotkeys: [

@@ -469,7 +469,7 @@ a {
 	column-span: 1;
 	position: absolute;
 	overflow-y: auto;
-	overflow-x: auto;
+	overflow-x: auto	;
 	transition-duration: 0s
 }
 
@@ -539,7 +539,6 @@ ul {
 	left: 0;
 	height: 100%;
 	width: 100%;
-	min-width: 100%;
 	overflow-y: auto;
 	overflow-x: auto;
 	transition-duration: 0s
@@ -687,4 +686,8 @@ button > * {
 
 #treeTab td button {
     margin: 0 10px;
+}
+
+#treeTab {
+	overflow-x: hidden;
 }

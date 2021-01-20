@@ -1,6 +1,9 @@
 //vscode-fold=1
 
 /*
+    www.eggradients.com/shades-of-black-color
+    4-2
+
     #222
 */
 
@@ -28,7 +31,7 @@ addLayer("black", {
         return "You have " + formatWhole(player[this.layer + "Pigment"].points) + " " + this.layer + " pigment.";
     },
     tooltipLocked() {
-        return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " blank pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
+        return "You need " + formatWhole(tmp[this.layer + "Pigment"].requires) + " coloured pigment to unlock the colour " + this.layer + ". (You have " + formatWhole(tmp[this.layer + "Pigment"].baseAmount) + ".)";
     },
 
     layerShown() {
@@ -111,6 +114,7 @@ addLayer("blackPigment", {
             return rows;
         }],
         "challenges",
+        "blank",
     ],
 
     hotkeys: [
@@ -296,21 +300,21 @@ addLayer("blackPigment", {
         cols: 3,
 
         11: {
-            title: "Maroon",
+            title: "Ebony",
             description: "Exponate base black pigment gain by 1.5.",
 
             effect: 1.5,
             cost: new Decimal(1),
         },
         12: {
-            title: "Burgundy",
+            title: "Onyx",
             description: "Multiply blank pigment gain by 2.",
 
             effect: 2,
             cost: new Decimal(2),
         },
         13: {
-            title: "Auburn",
+            title: "Black Olive",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
@@ -323,21 +327,21 @@ addLayer("blackPigment", {
         },
 
         21: {
-            title: "Blood Red",
+            title: "Jet",
             description: "Exponate Tint cost exponent by 0.5.",
 
             effect: 0.5,
             cost: new Decimal(10),
         },
         22: {
-            title: "Candy Apple Red",
+            title: "Smoky Black",
             description: "Gain 50% of secondary pigment gain per second.",
 
             effect: 0.5,
             cost: new Decimal(25),
         },
         23: {
-            title: "Alizarin Crimson",
+            title: "Licorice",
             description: "Boost blank pigment gain based on absorbed light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
@@ -352,7 +356,7 @@ addLayer("blackPigment", {
         },
 
         31: {
-            title: "Blood Red",
+            title: "Eigengrau",
             description: "Boost black pigment gain based on absorbed light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
@@ -364,7 +368,7 @@ addLayer("blackPigment", {
             cost: new Decimal(10),
         },
         32: {
-            title: "Candy Apple Red",
+            title: "Diesel",
             description: "Boost black pigment gain based on reflected light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
@@ -378,7 +382,7 @@ addLayer("blackPigment", {
             cost: new Decimal(25),
         },
         33: {
-            title: "Alizarin Crimson",
+            title: "Crowshead",
             description: "Boost black pigment gain based on black pigment.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);

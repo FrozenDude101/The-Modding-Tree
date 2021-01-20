@@ -110,6 +110,8 @@ addLayer("milestones", {
             absorbedLight:  achievementEffect("milestones", 42),
             whitePigment:   achievementEffect("milestones", 44),
             reflectedLight: achievementEffect("milestones", 43),
+
+            greyPigment:    achievementEffect("milestones", 51),
         };
     },
 
@@ -513,7 +515,7 @@ addLayer("milestones", {
             },
         },
 
-        /*51: {
+        51: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Grey<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },
@@ -549,7 +551,7 @@ addLayer("milestones", {
                 return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
-        52: {
+        /*52: {
             name() {
                 return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Pink<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
             },

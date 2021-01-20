@@ -63,7 +63,6 @@ addLayer("debugLayers", {
         ret += "</select>";
         return ret;
     },
-
     componentEditor() {
         let ret = "";
         let layerName = player[this.layer].activeLayer;
@@ -159,7 +158,6 @@ addLayer("debugLayers", {
 
         return ret;
     },
-
     attributeViewer() {
         let ret = "<h2>Attributes</h2><br><br>";
         let tableData = {};
@@ -199,7 +197,6 @@ addLayer("debugLayers", {
 
         return ret;
     },
-
     tabFormat: [
         ["display-text", function() {
             return tmp.debugLayers.createDropDownMenu;

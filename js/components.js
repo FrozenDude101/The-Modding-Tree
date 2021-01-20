@@ -223,12 +223,6 @@ function loadVue() {
 		<div><span>You have </span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px' + tmp[layer].color}">{{formatWhole(player[layer].points)}}</h2> {{tmp[layer].resource}}<span v-if="tmp[layer].effectDescription">, <span v-html="tmp[layer].effectDescription"></span></span><br><br></div>
 		`
 	})
-	
-	Vue.component('point-display', {
-		props: ['layer', 'data'],
-		template: `<div><span v-html="data[0]"></span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px' + tmp[layer].color}" v-html="formatWhole(data[1])"></h2><span v-html="data[2]"></span><br><br></div>
-		`
-	})
 
 	// Displays the base resource for the layer, as well as the best and total values for the layer's currency, if tracked
 	Vue.component('resource-display', {
@@ -421,6 +415,15 @@ function loadVue() {
 				v-bind:class="{ longUpg: true, can: player[layer].unlocked, locked: !player[layer].unlocked }">{{tmp[layer].buyables.sellAllText ? tmp[layer].buyables.sellAllText : "Sell All"}}</button>
 	`
 	})
+
+	// Custom components.
+	
+	Vue.component('point-display', {
+		props: ['layer', 'data'],
+		template: `<div><span v-html="data[0]"></span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px' + tmp[layer].color}" v-html="formatWhole(data[1])"></h2><span v-html="data[2]"></span><br><br></div>
+		`
+	})
+	// Displays a number in the style of main-display.
 
 	// SYSTEM COMPONENTS
 

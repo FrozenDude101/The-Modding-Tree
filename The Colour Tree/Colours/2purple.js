@@ -102,6 +102,7 @@ addLayer("purplePigment", {
             return rows;
         }],
         "challenges",
+        "blank",
     ],
 
     hotkeys: [
