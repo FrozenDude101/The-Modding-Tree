@@ -122,6 +122,7 @@ addLayer("purplePigment", {
     passiveGeneration() {
         let gain = 0;
 
+        if (hasUpgrade("blackPigment", 22)) gain += upgradeEffect("blackPigment", 22);
         if (hasUpgrade("whitePigment", 22)) gain += upgradeEffect("whitePigment", 22);
 
         gain *= player[this.layer].unlocked;

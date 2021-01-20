@@ -124,6 +124,9 @@ function getPointGen() {
 		if (primary.concat(secondary).includes(colour)) {
 			if (hasUpgrade(colour, 22)) gain = gain.mul(upgradeEffect(colour, 22));
 		}
+		if (shades.includes(colour)) {
+			if (hasUpgrade(colour, 23)) gain = gain.mul(upgradeEffect(colour, 23));
+		}
 	}
 	// Multiply.
 	

@@ -811,6 +811,7 @@ addLayer("challenges", {
             },
 
             done() {
+                if (player.stats.firstShade == "") return false;
                 return getBuyableAmount(player.stats.firstShade, 12).gt(getBuyableAmount(player.stats.firstShade, 11));
             },
             onComplete() {

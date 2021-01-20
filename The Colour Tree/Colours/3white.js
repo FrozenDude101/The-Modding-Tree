@@ -146,7 +146,9 @@ addLayer("whitePigment", {
         if (player.stats.firstShade == this.layer) mult = mult.mul(1.1);
         mult = mult.mul(tmp.milestones.effect[this.layer].div(100).add(1));
 
-        if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
+        if (hasUpgrade(this.layer, 31)) mult = mult.mul(upgradeEffect(this.layer, 31));
+        if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
+        if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
         return mult;
     },
@@ -332,13 +334,13 @@ addLayer("whitePigment", {
         },
         23: {
             title: "Alizarin Crimson",
-            description: "Boost black pigment gain based on absorbed light.",
+            description: "Boost blank pigment gain based on reflected light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
-                return player[this.layer].light.add(1).log(10).add(1);
+                return player[this.layer].light.add(1).log(20).add(1);
             },
             cost() {
                 return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
@@ -347,30 +349,40 @@ addLayer("whitePigment", {
 
         31: {
             title: "Blood Red",
-            description: "Exponate Tint cost exponent by 0.5.",
+            description: "Boost white pigment gain based on reflected light.",
 
-            effect: 0.5,
-            cost: new Decimal(10),
+            effect() {
+                return player[this.layer].light.add(1).log(100).add(1);
+            },
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(1e8) : new Decimal(1000))
+            },
         },
         32: {
             title: "Candy Apple Red",
-            description: "Gain 50% of secondary pigment gain per second.",
+            description: "Boost white pigment gain based on absorbed light.",
 
-            effect: 0.5,
-            cost: new Decimal(25),
+            effect() {
+                let base = new Decimal(0);
+                if (tmp.blackPigment.layerShown) base = base.add(player.blackPigment.light);
+                return base.add(1).log(100).add(1);
+            },
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(5e9) : new Decimal(50000))
+            },
         },
         33: {
             title: "Alizarin Crimson",
-            description: "Boost black pigment gain based on absorbed light.",
+            description: "Boost white pigment gain based on white pigment.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
-                return player[this.layer].light.add(1).log(10).add(1);
+                return player[this.layer].light.add(1).log(1000).add(1);
             },
             cost() {
-                return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
+                return (this.layer == player.stats.firstShade ? new Decimal(5e11) : new Decimal(5e6))
             },
         },
 
@@ -416,7 +428,7 @@ addLayer("whitePigment", {
 
                 return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
-            goalDescription: "Reach 250,000 blank pigment.",
+            goalDescription: "Reach 1e14 blank pigment.",
             rewardDescription: "Keep secondary pigment upgrades and challenges when dying white pigment.",
 
             unlocked() {
@@ -424,7 +436,7 @@ addLayer("whitePigment", {
             },
 
             canComplete() {
-                return player.points.gte(250000);
+                return player.points.gte(1e14);
             },
         },
     },

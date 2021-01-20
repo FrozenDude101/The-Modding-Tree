@@ -1,4 +1,6 @@
-//vscode-fold=1
+//vscode-fold=1#
+
+// Make base cost be 1e10.
 
 addLayer("grey", {
     symbol: "G",

@@ -53,7 +53,7 @@ addLayer("black", {
 });
 
 addLayer("blackPigment", {
-    color: "#DDD",
+    color: "#444",
     resource: "black pigment",
     shouldNotify() {
         return !player[this.layer].unlocked && canReset(this.layer);
@@ -149,8 +149,10 @@ addLayer("blackPigment", {
         
         if (player.stats.firstShade == this.layer) mult = mult.mul(1.1);
         mult = mult.mul(tmp.milestones.effect[this.layer].div(100).add(1));
-
-        if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
+        
+        if (hasUpgrade(this.layer, 31)) mult = mult.mul(upgradeEffect(this.layer, 31));
+        if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
+        if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
         return mult;
     },
@@ -290,7 +292,7 @@ addLayer("blackPigment", {
     },
 
     upgrades: {
-        rows: 2,
+        rows: 3,
         cols: 3,
 
         11: {
@@ -322,7 +324,7 @@ addLayer("blackPigment", {
 
         21: {
             title: "Blood Red",
-            description: "Exponate Shades cost exponent by 0.5.",
+            description: "Exponate Tint cost exponent by 0.5.",
 
             effect: 0.5,
             cost: new Decimal(10),
@@ -336,19 +338,59 @@ addLayer("blackPigment", {
         },
         23: {
             title: "Alizarin Crimson",
-            description: "Boost black pigment gain based on absorbed light.",
+            description: "Boost blank pigment gain based on absorbed light.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
             },
 
             effect() {
-                return player[this.layer].light.add(1).log(10).add(1);
+                return player[this.layer].light.add(1).log(20).add(1);
             },
             cost() {
                 return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
             },
         },
 
+        31: {
+            title: "Blood Red",
+            description: "Boost black pigment gain based on absorbed light.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                return player[this.layer].light.add(1).log(100).add(1);
+            },
+            cost: new Decimal(10),
+        },
+        32: {
+            title: "Candy Apple Red",
+            description: "Boost black pigment gain based on reflected light.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                let base = new Decimal(0);
+                if (tmp.whitePigment.layerShown) base = base.add(player.whitePigment.light);
+                return base.add(1).log(100).add(1);
+            },
+            cost: new Decimal(25),
+        },
+        33: {
+            title: "Alizarin Crimson",
+            description: "Boost black pigment gain based on black pigment.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                return player[this.layer].light.add(1).log(1000).add(1);
+            },
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
+            },
+        },
     },
 
     challenges: {
@@ -391,7 +433,7 @@ addLayer("blackPigment", {
 
                 return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
-            goalDescription: "Reach 250,000 blank pigment.",
+            goalDescription: "Reach 1e14 blank pigment.",
             rewardDescription: "Keep secondary pigment upgrades and challenges when dying black pigment.",
 
             unlocked() {
@@ -399,7 +441,7 @@ addLayer("blackPigment", {
             },
 
             canComplete() {
-                return player.points.gte(250000);
+                return player.points.gte(1e14);
             },
         },
     },

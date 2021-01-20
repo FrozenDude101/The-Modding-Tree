@@ -154,7 +154,7 @@ function calcRequiresExponent(layer, delta=0) {
         case "orangePigment":
         case "greenPigment":
         case "purplePigment":
-            return Math.max(0.5 * (primary+delta) * (primary+delta+1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0);
+            return Math.max(0.5 * (primary+delta-2) * (primary+delta-1) + 0.5 * (secondary+delta) * (secondary+delta+1), 0);
         case "blackPigment":
         case "whitePigment":
             return shades+delta;
