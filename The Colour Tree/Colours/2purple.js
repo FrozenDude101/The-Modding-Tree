@@ -152,6 +152,7 @@ addLayer("purplePigment", {
 
         if (tmp.blackPigment.layerShown) mult = mult.mul(buyableEffect("blackPigment", 11));
         if (tmp.whitePigment.layerShown) mult = mult.mul(buyableEffect("whitePigment", 11));
+        if (tmp.greyPigment.layerShown)  mult = mult.mul(buyableEffect("greyPigment",  11));
 
         return mult;
     },

@@ -66,7 +66,7 @@ function getNextAt(layer, canMax=false, useType = null) {
 		return layers[layer].getNextAt(canMax)
 	} else {
 		return new Decimal(0)
-	}}
+}}
 
 function softcap(value, cap, power = 0.5) {
 	if (value.lte(cap)) return value

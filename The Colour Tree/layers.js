@@ -27,37 +27,6 @@ addLayer("achievements", {
         Challenges: {
             embedLayer: "challenges",
         },
-        Effects: {
-            content: [
-                ["display-text", function() {
-                    let effects = tmp.milestones.effect;
-                    let tableData = {};
-                    for (let item in effects) {
-                        if (effects[item] instanceof Decimal && effects[item].eq(0) && !player.debugOptions.showAll) continue;
-                        let data = "+" + format(effects[item]) + "%";
-                        tableData[item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g,' $1')] = data;
-                    };
-                    return formatTable(tableData, {headings: ["Point", "Boost"]});
-                }],
-                "blank",
-                ["display-text", function() {
-                    let ret = "";
-
-                    if (hasAchievement("challenges", 11)) ret += player.stats.firstPrimary.charAt(0).toUpperCase() + player.stats.firstPrimary.slice(1).replace(/([A-Z])/g,' $1') + " is boosted by +10%.<br>";
-                    if (hasAchievement("challenges", 14)) ret += player.stats.firstSecondary.charAt(0).toUpperCase() + player.stats.firstSecondary.slice(1).replace(/([A-Z])/g,' $1') + " is boosted by +10%.<br>";
-                    if (hasAchievement("challenges", 21)) ret += "+" + achievementEffect("challenges", 21) + " base blank pigment gain.<br>";
-                    if (hasAchievement("challenges", 22)) ret += "Keep primary pigment unlock order and automatic gain upgrades on secondary pigment reset.<br>";
-                    if (hasAchievement("challenges", 24)) ret += "Secondary pigments are based on total primary pigments.<br>";
-
-                    if (ret == "") ret = "You haven't unlocked any additional effects yet.";
-                    else           ret = "You also have the following effects.<br><br>" + ret;
-                    return ret;
-                }],
-            ],
-            shouldNotify() {
-                return player.achievements.effectNotify;
-            },
-        },
     },
 });
 
@@ -76,6 +45,8 @@ addLayer("milestones", {
         return {
             points: "",
             levels: levels,
+
+            showPopups: true,
         };
     },
     points() {
@@ -92,6 +63,9 @@ addLayer("milestones", {
     tabFormat: [
         "main-display",
         "achievements",
+        ["display-text", "Milestone Completion Popups"],
+        "blank",
+        ["toggle", ["challenges", "showPopups"]],
     ],
 
     effect() {
@@ -115,6 +89,9 @@ addLayer("milestones", {
         };
     },
 
+    achievementsPopups() {
+        return player[this.layer].showPopups;
+    },
     achievements: {
         rows: 5,
         cols: 4,
@@ -602,6 +579,8 @@ addLayer("challenges", {
     startData() {
         return {
             points: "",
+
+            showPopups: true,
         };
     },
     points() {
@@ -616,20 +595,25 @@ addLayer("challenges", {
     tabFormat: [
         "main-display",
         "achievements",
+        ["display-text", "Challenge Completion Popups<br>Challenges without bonuses will never popup."],
+        "blank",
+        ["toggle", ["challenges", "showPopups"]],
     ],
 
     effect() {
         return new Decimal(player.challenges.achievements.length).add(1).log(10).add(1); 
     },
 
+    achievementPopups: false,
     achievements: {
         rows() {
             let rows = 1;
             if (tmp.milestones) {
-                if (tmp.milestones.achievements.row >= 2 || player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked || player.debugOptions.showAll) rows ++;
+                if (tmp.milestones.achievements.row >= 2 || player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked) rows ++;
                 if (tmp.milestones.achievements.row >= 3 || player.blackPigment.unlocked || player.whitePigment.unlocked) rows ++;
                 if (tmp.milestones.achievements.row >= 4 || player.greyPigment.unlocked || player.pinkPigment.unlocked) rows ++;
             }
+            if (player.debugOptions.showAll) rows = 5;
             return rows;
         },
         cols: 5,
@@ -653,7 +637,16 @@ addLayer("challenges", {
                 if (player.yellowPigment.unlocked) player.stats.firstPrimary = "yellowPigment";
                 if (player.bluePigment.unlocked)   player.stats.firstPrimary = "bluePigment";
 
-                player.achievements.effectNotify = true;
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
             effect: 1.1,
         },
@@ -692,7 +685,16 @@ addLayer("challenges", {
                 if (player.greenPigment.unlocked)  player.stats.firstSecondary = "greenPigment";
                 if (player.purplePigment.unlocked) player.stats.firstSecondary = "purplePigment";
 
-                player.achievements.effectNotify = true;
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
             effect: 1.1,
         },
@@ -717,7 +719,16 @@ addLayer("challenges", {
                 return hasChallenge("orangePigment", 11) || hasChallenge("greenPigment", 11) || hasChallenge("purplePigment", 11);
             },
             onComplete() {
-                player.achievements.effectNotify = true;
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
             effect() {
                 return tmp.orange.layerShown + tmp.green.layerShown + tmp.purple.layerShown + tmp.grey.layerShown + tmp.pink.layerShown;
@@ -735,7 +746,16 @@ addLayer("challenges", {
                 return hasChallenge("orangePigment", 12) || hasChallenge("greenPigment", 12) || hasChallenge("purplePigment", 12);
             },
             onComplete() {
-                player.achievements.effectNotify = true;
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
         },
         23: {
@@ -758,7 +778,16 @@ addLayer("challenges", {
                 return (!hasChallenge("orangePigment", 11) && hasChallenge("orangePigment", 12)) || (!hasChallenge("greenPigment", 11) && hasChallenge("greenPigment", 12)) || (!hasChallenge("purplePigment", 11) && hasChallenge("purplePigment", 12));
             },
             onComplete() {
-                player.achievements.effectNotify = true;
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
         },
         25: {
@@ -774,7 +803,7 @@ addLayer("challenges", {
             name: "Value",
             tooltip() {
                 let colour = (player.stats.firstShade ? player.stats.firstShade.charAt(0).toUpperCase() + player.stats.firstShade.slice(1).replace(/([A-Z])/g,' $1') : "First shade");
-                return  "Combine two colours.\nReward:\n" + colour + " is permanently boosted by +10%.";
+                return  "Unlock black or white pigment.\nReward:\n" + colour + " is permanently boosted by +10%.";
             },
 
             style: {
@@ -788,7 +817,16 @@ addLayer("challenges", {
                 if (player.blackPigment.unlocked) player.stats.firstShade = "blackPigment";
                 if (player.whitePigment.unlocked) player.stats.firstShade = "whitePigment";
 
-                player.achievements.effectNotify = true;
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
             effect: 1.1,
         },
@@ -817,7 +855,16 @@ addLayer("challenges", {
                 return getBuyableAmount(player.stats.firstShade, 12).gt(getBuyableAmount(player.stats.firstShade, 11));
             },
             onComplete() {
-                player.achievements.effectNotify = true;
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
         },
         33: {
@@ -829,11 +876,58 @@ addLayer("challenges", {
             },
         },
         34: {
-            name: "Skipping A Beat",
-            tooltip: "Obtain all secondary pigment challenges with only 2 primary pigments used.",
-            //TODO
+            name: "Out of<br>Order<sup>2</sup>",
+            tooltip() {
+                let firstChallenge = (player.firstShade == "blackPigment" ? "Subtractive" : "Additive");
+                return "Complete Anti-Favoritism before " + firstChallenge + ".\nReward:\nAbsorbed/Reflected light is generated based on best black/white pigment.";
+            },
+
+            style: {
+                color: "#FD0",
+            },
+
             done() {
-                return player.blackPigment.unlocked && player.whitePigment.unlocked;
+                return (player.firstShade == "blackPigment" ? hasChallenge("whitePigment", 12) && !hasChallenge("whitePigment", 11) : hasChallenge("blackPigment", 12) && !hasChallenge("blackPigment", 11));
+            },
+            onComplete() {
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
+            },
+        },
+        35: {
+            name: "Fresh<br>Paint",
+            tooltip() {
+                let shade1 = (player.firstShade == "blackPigment" ? "black" : "white");
+                let shade2 = (player.firstShade == "blackPigment" ? "white" : "black");
+                return "Have more coats of " + shade2 + " paint than " + shade1 + " paint.\nReward:\nBlack/White pigment buyables don't spend pigment/light.";
+            },
+
+            style: {
+                color: "#FD0",
+            },
+
+            done() {
+                return (player.firstShade == "blackPigment" ? getBuyableAmount("whitePigment", 12).gt(getBuyableAmount("blackPigment", 12)) : getBuyableAmount("blackPigment", 12).gt(getBuyableAmount("whitePigment", 12)));
+            },
+            onComplete() {
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        tmp[this.layer].achievements[this.id].name,
+                        5,
+                        "#DDD"
+                    );
+                }
             },
         },
         

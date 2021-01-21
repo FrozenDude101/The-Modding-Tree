@@ -158,6 +158,8 @@ addLayer("whitePigment", {
         if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
+        if (tmp.greyPigment.layerShown) mult = mult.mul(buyableEffect("greyPigment", 11));
+
         return mult;
     },
     gainExp() {
@@ -200,7 +202,7 @@ addLayer("whitePigment", {
     },
 
     effect() {
-        ret = player[this.layer].points;
+        ret = (hasAchievement("challenges", 34) ? player[this.layer].best : player[this.layer].points);
 
         ret = ret.mul(tmp.milestones.effect.absorbedLight.div(100).add(1));
 
@@ -217,9 +219,9 @@ addLayer("whitePigment", {
             title: "Tints",
             display() {
                 return `
-                Multiply all primary and secondary pigment gain by x` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
+                Multiply all primary and secondary pigment gain by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
                 Discover a new tint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` absorbed light.<br>
-                You have discovered ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` different tint` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying all primary and secondary pigment gain by x` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                You have discovered ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` different tint` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying all primary and secondary pigment gain by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
                 `
             },
 
@@ -242,7 +244,7 @@ addLayer("whitePigment", {
                 return player[this.layer].light.gte(tmp[this.layer].buyables[this.id].cost);
             },
             buy() {
-                player[this.layer].light = player[this.layer].light.sub(tmp[this.layer].buyables[this.id].cost);
+                if (!hasAchievement("challenges", 35)) player[this.layer].light = player[this.layer].light.sub(tmp[this.layer].buyables[this.id].cost);
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
             },
 
@@ -262,7 +264,7 @@ addLayer("whitePigment", {
                 return `
                 Each layer of paint increases the reflectivity by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
                 Add another layer of white paint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` white pigment.<br>
-                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying reflectivity by x` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying reflectivity by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
                 `
             },
 
@@ -281,7 +283,7 @@ addLayer("whitePigment", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost);
             },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
+                if (!hasAchievement("challenges", 35)) player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
             },
 

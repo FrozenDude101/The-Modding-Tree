@@ -82,6 +82,7 @@ addLayer("greyPigment", {
             lifetimeTotalLight: new Decimal(0),
             
             unlocked: false,
+            shade: 640,
         };
     },
 
@@ -94,7 +95,22 @@ addLayer("greyPigment", {
         "prestige-button",
         ["slider", [[this.layer, "lightness"], 0, 1000]],
         "blank",
-        ["raw-html", function() { return tmp.greyPigment.createSlider} ],
+        ["raw-html", function() {
+            return tmp.greyPigment.createSlider
+        }],
+        "blank",
+        ["display-text", function() {
+            return "Your shade of grey is boosting<br>absorption rate by x" + format(tmp.greyPigment.effect.absorbedLight) + "<br>reflectivity by x" + format(tmp.greyPigment.effect.reflectedLight) + ".";
+        }],
+        "blank",
+        "buyables",
+        "blank",
+        ["upgrades", function() {
+            let rows = [];
+            if (getBuyableAmount("greyPigment", 11).gte(1) || player.debugOptions.showAll) rows.push(1);
+            if (hasUpgrade("greyPigment", 13) || player.debugOptions.showAll) rows.push(2);
+            return rows;
+        }],
     ],
 
     hotkeys: [
@@ -174,10 +190,106 @@ addLayer("greyPigment", {
         let exponent = new Decimal(2);
 
         let mult = new Decimal(1);
+        mult = mult.mul(buyableEffect(this.layer, 12));
 
         return {
-            absorbedLight: Decimal.pow(normalisedShade, exponent).add(1).mul(mult),
-            reflectedLight: Decimal.pow(1-normalisedShade, exponent).add(1).mul(mult),
+            absorbedLight: Decimal.pow(normalisedShade, exponent).mul(mult).add(1),
+            reflectedLight: Decimal.pow(1-normalisedShade, exponent).mul(mult).add(1),
         };
+    },
+
+    buyables: {
+        rows: 1,
+        cols: 2,
+
+        11: {
+            title: "Tones",
+            display() {
+                return `
+                Multiply all black, white, and coloured pigment gain by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
+                Discover a new tone for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` grey pigment.<br>
+                You have discovered ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` different tone` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying all black, white, and coloured pigment gain by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                `
+            },
+
+            unlocked() {
+                return player.greyPigment.unlocked || player.debugOptions.showAll;
+            },
+            
+            baseCost: new Decimal(1),
+            exponent() {
+                let ret = new Decimal(5);
+
+                return ret;
+            },
+            cost() {
+                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+            },
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost);
+            },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+            },
+
+            baseEffect() {
+                let ret = new Decimal(1.5);
+                return ret;
+            },
+            effect() {
+                return tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+            },
+        },
+        12: {
+            title() {
+                return formatNth(getBuyableAmount(this.layer, this.id).add(2)) + " Coat"
+            },
+            display() {
+                return `
+                Each layer of paint multiplies the grey shade multiplier by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
+                Add another layer of grey paint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` grey pigment.<br>
+                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying the grey shade multiplier by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                `
+            },
+
+            unlocked() {
+                return player.greyPigment.unlocked || player.debugOptions.showAll;
+            },
+            
+            baseCost: new Decimal(2),
+            exponent() {
+                return new Decimal(1.5);
+            },
+            cost() {
+                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+            },
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost);
+            },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+            },
+
+            baseEffect() {
+                let ret = new Decimal(1.1);
+                return ret;
+            },
+            effect() {
+                return tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+            },
+        }
+    },
+
+    upgrades: {
+        rows: 2,
+        cols: 3,
+
+        11: {
+            title: "1",
+
+            cost: new Decimal(1),
+        }
     },
 });
