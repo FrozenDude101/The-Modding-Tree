@@ -138,6 +138,12 @@ function merge(arr1, arr2) {
 
 }
 
+function includesAny(arr1, arr2) {
+
+    return filter(arr1, arr2).length > 0;
+
+}
+
 // ---- Multi-Layer ----
 
 function calcRequiresExponent(layer, delta=0) {

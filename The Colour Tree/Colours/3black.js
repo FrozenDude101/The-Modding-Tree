@@ -35,8 +35,8 @@ addLayer("black", {
     },
 
     layerShown() {
-        if (tmp[this.layer].layerShown && typeof tmp[this.layer].layerShown != "object") player[this.layer].shown = true;
-        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+        if (layerShown(this.layer) && !(layerShown(this.layer) instanceof Decimal)) player[this.layer].shown = true;
+        return layerShown(this.layer + "Pigment") || player.debugOptions.showAll;
     },  
 
     startData() {
@@ -83,8 +83,8 @@ addLayer("blackPigment", {
             lifetimeTotalLight: new Decimal(0),
             
             unlocked: false,
-
             requiresExponent: 0,
+            resets: 0,
         };
     },
     requiresExponent() {
@@ -102,15 +102,17 @@ addLayer("blackPigment", {
             },
             " light."
         ]],
-        "prestige-button",
+        ["prestige-button", "", function() {
+            return (tmp.blackPigment.passiveGeneration < 0.1 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
         "blank",
         "buyables",
         "blank",
         ["upgrades", function() {
             let rows = [];
-            if (getBuyableAmount("blackPigment", 11).gte(2) || player.debugOptions.showAll) rows.push(1);
-            if (hasUpgrade("blackPigment", 13) || player.debugOptions.showAll) rows.push(2);
-            if (hasUpgrade("blackPigment", 23) || player.debugOptions.showAll) rows.push(3);
+            if (getBuyableAmount("blackPigment", 11).gte(2) || includesAny(player.blackPigment.upgrades, [11, 12, 13]) || player.debugOptions.showAll) rows.push(1);
+            if (hasUpgrade("blackPigment", 13) || includesAny(player.blackPigment.upgrades, [21, 22, 23]) || player.debugOptions.showAll) rows.push(2);
+            if (hasUpgrade("blackPigment", 23) || includesAny(player.blackPigment.upgrades, [31, 32, 33]) || player.debugOptions.showAll) rows.push(3);
             return rows;
         }],
         "challenges",
@@ -122,7 +124,7 @@ addLayer("blackPigment", {
             key: "B",
             description: "Shift+B : Combine coloured pigment to make black pigment.",
             onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
+                if (player[this.layer].unlocked && canReset(this.layer)) doReset(this.layer);
             },
         }
     ],
@@ -134,6 +136,8 @@ addLayer("blackPigment", {
     },
     passiveGeneration() {
         let gain = 0;
+
+        if (layerShown("greyPigment") && hasUpgrade("greyPigment", 22)) gain += 0.1;
 
         gain *= player[this.layer].unlocked;
 
@@ -158,7 +162,7 @@ addLayer("blackPigment", {
         if (hasUpgrade(this.layer, 32)) mult = mult.mul(upgradeEffect(this.layer, 32));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
-        if (tmp.greyPigment.layerShown) mult = mult.mul(buyableEffect("greyPigment", 11));
+        if (layerShown("greyPigment")) mult = mult.mul(buyableEffect("greyPigment", 11));
 
         return mult;
     },
@@ -176,13 +180,15 @@ addLayer("blackPigment", {
     },
 
     canReset() {
-        return tmp[this.layer].getResetGain.gte(1) && tmp[this.layer].passiveGeneration < 1;
+        return tmp[this.layer].getResetGain.gte(1) && tmp[this.layer].passiveGeneration < 0.1;
     },
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
         let keepUpgrades = [];
 
         switch(layer) {
+            case "greyPigment":
+                break;
             default:
                 keep = undefined;
                 break;
@@ -204,9 +210,11 @@ addLayer("blackPigment", {
     effect() {
         ret = (hasAchievement("challenges", 34) ? player[this.layer].best : player[this.layer].points);
 
-        ret = ret.mul(tmp.milestones.effect.absorbedLight.div(100).add(1));
+        ret = ret.mul(tmp[this.layer].buyables[12].effect.add(1));
 
-        ret = ret.mul(tmp[this.layer].buyables[12].effect);
+        if (tmp.greyPigment.layerShown) ret = ret.mul(tmp.greyPigment.effect.absorbedLight);
+
+        ret = ret.mul(tmp.milestones.effect.absorbedLight.div(100).add(1));
 
         return ret;
     },
@@ -262,9 +270,9 @@ addLayer("blackPigment", {
             },
             display() {
                 return `
-                Each layer of paint increases the absorption rate by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
+                Each layer of paint increases the the absorption multiplier by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
                 Add another layer of black paint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` black pigment.<br>
-                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying absorption rate by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                You have painted ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` additional layer` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, increasing the absorption multiplier by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
                 `
             },
 
@@ -289,10 +297,13 @@ addLayer("blackPigment", {
 
             baseEffect() {
                 let ret = new Decimal(1);
+                
+                if (layerShown("greyPigment") && hasUpgrade("greyPigment", 23)) ret = ret.add(0.1);
+
                 return ret;
             },
             effect() {
-                return tmp[this.layer].buyables[this.id].baseEffect.mul(getBuyableAmount(this.layer, this.id)).add(1);
+                return tmp[this.layer].buyables[this.id].baseEffect.mul(getBuyableAmount(this.layer, this.id));
             },
         }
     },
@@ -303,7 +314,7 @@ addLayer("blackPigment", {
 
         11: {
             title: "Ebony",
-            description: "Exponate base black pigment gain by 1.5.",
+            description: "Exponate base blank pigment gain by 1.5.",
 
             effect: 1.5,
             cost: new Decimal(1),
@@ -337,7 +348,7 @@ addLayer("blackPigment", {
         },
         22: {
             title: "Smoky Black",
-            description: "Gain 50% of secondary pigment gain per second.",
+            description: "Lose the ability to dye, but gain 50% of secondary pigment gain per second.",
 
             effect: 0.5,
             cost: new Decimal(25),
@@ -367,7 +378,9 @@ addLayer("blackPigment", {
             effect() {
                 return player[this.layer].light.add(1).log(100).add(1);
             },
-            cost: new Decimal(10),
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(1e8) : new Decimal(1000))
+            },
         },
         32: {
             title: "Diesel",
@@ -378,10 +391,12 @@ addLayer("blackPigment", {
 
             effect() {
                 let base = new Decimal(0);
-                if (tmp.whitePigment.layerShown) base = base.add(player.whitePigment.light);
+                if (layerShown("whitePigment")) base = base.add(player.whitePigment.light);
                 return base.add(1).log(100).add(1);
             },
-            cost: new Decimal(25),
+            cost() {
+                return (this.layer == player.stats.firstShade ? new Decimal(5e9) : new Decimal(50000))
+            },
         },
         33: {
             title: "Crowshead",
@@ -394,7 +409,7 @@ addLayer("blackPigment", {
                 return player[this.layer].light.add(1).log(1000).add(1);
             },
             cost() {
-                return (this.layer == player.stats.firstShade ? new Decimal(10000000) : new Decimal(250))
+                return (this.layer == player.stats.firstShade ? new Decimal(5e11) : new Decimal(5e6))
             },
         },
     },

@@ -253,6 +253,7 @@ function doReset(layer, force=false) {
 	prevOnReset = undefined
 
 	player[layer].resetTime = 0
+	player[layer].resets += 1;
 	player.stats.resets += 1;
 
 	updateTemp()

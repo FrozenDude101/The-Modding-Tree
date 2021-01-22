@@ -92,53 +92,62 @@ function getPointGen() {
 
 	let gain = new Decimal(1);
 
-	const primary = ["redPigment", "yellowPigment", "bluePigment"];
-	const secondary = ["orangePigment", "greenPigment", "purplePigment"];
-	const shades = ["blackPigment", "whitePigment"];
+	const primary = [];
+	const secondary = [];
+	const shades = [];
 
-	let colours = [];
-	for (let colour of primary.concat(secondary).concat(shades)) {
-		if (tmp[colour].layerShown) colours.push(colour);
-	}
+	if (layerShown("redPigment"))    primary.push("redPigment");
+	if (layerShown("yellowPigment")) primary.push("yellowPigment");
+	if (layerShown("bluePigment"))   primary.push("bluePigment");
+
+	if (layerShown("orangePigment")) secondary.push("orangePigment");
+	if (layerShown("greenPigment"))  secondary.push("greenPigment");
+	if (layerShown("purplePigment")) secondary.push("purplePigment");
+
+	if (layerShown("blackPigment")) shades.push("blackPigment");
+	if (layerShown("whitePigment")) shades.push("whitePigment");
+	if (layerShown("greyPigment"))  shades.push("greyPigment");
+	// Working out which colours are shown, as only shown colours have effects.
 	
-	for (let colour of colours) {
-		if (primary.concat(secondary).includes(colour)) {
-			if (hasUpgrade(colour, 11)) gain = gain.add(upgradeEffect(colour, 11));
-		}
+	for (let colour of primary) {
+		if (hasUpgrade(colour, 11)) gain = gain.add(upgradeEffect(colour, 11));
 	}
+	for (let colour of secondary) {
+		if (hasUpgrade(colour, 11)) gain = gain.add(upgradeEffect(colour, 11));
+	}	
 	if (hasAchievement("challenges", 21)) gain = gain.add(achievementEffect("challenges", 21));
 	// Base add.
 
-	for (let colour of colours) {
-		if (shades.includes(colour)) {
-			if (hasUpgrade(colour, 11)) {
-				gain = gain.pow(upgradeEffect(colour, 11));
-			}
-		}
+	for (let colour of shades) {
+		if (hasUpgrade(colour, 11)) gain = gain.pow(upgradeEffect(colour, 11));
 	}
 	// Base exponation.
+
 	
-	for (let colour of colours) {
+	
+	for (let colour of primary) {
 		if (hasUpgrade(colour, 12)) gain = gain.mul(upgradeEffect(colour, 12));
 		if (hasUpgrade(colour, 13)) gain = gain.mul(upgradeEffect(colour, 13));
-		if (primary.concat(secondary).includes(colour)) {
-			if (hasUpgrade(colour, 22)) gain = gain.mul(upgradeEffect(colour, 22));
-		}
-		if (shades.includes(colour)) {
-			if (hasUpgrade(colour, 23)) gain = gain.mul(upgradeEffect(colour, 23));
-		}
+		if (hasUpgrade(colour, 22)) gain = gain.mul(upgradeEffect(colour, 22));
 	}
-	// Multiply.
-	
-	for (let colour of colours) {
-		if (primary.includes(colour)) {
-			if (hasUpgrade(colour, 51)) gain = gain.pow(upgradeEffect(colour, 51));
-		}
+	for (let colour of secondary) {
+		if (hasUpgrade(colour, 12)) gain = gain.mul(upgradeEffect(colour, 12));
+		if (hasUpgrade(colour, 13)) gain = gain.mul(upgradeEffect(colour, 13));
+		if (hasUpgrade(colour, 22)) gain = gain.mul(upgradeEffect(colour, 22));
+	}	
+	for (let colour of shades) {
+		if (hasUpgrade(colour, 12)) gain = gain.mul(upgradeEffect(colour, 12));
+		if (hasUpgrade(colour, 13)) gain = gain.mul(upgradeEffect(colour, 13));
+		if (colour != "greyPigment" && hasUpgrade(colour, 23)) gain = gain.mul(upgradeEffect(colour, 23));
 	}
-	// Exponation.
 
 	gain = gain.mul(tmp.milestones.effect["blankPigment"].div(100).add(1));
-	// Achievement bonus.
+	// Multiply.
+	
+	for (let colour of primary) {
+		if (hasUpgrade(colour, 51)) gain = gain.pow(upgradeEffect(colour, 51));
+	}
+	// Exponation.
 
 	return gain;
 

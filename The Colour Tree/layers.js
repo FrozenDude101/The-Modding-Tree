@@ -65,7 +65,7 @@ addLayer("milestones", {
         "achievements",
         ["display-text", "Milestone Completion Popups"],
         "blank",
-        ["toggle", ["challenges", "showPopups"]],
+        ["toggle", ["milestones", "showPopups"]],
     ],
 
     effect() {
@@ -89,7 +89,7 @@ addLayer("milestones", {
         };
     },
 
-    achievementsPopups() {
+    achievementPopups() {
         return player[this.layer].showPopups;
     },
     achievements: {
@@ -642,7 +642,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -690,7 +691,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -709,7 +711,7 @@ addLayer("challenges", {
 
         21: {
             name: "Lines Are<br>Better Than<br>Triangles",
-            tooltip: "Complete an Addition challenge.\nReward:\nAdd 1 to base blank pigment gain for each line of 3 layers shown.",
+            tooltip: "Complete an Subtractive challenge.\nReward:\nAdd 1 to base blank pigment gain for each line of 3 layers shown.",
 
             style: {
                 color: "#FD0",
@@ -724,7 +726,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -751,7 +754,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -768,7 +772,7 @@ addLayer("challenges", {
         },
         24: {
             name: "Out Of<br>Order",
-            tooltip: "Complete a Complementary challenge before an Addition challenge.\nReward:\nSecondary pigments are now based on total primary pigments.",
+            tooltip: "Complete a Complementary challenge before an Subtractive challenge.\nReward:\nSecondary pigments are now based on total primary pigments.",
 
             style: {
                 color: "#FD0",
@@ -783,7 +787,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -822,7 +827,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -860,7 +866,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -878,7 +885,7 @@ addLayer("challenges", {
         34: {
             name: "Out of<br>Order<sup>2</sup>",
             tooltip() {
-                let firstChallenge = (player.firstShade == "blackPigment" ? "Subtractive" : "Additive");
+                let firstChallenge = (player.firstShade == "blackPigment" ? "Additive" : "Subtractive");
                 return "Complete Anti-Favoritism before " + firstChallenge + ".\nReward:\nAbsorbed/Reflected light is generated based on best black/white pigment.";
             },
 
@@ -895,7 +902,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -923,7 +931,8 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        tmp[this.layer].achievements[this.id].name,
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
                         5,
                         "#DDD"
                     );
@@ -940,6 +949,31 @@ addLayer("challenges", {
             },
         },
         42: {
+            name: "Min-Maxing",
+            tooltip: "Create the darkest and lightest shades of grey.\nReward\nKeep all coloured upgrades and challenge completions when dying grey pigment.",
+
+            style: {
+                color: "#FD0",
+            },
+
+            done() {
+                return player.greyPigment.maxed && player.greyPigment.minned;
+            },
+            onComplete() {
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        5,
+                        "#DDD"
+                    );
+                }
+            },
+        },
+        43: {
             name: "How Come Light Red Gets An Exception?",
             tooltip: "Unlock pink pigment.",
 

@@ -41,7 +41,7 @@ addLayer("purple", {
 
     layerShown() {
         if (tmp[this.layer]) player[this.layer].shown = true;
-        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+        return layerShown(this.layer + "Pigment") || player.debugOptions.showAll;
     },  
 
     startData() {
@@ -80,8 +80,8 @@ addLayer("purplePigment", {
             lifetimeTotal: new Decimal(0),
             
             unlocked: false,
-
             requiresExponent: 0,
+            resets: 0,
         };
     },
     requiresExponent() {
@@ -92,13 +92,15 @@ addLayer("purplePigment", {
 
     tabFormat: [
         "main-display",
-        "prestige-button",
+        ["prestige-button", "", function() {
+            return (tmp.purplePigment.passiveGeneration < 0.5 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
         "blank",
         ["upgrades", function() {
             rows = [];
-            if (player.purplePigment.unlocked || player.debugOptions.showAll) rows.push(1);
-            if (hasUpgrade("purplePigment", 13) || hasChallenge("purplePigment", 12) || player.debugOptions.showAll) rows.push(2);
-            if (hasChallenge("purplePigment", 12) || player.debugOptions.showAll) rows.push(3);
+            if (player.purplePigment.unlocked || includesAny(player.purplePigment.upgrades, [11, 12, 13]) || player.debugOptions.showAll) rows.push(1);
+            if (hasUpgrade("purplePigment", 13) || hasChallenge("purplePigment", 12) || includesAny(player.purplePigment.upgrades, [21, 22, 23]) || player.debugOptions.showAll) rows.push(2);
+            if (hasChallenge("purplePigment", 12) || includesAny(player.purplePigment.upgrades, [31, 32, 33]) || player.debugOptions.showAll) rows.push(3);
             return rows;
         }],
         "challenges",
@@ -110,7 +112,7 @@ addLayer("purplePigment", {
             key: "p",
             description: "P : Combine red and blue pigment to make purple pigment.",
             onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
+                if (player[this.layer].unlocked && canReset(this.layer)) doReset(this.layer);
             },
         }
     ],
@@ -123,8 +125,8 @@ addLayer("purplePigment", {
     passiveGeneration() {
         let gain = 0;
 
-        if (hasUpgrade("blackPigment", 22)) gain += upgradeEffect("blackPigment", 22);
-        if (hasUpgrade("whitePigment", 22)) gain += upgradeEffect("whitePigment", 22);
+        if (layerShown("blackPigment") && hasUpgrade("blackPigment", 22)) gain += upgradeEffect("blackPigment", 22);
+        if (layerShown("whitePigment") && hasUpgrade("whitePigment", 22)) gain += upgradeEffect("whitePigment", 22);
 
         gain *= player[this.layer].unlocked;
 
@@ -150,9 +152,9 @@ addLayer("purplePigment", {
         if (hasUpgrade(this.layer, 23)) mult = mult.mul(upgradeEffect(this.layer, 23));
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
-        if (tmp.blackPigment.layerShown) mult = mult.mul(buyableEffect("blackPigment", 11));
-        if (tmp.whitePigment.layerShown) mult = mult.mul(buyableEffect("whitePigment", 11));
-        if (tmp.greyPigment.layerShown)  mult = mult.mul(buyableEffect("greyPigment",  11));
+        if (layerShown("blackPigment")) mult = mult.mul(buyableEffect("blackPigment", 11));
+        if (layerShown("whitePigment")) mult = mult.mul(buyableEffect("whitePigment", 11));
+        if (layerShown("greyPigment"))  mult = mult.mul(buyableEffect("greyPigment",  11));
 
         return mult;
     },
@@ -169,7 +171,7 @@ addLayer("purplePigment", {
     },
 
     canReset() {
-        return tmp[this.layer].getResetGain.gte(1);
+        return tmp[this.layer].getResetGain.gte(1) && tmp.orangePigment.passiveGeneration < 0.5;
     },
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
@@ -189,7 +191,9 @@ addLayer("purplePigment", {
         if (layer == "blackPigment" && hasChallenge("blackPigment", 13)) keep.push("upgrades");
         if (layer == "whitePigment" && hasChallenge("whitePigment", 13)) keep.push("upgrades");
 
-        if (["blackPigment", "whitePigment"].includes(layer)) {
+        if (layer == "greyPigment" && hasAchievement("challenges", 42))  keep = merge(keep, ["challenges", "upgrades"]);
+
+        if (["blackPigment", "whitePigment", "greyPigment"].includes(layer)) {
             keepUpgrades = merge(filter(player[this.layer].upgrades, keepUpgrades), forceUpgrades);
             layerDataReset(this.layer, keep);
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
@@ -286,7 +290,7 @@ addLayer("purplePigment", {
 
             effect() {
                 let base = new Decimal(0);
-                if (tmp.bluePigment.layerShown) base = base.add(player.bluePigment.points);
+                if (layerShown("yellowPigment")) base = base.add(player.yellowPigment.points);
 
                 return base.add(1).log(100).add(1);
             },
@@ -299,7 +303,7 @@ addLayer("purplePigment", {
         cols: 2,
 
         11: {
-            name: "Additive",
+            name: "Subtractive",
             challengeDescription: "Only have red, purple, and blue pigment.",
             goalDescription: "Reach 250,000 blank pigment.",
             rewardDescription: "Unlock a row of red and blue pigment upgrades.",

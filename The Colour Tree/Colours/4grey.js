@@ -34,8 +34,8 @@ addLayer("grey", {
     },
 
     layerShown() {
-        if (tmp[this.layer]) player[this.layer].shown = true;
-        return tmp[this.layer + "Pigment"].layerShown || player.debugOptions.showAll;
+        if (layerShown(this.layer) && !(layerShown(this.layer) instanceof Decimal)) player[this.layer].shown = true;
+        return layerShown(this.layer + "Pigment") || player.debugOptions.showAll;
     },  
 
     startData() {
@@ -77,38 +77,45 @@ addLayer("greyPigment", {
             lifetimeBest: new Decimal(0),
             lifetimeTotal: new Decimal(0),
 
-            light: new Decimal(0),
-            lifetimeBestLight: new Decimal(0),
-            lifetimeTotalLight: new Decimal(0),
+            shade: 640,
             
             unlocked: false,
-            shade: 640,
+            minned: false,
+            maxed:false,
+            resets: 0,
         };
+    },
+    minMax() {
+        if (player[this.layer].shade == 0)    player[this.layer].minned = true;
+        if (player[this.layer].shade == 1280) player[this.layer].maxed  = true;
     },
 
     createSlider() {
-        if (typeof tmp.greyPigment.createSlider == "string") return tmp.greyPigment.createSlider;
+        if (typeof tmp.greyPigment.createSlider == "string" && player.tab == "grey" && player.subtabs.grey.mainTabs == "Pigment") return tmp.greyPigment.createSlider;
         return `<input id=greyPigmentShadeSlider class=slider type=range min=0 max=1280 value=` + player.greyPigment.shade + ` oninput="player.greyPigment.shade = this.value">`;
     },
     tabFormat: [
         "main-display",
         "prestige-button",
-        ["slider", [[this.layer, "lightness"], 0, 1000]],
         "blank",
         ["raw-html", function() {
             return tmp.greyPigment.createSlider
+        }, function() {
+            return (player.greyPigment.unlocked ? {} : {display: "none"});
         }],
         "blank",
         ["display-text", function() {
             return "Your shade of grey is boosting<br>absorption rate by x" + format(tmp.greyPigment.effect.absorbedLight) + "<br>reflectivity by x" + format(tmp.greyPigment.effect.reflectedLight) + ".";
+        }, function() {
+            return (player.greyPigment.unlocked ? {} : {display: "none"});
         }],
         "blank",
         "buyables",
         "blank",
         ["upgrades", function() {
             let rows = [];
-            if (getBuyableAmount("greyPigment", 11).gte(1) || player.debugOptions.showAll) rows.push(1);
-            if (hasUpgrade("greyPigment", 13) || player.debugOptions.showAll) rows.push(2);
+            if (getBuyableAmount("greyPigment", 11).gte(1) || includesAny(player.greyPigment.upgrades, [11, 12, 13]) || player.debugOptions.showAll) rows.push(1);
+            if (hasUpgrade("greyPigment", 13) || includesAny(player.greyPigment.upgrades, [21, 22, 23]) || player.debugOptions.showAll) rows.push(2);
             return rows;
         }],
     ],
@@ -118,7 +125,7 @@ addLayer("greyPigment", {
             key: "G",
             description: "Shift+G : Combine black and white pigment to make grey pigment.",
             onPress() {
-                if (player[this.layer].unlocked) doReset(this.layer);
+                if (player[this.layer].unlocked && canReset(this.layer)) doReset(this.layer);
             },
         }
     ],
@@ -220,6 +227,8 @@ addLayer("greyPigment", {
             exponent() {
                 let ret = new Decimal(5);
 
+                if (hasUpgrade(this.layer, 21)) ret = ret.pow(upgradeEffect(this.layer, 21));
+
                 return ret;
             },
             cost() {
@@ -274,6 +283,9 @@ addLayer("greyPigment", {
 
             baseEffect() {
                 let ret = new Decimal(1.1);
+                
+                if (hasUpgrade(this.layer, 23)) ret = ret.add(0.1);
+
                 return ret;
             },
             effect() {
@@ -287,9 +299,56 @@ addLayer("greyPigment", {
         cols: 3,
 
         11: {
-            title: "1",
+            title: "Ebony",
+            description: "Exponate base blank pigment gain by 1.5.",
 
+            effect: 1.5,
             cost: new Decimal(1),
-        }
+        },
+        12: {
+            title: "Onyx",
+            description: "Multiply blank pigment gain by 2.",
+
+            effect: 2,
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "Black Olive",
+            description: "Boost blank pigment gain based on blank pigment amount.",
+            effectDisplay() {
+                return "x" + format(tmp[this.layer].upgrades[this.id].effect);
+            },
+
+            effect() {
+                return player.points.add(1).log(10).add(1)
+            },
+            cost: new Decimal(5),
+        },
+
+        21: {
+            title: "Jet",
+            description: "Exponate Tone cost exponent by 0.5.",
+
+            effect: 0.5,
+            cost: new Decimal(10),
+        },
+        22: {
+            title: "Smoky Black",
+            description: "Lose the ability to dye, but gain 10% of black and white pigment gain per second.",
+
+            effect: 0.1,
+            cost: new Decimal(25),
+        },
+        23: {
+            title: "Licorice",
+            description: "Add 0.1 to the base effect of all coats of paint.",
+
+            effect: 0.1,
+            cost: new Decimal(0),
+        },
     },
+
+    challenges: {
+        
+    }
 });
