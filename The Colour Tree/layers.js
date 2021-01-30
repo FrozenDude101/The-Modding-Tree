@@ -1344,7 +1344,7 @@ addLayer("help", {
         resets: {
             title: "Resets",
             body() {
-                ret = "<br>";
+                ret = "<br>By default the resulting amount is based on the minimum of the pigment used to make it.<br>";
 
                 if (player.orangePigment.unlocked || player.help.showAll) ret += "Orange pigment resets red and yellow pigment.<br>";
                 if (player.greenPigment.unlocked || player.help.showAll) ret += "Green pigment resets yellow and blue pigment.<br>";
@@ -1385,7 +1385,7 @@ addLayer("statistics", {
         let ret = "<select id=selectLayer>";
         for (let LAYER of ["none"].concat(LAYERS)) {
             if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "milestones", "challenges", "secrets", "help", "statistics", "debug", "debugLayers", "debugOptions", "red", "yellow", "blue", "orange", "green", "purple", "black", "white", "grey", "pink"].includes(LAYER)) continue;
-            if (LAYER != "none" && !layerShown(LAYER)) continue;
+            if (LAYER != "none" && !player[LAYER].unlocked) continue;
             let selected = (LAYER == player[this.layer].activeLayer ? "selected='selected'" : "");
             ret += "<option value=" + LAYER + " " + selected + ">" + LAYER.charAt(0).toUpperCase() + LAYER.slice(1).replace(/([A-Z])/g,' $1') + "</option>";
         }
