@@ -114,6 +114,18 @@ function formatTable(data, {
 
 // ---- Misc ----
 
+function max(arr1) {
+
+    let max = 0;
+
+    for (let item of arr1) {
+        if (item > max) max = item;
+    }
+
+    return max;
+
+}
+
 function filter(arr1, arr2) {
 
     let ret = [];
@@ -167,4 +179,30 @@ function calcRequiresExponent(layer, delta=0) {
         default:
             alert("Invalid layer '" + layer + "' called to calcUnlock.");
     }
+}
+
+function inNChallenges() {
+
+    let ret = 0;
+    for (let layer of ["orangePigment", "greenPigment", "purplePigment", "blackPigment", "whitePigment", "greyPigment"]) {
+        if (player[layer].activeChallenge != null) ret += 1;
+    }
+    return ret;
+
+}
+
+function nLayersShown() {
+
+    let ret = 0;
+    for (let layer of ["redPigment", "yellowPigment", "bluePigment", "orangePigment", "greenPigment", "purplePigment", "blackPigment", "whitePigment", "greyPigment"]) {
+        if (layerShown(layer)) ret += 1;
+    }
+    return ret;
+
+}
+
+function calcAchievementGoal(level) {
+
+    return Decimal.pow(10, Decimal.pow(10, Math.floor(level/9)).mul(level%9 + 1));
+
 }

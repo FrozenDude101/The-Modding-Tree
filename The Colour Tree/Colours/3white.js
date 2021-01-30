@@ -68,8 +68,8 @@ addLayer("whitePigment", {
     
     layerShown() {
         let unlockCondition = player.orangePigment.unlocked && player.greenPigment.unlocked && player.purplePigment.unlocked;
-        let challengeCondition = !inChallenge() || inChallenge("whitePigment");
-        return unlockCondition && challengeCondition || player.debugOptions.showAll;
+        let challengeCondition = inChallenge("orangePigment") || inChallenge("greenPigment") || inChallenge("purplePigment") || inChallenge("blackPigment");
+        return unlockCondition && !challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -104,6 +104,11 @@ addLayer("whitePigment", {
         ]],
         ["prestige-button", "", function() {
             return (tmp.whitePigment.passiveGeneration < 0.1 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
+        ["display-text", function() {
+                return "You are dying " + format(tmp.whitePigment.getResetGain.mul(tmp.whitePigment.passiveGeneration)) + " white pigment per second.";
+        }, function() {
+            return (tmp.whitePigment.passiveGeneration != 0 || player.debugOptions.showAll ? {} : {display: "none"});
         }],
         "blank",
         "buyables",
@@ -163,6 +168,7 @@ addLayer("whitePigment", {
         if (hasUpgrade(this.layer, 33)) mult = mult.mul(upgradeEffect(this.layer, 33));
 
         if (layerShown("greyPigment")) mult = mult.mul(buyableEffect("greyPigment", 11));
+        if (layerShown("greyPigment")) mult = mult.mul(tmp.greyPigment.effect.whitePigment);
 
         return mult;
     },
@@ -186,15 +192,11 @@ addLayer("whitePigment", {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
         let keepUpgrades = [];
 
-        switch(layer) {
-            case "greyPigment":
-                break;
-            default:
-                keep = undefined;
-                break;
-        }
+        if (layer == "greyPigment" && hasChallenge("greyPigment", 11)) keep = merge(keep, ["buyables", "challenges", "upgrades"]);
 
-        if (keep != undefined) {
+        if (layer.indexOf("Pigment") != -1 && hasAchievement("challenges", 42)) keep = merge(keep, ["challenges"]);
+
+        if (["greyPigment"].includes(layer)) {
             keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
             layerDataReset(this.layer, keep);
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
@@ -205,14 +207,19 @@ addLayer("whitePigment", {
 
         player[this.layer].light = player[this.layer].light.add(tmp[this.layer].effect.mul(diff));
 
+        if (layerShown("greyPigment") && hasUpgrade("greyPigment", 31)) {
+            for (let buyable in tmp[this.layer].buyables) {
+                if (["rows", "cols"].includes(buyable)) continue;
+                if (tmp[this.layer].buyables[buyable].canAfford) layers[this.layer].buyables[buyable].buy();
+            }
+        }
+
     },
 
     effect() {
         ret = (hasAchievement("challenges", 34) ? player[this.layer].best : player[this.layer].points);
 
         ret = ret.mul(tmp[this.layer].buyables[12].effect.add(1));
-
-        if (tmp.greyPigment.layerShown) ret = ret.mul(tmp.greyPigment.effect.reflectedLight);
 
         ret = ret.mul(tmp.milestones.effect.reflectedLight.div(100).add(1));
 
@@ -230,6 +237,7 @@ addLayer("whitePigment", {
                 Multiply all primary and secondary pigment gain by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
                 Discover a new tint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` absorbed light.<br>
                 You have discovered ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` different tint` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying all primary and secondary pigment gain by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                ` + (buyableEffect(this.layer, this.id).gte(1e100) ? "<br>(Softcapped)" : "") + `
                 `
             },
 
@@ -246,7 +254,9 @@ addLayer("whitePigment", {
                 return ret;
             },
             cost() {
-                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                let ret = this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                if (layerShown("greyPigment") && hasUpgrade("greyPigment", 32)) ret = ret.mul(upgradeEffect("greyPigment", 32));
+                return ret;
             },
             canAfford() {
                 return player[this.layer].light.gte(tmp[this.layer].buyables[this.id].cost);
@@ -261,7 +271,9 @@ addLayer("whitePigment", {
                 return ret;
             },
             effect() {
-                return tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+                let ret = tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+                if (ret.gte(1e100)) ret = ret.sqrt().mul(1e50);
+                return ret;
             },
         },
         12: {
@@ -285,7 +297,9 @@ addLayer("whitePigment", {
                 return new Decimal(1.5);
             },
             cost() {
-                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                let ret = this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                if (layerShown("greyPigment") && hasUpgrade("greyPigment", 32)) ret = ret.mul(upgradeEffect("greyPigment", 32));
+                return ret;
             },
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost);
@@ -303,7 +317,9 @@ addLayer("whitePigment", {
                 return ret;
             },
             effect() {
-                return tmp[this.layer].buyables[this.id].baseEffect.mul(getBuyableAmount(this.layer, this.id));
+                let ret = tmp[this.layer].buyables[this.id].baseEffect.mul(getBuyableAmount(this.layer, this.id));
+                if (layerShown("greyPigment") && hasUpgrade("greyPigment", 33)) ret = ret.mul(upgradeEffect("greyPigment", 33));
+                return ret;
             },
         }
     },
@@ -449,7 +465,7 @@ addLayer("whitePigment", {
 
                 return "Don't have " + player.stats.firstPrimary.replace(/[A-Z].*/, "") + ", " + player.stats.firstSecondary.replace(/[A-Z].*/, "") + ", and " + player.stats.firstShade.replace(/[A-Z].*/, "") + " pigment.";
             },
-            goalDescription: "Reach 1e14 blank pigment.",
+            goalDescription: "Reach 1e12 blank pigment.",
             rewardDescription: "Keep secondary pigment upgrades and challenges when dying white pigment.",
 
             unlocked() {
@@ -457,7 +473,7 @@ addLayer("whitePigment", {
             },
 
             canComplete() {
-                return player.points.gte(1e14);
+                return player.points.gte(1e12);
             },
         },
     },

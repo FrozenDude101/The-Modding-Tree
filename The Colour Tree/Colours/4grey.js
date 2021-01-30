@@ -67,8 +67,8 @@ addLayer("greyPigment", {
     
     layerShown() {
         let unlockCondition = player.blackPigment.unlocked && player.whitePigment.unlocked;
-        let challengeCondition = !inChallenge();
-        return unlockCondition && challengeCondition || player.debugOptions.showAll;
+        let challengeCondition = inChallenge("orangePigment") || inChallenge("greenPigment") || inChallenge("purplePigment") || inChallenge("blackPigment") || inChallenge("whitePigment");
+        return unlockCondition && !challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -96,7 +96,14 @@ addLayer("greyPigment", {
     },
     tabFormat: [
         "main-display",
-        "prestige-button",
+        ["prestige-button", "", function() {
+            return (tmp.greyPigment.passiveGeneration < 0.1 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
+        ["display-text", function() {
+                return "You are dying " + format(tmp.greyPigment.getResetGain.mul(tmp.greyPigment.passiveGeneration)) + " grey pigment per second.";
+        }, function() {
+            return (tmp.greyPigment.passiveGeneration != 0 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
         "blank",
         ["raw-html", function() {
             return tmp.greyPigment.createSlider
@@ -105,7 +112,7 @@ addLayer("greyPigment", {
         }],
         "blank",
         ["display-text", function() {
-            return "Your shade of grey is boosting<br>absorption rate by x" + format(tmp.greyPigment.effect.absorbedLight) + "<br>reflectivity by x" + format(tmp.greyPigment.effect.reflectedLight) + ".";
+            return "Your shade of grey is boosting<br>black pigment gain by x" + format(tmp.greyPigment.effect.blackPigment) + ".<br>white pigment gain by x" + format(tmp.greyPigment.effect.whitePigment) + ".";
         }, function() {
             return (player.greyPigment.unlocked ? {} : {display: "none"});
         }],
@@ -116,8 +123,11 @@ addLayer("greyPigment", {
             let rows = [];
             if (getBuyableAmount("greyPigment", 11).gte(1) || includesAny(player.greyPigment.upgrades, [11, 12, 13]) || player.debugOptions.showAll) rows.push(1);
             if (hasUpgrade("greyPigment", 13) || includesAny(player.greyPigment.upgrades, [21, 22, 23]) || player.debugOptions.showAll) rows.push(2);
+            if (hasUpgrade("greyPigment", 23) || includesAny(player.greyPigment.upgrades, [31, 32, 33]) || player.debugOptions.showAll) rows.push(3);
             return rows;
         }],
+        "challenges",
+        "blank",
     ],
 
     hotkeys: [
@@ -131,12 +141,14 @@ addLayer("greyPigment", {
     ],
 
     type: "custom",
-    row: 2,
+    row: 3,
     prestigeButtonText() {
         return "Combine black and white pigment for " + formatWhole(tmp[this.layer].getResetGain) + " grey pigment.<br>Next at " + format(tmp[this.layer].getNextAt) + " black and white pigment.";
     },
     passiveGeneration() {
         let gain = 0;
+
+        if (hasAchievement("challenges", 45)) gain += 0.1;
 
         gain *= player[this.layer].unlocked;
 
@@ -172,23 +184,28 @@ addLayer("greyPigment", {
     },
 
     canReset() {
-        return tmp[this.layer].getResetGain.gte(1) && tmp[this.layer].passiveGeneration < 1;
+        return tmp[this.layer].getResetGain.gte(1) && tmp[this.layer].passiveGeneration < 0.1;
     },
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
         let keepUpgrades = [];
 
-        switch(layer) {
-            default:
-                keep = undefined;
-                break;
-        }
-
-        if (keep != undefined) {
+        if ([].includes(layer)) {
             keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
             layerDataReset(this.layer, keep);
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
         }
+    },
+
+    update(diff) {
+
+        if (hasAchievement("challenges", 43)) {
+            for (let buyable in tmp[this.layer].buyables) {
+                if (["rows", "cols"].includes(buyable)) continue;
+                if (tmp[this.layer].buyables[buyable].canAfford) layers[this.layer].buyables[buyable].buy();
+            }
+        }
+
     },
 
     effect() {
@@ -200,8 +217,8 @@ addLayer("greyPigment", {
         mult = mult.mul(buyableEffect(this.layer, 12));
 
         return {
-            absorbedLight: Decimal.pow(normalisedShade, exponent).mul(mult).add(1),
-            reflectedLight: Decimal.pow(1-normalisedShade, exponent).mul(mult).add(1),
+            blackPigment: Decimal.pow(normalisedShade, exponent).mul(mult).add(1),
+            whitePigment: Decimal.pow(1-normalisedShade, exponent).mul(mult).add(1),
         };
     },
 
@@ -216,6 +233,7 @@ addLayer("greyPigment", {
                 Multiply all black, white, and coloured pigment gain by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
                 Discover a new tone for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` grey pigment.<br>
                 You have discovered ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` different tone` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying all black, white, and coloured pigment gain by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
+                ` + (buyableEffect(this.layer, this.id).gte(1e100) ? "<br>(Softcapped)" : "") + `
                 `
             },
 
@@ -232,13 +250,15 @@ addLayer("greyPigment", {
                 return ret;
             },
             cost() {
-                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                let ret = this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                if (hasUpgrade(this.layer, 32)) ret = ret.mul(upgradeEffect(this.layer, 32));
+                return ret;
             },
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost);
             },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
+                if (!hasAchievement("challenges", 44)) player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
             },
 
@@ -247,7 +267,9 @@ addLayer("greyPigment", {
                 return ret;
             },
             effect() {
-                return tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+                let ret = tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+                if (ret.gte(1e100)) ret = ret.sqrt().mul(1e50);
+                return ret;
             },
         },
         12: {
@@ -271,13 +293,15 @@ addLayer("greyPigment", {
                 return new Decimal(1.5);
             },
             cost() {
-                return this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                let ret = this.baseCost.mul(tmp[this.layer].buyables[this.id].exponent.pow(getBuyableAmount(this.layer, this.id)));
+                if (hasUpgrade(this.layer, 32)) ret = ret.mul(upgradeEffect(this.layer, 32));
+                return ret;
             },
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost);
             },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
+                if (!hasAchievement("challenges", 44)) player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost);
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
             },
 
@@ -289,7 +313,9 @@ addLayer("greyPigment", {
                 return ret;
             },
             effect() {
-                return tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+                let ret = tmp[this.layer].buyables[this.id].baseEffect.pow(getBuyableAmount(this.layer, this.id));
+                if (hasUpgrade(this.layer, 33)) ret = ret.mul(upgradeEffect(this.layer, 33));
+                return ret;
             },
         }
     },
@@ -344,11 +370,48 @@ addLayer("greyPigment", {
             description: "Add 0.1 to the base effect of all coats of paint.",
 
             effect: 0.1,
-            cost: new Decimal(0),
+            cost: new Decimal(1000),
+        },
+
+        31: {
+            title: "Jet",
+            description: "Automatically purchase one of each black and white pigment buyable per second.",
+
+            cost: new Decimal(10000),
+        },
+        32: {
+            title: "Smoky Black",
+            description: "Halve the cost of all black, white, and grey pigment buyables.",
+
+            effect: 0.5,
+            cost: new Decimal(1e7),
+        },
+        33: {
+            title: "Licorice",
+            description: "Double the effect of all coats of paint.",
+
+            effect: 2,
+            cost: new Decimal(1e15),
         },
     },
 
     challenges: {
-        
-    }
+        rows: 1,
+        cols: 3,
+
+        11: {
+            name: "Toner",
+            challengeDescription: "Square root blank pigment gain after all effects.",
+            goalDescription: "Reach 1e11 blank pigment.",
+            rewardDescription: "Keep black and white pigment upgrades, challenges, and buyables when dying grey pigments.",
+
+            unlocked() {
+                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
+            },
+
+            canComplete() {
+                return player.points.gte(1e11);
+            },
+        },
+    },
 });

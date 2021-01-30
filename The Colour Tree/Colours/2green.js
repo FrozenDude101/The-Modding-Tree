@@ -17,7 +17,7 @@ addLayer("green", {
 
     x() {
         let ret = 1.5;
-        if (player.black.shown) ret += 0.5;
+        if (player.black.shown || player.white.shown) ret += 0.5;
         return ret;
     },
     y() {
@@ -69,8 +69,8 @@ addLayer("greenPigment", {
 
     layerShown() {
         let unlockCondition = player.yellowPigment.unlocked && player.bluePigment.unlocked;
-        let challengeCondition = !inChallenge() || inChallenge(this.layer) || player.stats.firstSecondary == this.layer && inChallenge("whitePigment", 12) || player.stats.firstSecondary == this.layer && inChallenge("blackPigment", 12) || player.stats.firstSecondary != this.layer && inChallenge("whitePigment", 13) || player.stats.firstSecondary != this.layer && inChallenge("blackPigment", 13);
-        return unlockCondition && challengeCondition || player.debugOptions.showAll;
+        let challengeCondition = inChallenge("orangePigment") || inChallenge("purplePigment") || inChallenge("blackPigment", 11) || inChallenge("whitePigment", 11) || (player.stats.firstSecondary != this.layer && (inChallenge("blackPigment", 12) || inChallenge("whitePigment", 12))) || (player.stats.firstSecondary == this.layer && (inChallenge("blackPigment", 13) || inChallenge("whitePigment", 13)))
+        return unlockCondition && !challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -94,6 +94,11 @@ addLayer("greenPigment", {
         "main-display",
         ["prestige-button", "", function() {
             return (tmp.greenPigment.passiveGeneration < 0.5 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
+        ["display-text", function() {
+                return "You are dying " + format(tmp.greenPigment.getResetGain.mul(tmp.greenPigment.passiveGeneration)) + " green pigment per second.";
+        }, function() {
+            return (tmp.greenPigment.passiveGeneration != 0 || player.debugOptions.showAll ? {} : {display: "none"});
         }],
         "blank",
         ["upgrades", function() {
@@ -191,7 +196,7 @@ addLayer("greenPigment", {
         if (layer == "blackPigment" && hasChallenge("blackPigment", 13)) keep.push("upgrades");
         if (layer == "whitePigment" && hasChallenge("whitePigment", 13)) keep.push("upgrades");
 
-        if (layer == "greyPigment" && hasAchievement("challenges", 42))  keep = merge(keep, ["challenges", "upgrades"]);
+        if (layer.indexOf("Pigment") != -1 && hasAchievement("challenges", 42)) keep = merge(keep, ["challenges", "upgrades"]);
 
         if (["blackPigment", "whitePigment", "greyPigment"].includes(layer)) {
             keepUpgrades = merge(filter(player[this.layer].upgrades, keepUpgrades), forceUpgrades);
@@ -265,7 +270,7 @@ addLayer("greenPigment", {
         
         31: {
             title: "Pastel Green",
-            description: "Keep yellow and blue pigment upgrades on orange pigment reset.",
+            description: "Keep yellow and blue pigment upgrades when dying green pigment.",
 
             cost: new Decimal(200),
         },
@@ -310,9 +315,9 @@ addLayer("greenPigment", {
 
             unlocked() {
                 let unlockCondition = player[this.layer].unlocked;
-                let challengeCondition = !inChallenge() || inChallenge(this.layer);
-                return unlockCondition && challengeCondition || player.debugOptions.showAll;
+                return unlockCondition || player.debugOptions.showAll;
             },
+
 
             canComplete() {
                 return player.points.gte(250000);
@@ -326,9 +331,9 @@ addLayer("greenPigment", {
 
             unlocked() {
                 let unlockCondition = player[this.layer].unlocked;
-                let challengeCondition = !inChallenge() || inChallenge(this.layer);
-                return unlockCondition && challengeCondition || player.debugOptions.showAll;
+                return unlockCondition || player.debugOptions.showAll;
             },
+
 
             canComplete() {
                 return player.points.gte(250000);

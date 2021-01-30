@@ -100,13 +100,6 @@ function shouldNotify(layer){
 			}
 		}
 	}
-	for (id in tmp[layer].buyables){
-		if (!isNaN(id)) {
-			if (tmp[layer].buyables[id].canAfford && tmp[layer].buyables[id].unlocked) {
-				return true
-			}
-		}
-	}
 	if (player[layer].activeChallenge && canCompleteChallenge(layer, player[layer].activeChallenge)) {
 		return true
 	}

@@ -13,7 +13,7 @@ addLayer("red", {
 
     x() {
         let ret = 1.5;
-        if (player.black.shown) ret += 0.5;
+        if (player.black.shown || player.white.shown) ret += 0.5;
         return ret;
     },
     y() {
@@ -65,8 +65,8 @@ addLayer("redPigment", {
     },
 
     layerShown() {
-        let challengeCondition = !inChallenge() || inChallenge("orangePigment", 11) || inChallenge("purplePigment", 11) || inChallenge("greenPigment", 12) || inChallenge("blackPigment", 11) || inChallenge("whitePigment", 11) || player.stats.firstPrimary == this.layer && inChallenge("whitePigment", 12) || player.stats.firstPrimary == this.layer && inChallenge("blackPigment", 12) || player.stats.firstPrimary != this.layer && inChallenge("whitePigment", 13) || player.stats.firstPrimary != this.layer && inChallenge("blackPigment", 13);
-        return challengeCondition || player.debugOptions.showAll;
+        let challengeCondition = inChallenge("greenPigment", 11) || inChallenge("orangePigment", 12) || inChallenge("purplePigment", 12) || (player.stats.firstPrimary != this.layer && (inChallenge("blackPigment", 12) || inChallenge("whitePigment", 12))) || (player.stats.firstPrimary == this.layer && (inChallenge("blackPigment", 13) || inChallenge("whitePigment", 13)))
+        return !challengeCondition || player.debugOptions.showAll;
     },
 
     startData() {
@@ -90,6 +90,14 @@ addLayer("redPigment", {
         "main-display",
         ["prestige-button", "", function() {
             return (tmp.redPigment.passiveGeneration < 1 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
+        ["blank", "", function() {
+            return (tmp.redPigment.passiveGeneration != 0 && tmp.redPigment.passiveGeneration < 1 || player.debugOptions.showAll ? {} : {display: "none"});
+        }],
+        ["display-text", function() {
+                return "You are dying " + format(tmp.redPigment.getResetGain.mul(tmp.redPigment.passiveGeneration)) + " red pigment per second.";
+        }, function() {
+            return (tmp.redPigment.passiveGeneration != 0 || player.debugOptions.showAll ? {} : {display: "none"});
         }],
         "blank",
         ["upgrades", function() {
@@ -182,14 +190,15 @@ addLayer("redPigment", {
 
         if (layer == "orangePigment" && hasUpgrade("orangePigment", 31)) keep.push("upgrades");
         if (layer == "purplePigment" && hasUpgrade("purplePigment", 31)) keep.push("upgrades");
-        if (layer == "orangePigment" || layer == "purplePigment" && hasAchievement("challenges", 22)) keepUpgrades = keepUpgrades.concat([31, 33, 43, 53]);
+        if (layer == "orangePigment" || layer == "purplePigment" && hasAchievement("challenges", 22)) keepUpgrades = merge(keepUpgrades, [31, 33, 43, 53]);
 
         if (layer == "blackPigment" && hasChallenge("blackPigment", 11)) keep.push("upgrades");
         if (layer == "whitePigment" && hasChallenge("whitePigment", 11)) keep.push("upgrades");
 
-        if (layer == "greyPigment" && hasAchievement("challenges", 42)) keep.push("upgrades");
-
-        if (["orangePigment", "purplePigment", "blackPigment", "whitePigment", "greyPigment", "pinkPigment"].includes(layer)) {
+        if (hasAchievement("challenges", 32)) keepUpgrades = merge(keepUpgrades, [31]);
+        if (layer.indexOf("Pigment") != -1 && hasAchievement("challenges", 42)) keep = merge(keep, ["challenges", "upgrades"]);
+        
+        if (["orangePigment", "purplePigment", "blackPigment", "whitePigment", "greyPigment"].includes(layer)) {
             keepUpgrades = filter(player[this.layer].upgrades, keepUpgrades);
             layerDataReset(this.layer, keep);
             if (!keep.includes("upgrades")) player[this.layer].upgrades = keepUpgrades;
@@ -261,7 +270,7 @@ addLayer("redPigment", {
         
         31: {
             title: "Carmine",
-            description: "Red pigment acts as if it was bought first.",
+            description: "Red pigment acts as if it was dyed first.",
 
             cost: new Decimal(20000),
         },

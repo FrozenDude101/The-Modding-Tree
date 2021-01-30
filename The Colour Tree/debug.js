@@ -56,7 +56,7 @@ addLayer("debugLayers", {
     createDropDownMenu() {
         let ret = "<select id=selectLayer>";
         for (let LAYER of ["none"].concat(LAYERS)) {
-            if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "statistics", "debug", "debugLayers", "debugOptions", "red", "yellow", "blue", "orange", "green", "purple", "black", "white", "grey", "pink"].includes(LAYER)) continue;
+            if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "secrets", "help", "statistics", "debug", "debugLayers", "debugOptions", "red", "yellow", "blue", "orange", "green", "purple", "black", "white", "grey", "pink"].includes(LAYER)) continue;
             let selected = (LAYER == player[this.layer].activeLayer ? "selected='selected'" : "");
             ret += "<option value=" + LAYER + " " + selected + ">" + LAYER.charAt(0).toUpperCase() + LAYER.slice(1).replace(/([A-Z])/g,' $1') + "</option>";
         }
@@ -93,6 +93,34 @@ addLayer("debugLayers", {
                         let cssClass = (exists && comp >= maxComp ? "bought" : "locked");
 
                         ret += "<button style='" + style + "' class='debugButton " + cssClass + "' onClick=updateAchievements('" + layerName + "','" + id + "')>" + id + "<br>" + comp + "/" + maxComp + "</button>";
+                    }
+                    ret += "<br>";
+                }
+                ret += "<br>";
+            }
+            
+            if (layer.buyables) {
+                ret += "<h2>Buyables</h2><br><br>";
+                let colRange = [9, 0];
+                let rowRange = [Infinity, 0];
+                for (let buyable in layer.buyables) {
+                    if (buyable == "rows" || buyable == "cols" || buyable == "layer") continue;
+                    colRange[0] = Math.min(colRange[0], buyable.slice(-1))
+                    colRange[1] = Math.max(colRange[1], buyable.slice(-1))
+                    rowRange[0] = Math.min(rowRange[0], buyable.slice(0, -1))
+                    rowRange[1] = Math.max(rowRange[1], buyable.slice(0, -1))
+                }
+                for (let i = rowRange[0]; i <= rowRange[1]; i++) {
+                    for (let j = colRange[0]; j <= colRange[1]; j++) {
+                        let exists = layer.buyables[i+""+j];
+                        let style = (exists ? "" : "opacity: 0");
+
+                        let id = (exists ? i+""+j : "");
+                        let amount = (exists ? formatWhole(getBuyableAmount(layerName, id)) : "")
+
+                        let cssClass = (exists && getBuyableAmount(layerName, id).gte(1) ? "bought" : "locked");
+
+                        ret += "<button style='" + style + "' class='debugButton " + cssClass + "' onclick=\"buyBuyable('" + layerName + "', '" + id + "', true)\">" + i + j + "<br>" + amount + "</button>";
                     }
                     ret += "<br>";
                 }

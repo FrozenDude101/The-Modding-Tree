@@ -14,11 +14,6 @@ addLayer("achievements", {
             effectNotify: false,
         };
     },
-    effectNotify() {
-        if (player.tab == this.layer && player.subtabs[this.layer].mainTabs == "Effects") {
-            player[this.layer].effectNotify = false;
-        }
-    },
 
     tabFormat: {
         Milestones: {
@@ -27,13 +22,17 @@ addLayer("achievements", {
         Challenges: {
             embedLayer: "challenges",
         },
+        Secrets: {
+            embedLayer: "secrets",
+            unlocked() {
+                return layerShown("secrets");
+            }  
+        },
     },
 });
 
 addLayer("milestones", {
     resource: "milestones.",
-
-    layerShown: true,
 
     startData() {
         let levels = {};
@@ -111,9 +110,9 @@ addLayer("milestones", {
                 }
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.points.gte(tmp[this.layer].achievements[this.id].goal);
@@ -131,7 +130,7 @@ addLayer("milestones", {
 
         21: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Red<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -148,9 +147,9 @@ addLayer("milestones", {
                 return {opacity: (player.redPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.redPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -167,7 +166,7 @@ addLayer("milestones", {
         },
         22: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Yellow<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Yellow<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -184,9 +183,9 @@ addLayer("milestones", {
                 return {opacity: (player.yellowPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.yellowPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -203,7 +202,7 @@ addLayer("milestones", {
         },
         23: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Blue<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Blue<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -220,9 +219,9 @@ addLayer("milestones", {
                 return {opacity: (player.bluePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.bluePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -240,7 +239,7 @@ addLayer("milestones", {
 
         31: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Orange<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Orange<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -257,9 +256,9 @@ addLayer("milestones", {
                 return {opacity: (player.orangePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.orangePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -276,7 +275,7 @@ addLayer("milestones", {
         },
         32: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Green<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Green<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -293,9 +292,9 @@ addLayer("milestones", {
                 return {opacity: (player.greenPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.greenPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -312,7 +311,7 @@ addLayer("milestones", {
         },
         33: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Purple<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Purple<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -329,9 +328,9 @@ addLayer("milestones", {
                 return {opacity: (player.purplePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.purplePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -349,7 +348,7 @@ addLayer("milestones", {
 
         41: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Black<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Black<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -366,9 +365,9 @@ addLayer("milestones", {
                 return {opacity: (player.blackPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.blackPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -402,9 +401,9 @@ addLayer("milestones", {
                 return {opacity: (player.blackPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.blackPigment.light.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -438,9 +437,9 @@ addLayer("milestones", {
                 return {opacity: (player.whitePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.whitePigment.light.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -457,7 +456,7 @@ addLayer("milestones", {
         },
         44: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>White<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>White<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -474,9 +473,9 @@ addLayer("milestones", {
                 return {opacity: (player.whitePigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.whitePigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -494,7 +493,7 @@ addLayer("milestones", {
 
         51: {
             name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Grey<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
+                return "Vibrant<br>Grey<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max))
             },
             tooltip() {
                 switch (player[this.layer].levels[this.id]) {
@@ -511,9 +510,9 @@ addLayer("milestones", {
                 return {opacity: (player.greyPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
             },
 
-            max: 40,
+            max: 50,
             goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
+                return calcAchievementGoal(player[this.layer].levels[this.id]);
             },
             done() {
                 return player.greyPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
@@ -528,49 +527,16 @@ addLayer("milestones", {
                 return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
             },
         },
-        /*52: {
-            name() {
-                return ["Faded", "Static", "Bright", "Vibrant"][Math.floor(Math.min(player[this.layer].levels[this.id], tmp[this.layer].achievements[this.id].max-1)/10)] + "<br>Pink<br>" + formatNumeral(Math.min(player[this.layer].levels[this.id]+1, tmp[this.layer].achievements[this.id].max)%10)
-            },
-            tooltip() {
-                switch (player[this.layer].levels[this.id]) {
-                    case 0:
-                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " pink pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% pink pigment.";
-                    case tmp[this.layer].achievements[this.id].max:
-                        return "MAXED\nReward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% pink pigment.";
-                    default:
-                        return "Have " + formatWhole(tmp[this.layer].achievements[this.id].goal) + " pink pigment.\nCurrent Reward:\n+" + formatWhole(tmp[this.layer].achievements[this.id].effect) + "% pink pigment.\nNext Reward:\n+" + formatWhole(this.effect(1)) + "% pink pigment.";
-                }
-            },
-
-            style() {
-                return {opacity: (player.darkGreyPigment.unlocked || player.debugOptions.showAll ? 1 : 0)};
-            },
-
-            max: 40,
-            goal() {
-                return new Decimal(1e3).pow(player[this.layer].levels[this.id]).max(10);
-            },
-            done() {
-                return player.pinkPigment.points.gte(tmp[this.layer].achievements[this.id].goal) && tmp[this.layer].achievements[this.id].style.opacity;
-            },
-            onComplete() {
-                player[this.layer].levels[this.id] += 1;
-                if (player[this.layer].levels[this.id] < tmp[this.layer].achievements[this.id].max) {
-                    player[this.layer].achievements.pop();
-                }
-            },
-            effect(delta = 0) {
-                return new Decimal(player[this.layer].levels[this.id]+delta).min(tmp[this.layer].achievements[this.id].max).mul(tmp.challenges.effect);
-            },
-        },*/
     },
 });
 
 addLayer("challenges", {
     resource: "achievements",
 
-    layerShown: true,
+    shouldNotify() {
+        if (player.tab == "achievements" && player.subtabs.achievements.mainTabs == "Challenges") player[this.layer].shouldNotify = false;
+        return player[this.layer].shouldNotify;
+    },
 
     effectDescription() {
         return "<br>boosting all milestone achievement effects by x" + format(tmp[this.layer].effect) + ".";
@@ -580,6 +546,7 @@ addLayer("challenges", {
         return {
             points: "",
 
+            shouldNotify: false,
             showPopups: true,
         };
     },
@@ -608,12 +575,13 @@ addLayer("challenges", {
     achievements: {
         rows() {
             let rows = 1;
-            if (tmp.milestones) {
-                if (tmp.milestones.achievements.row >= 2 || player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked) rows ++;
-                if (tmp.milestones.achievements.row >= 3 || player.blackPigment.unlocked || player.whitePigment.unlocked) rows ++;
-                if (tmp.milestones.achievements.row >= 4 || player.greyPigment.unlocked || player.pinkPigment.unlocked) rows ++;
+            if (tmp.challenges) {
+                if (tmp.challenges.achievements.row >= 2 || player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked || includesAny(player.challenges.achievements, [21, 22, 23, 24, 25])) rows ++;
+                if (tmp.challenges.achievements.row >= 3 || player.blackPigment.unlocked || player.whitePigment.unlocked || includesAny(player.challenges.achievements, [31, 32, 33, 34, 35])) rows ++;
+                if (tmp.challenges.achievements.row >= 4 || player.greyPigment.unlocked || includesAny(player.challenges.achievements, [41, 42, 43, 44, 45])) rows ++;
             }
             if (player.debugOptions.showAll) rows = 5;
+            if (typeof tmp.challenges.achievements.rows == "number" && rows != tmp.challenges.achievements.rows) player.challenges.shouldNotify = true;
             return rows;
         },
         cols: 5,
@@ -643,7 +611,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -692,7 +660,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -727,14 +695,14 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
                 }
             },
             effect() {
-                return tmp.orange.layerShown + tmp.green.layerShown + tmp.purple.layerShown + tmp.grey.layerShown + tmp.pink.layerShown;
+                return tmp.orange.layerShown + tmp.green.layerShown + tmp.purple.layerShown + tmp.grey.layerShown;
             },
         },
         22: {
@@ -755,7 +723,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -788,7 +756,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -828,7 +796,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -849,7 +817,7 @@ addLayer("challenges", {
             },
             tooltip() {
                 let colour = (player.stats.firstShade == "blackPigment" ? "shades" : "tints");
-                return "Have more coats of paint than " + colour + ".\nReward:\nAll primary and secondary pigments act as if they were bought first.";
+                return "Have more coats of paint than " + colour + ".\nReward:\nAll primary and secondary pigments act as if they were bought first and keep primary pigment unlock order upgrades on all resets.";
             },
 
             style: {
@@ -867,7 +835,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -883,7 +851,7 @@ addLayer("challenges", {
             },
         },
         34: {
-            name: "Out of<br>Order<sup>2</sup>",
+            name: "Out of<br>Order 2",
             tooltip() {
                 let firstChallenge = (player.firstShade == "blackPigment" ? "Additive" : "Subtractive");
                 return "Complete Anti-Favoritism before " + firstChallenge + ".\nReward:\nAbsorbed/Reflected light is generated based on best black/white pigment.";
@@ -894,7 +862,7 @@ addLayer("challenges", {
             },
 
             done() {
-                return (player.firstShade == "blackPigment" ? hasChallenge("whitePigment", 12) && !hasChallenge("whitePigment", 11) : hasChallenge("blackPigment", 12) && !hasChallenge("blackPigment", 11));
+                return (player.firstShade == "blackPigment" ? hasChallenge("whitePigment", 13) && !hasChallenge("whitePigment", 11) : hasChallenge("blackPigment", 13) && !hasChallenge("blackPigment", 11));
             },
             onComplete() {
                 if (player[this.layer].showPopups) {
@@ -903,7 +871,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -932,7 +900,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -950,7 +918,7 @@ addLayer("challenges", {
         },
         42: {
             name: "Min-Maxing",
-            tooltip: "Create the darkest and lightest shades of grey.\nReward\nKeep all coloured upgrades and challenge completions when dying grey pigment.",
+            tooltip: "Create the darkest and lightest shades of grey.\nReward:\nKeep all colour upgrades and challenge completions when dying any pigment. Also keep black and white pigment challenge completions.",
 
             style: {
                 color: "#FD0",
@@ -966,7 +934,7 @@ addLayer("challenges", {
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
                         
-                        tmp[this.layer].achievements[this.id].name.replaceAll("<br>", " ").replaceAll("<sup>", " ").replaceAll("</sup>", ""),
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
                     );
@@ -974,14 +942,426 @@ addLayer("challenges", {
             },
         },
         43: {
-            name: "How Come Light Red Gets An Exception?",
-            tooltip: "Unlock pink pigment.",
+            name: "50 Tones<br>of Grey",
+            tooltip: "Discover 50 different tones.\nReward:\nAutomatically purchase grey pigment buyables.",
+
+            style: {
+                color: "#FD0",
+            },
 
             done() {
-                return player.pinkPigment.unlocked;
+                return getBuyableAmount("greyPigment", 11).gte(50);
+            },
+            onComplete() {
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
+                        5,
+                        "#DDD"
+                    );
+                }
+            },
+        },
+        44: {
+            name: "Coming Back For More",
+            tooltip: "Reach 1000 blank pigment with only a single layer visible.\nReward:\nGrey pigment buyables don't spend pigment.",
+
+            style: {
+                color: "#FD0",
+            },
+
+            done() {
+                return nLayersShown() == 1 && player.points.gte(1000);
+            },
+            onComplete() {
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
+                        5,
+                        "#DDD"
+                    );
+                }
+            },
+        },
+        45: {
+            name: "Coming Back For More 2",
+            tooltip: "Reach 1,000,000 blank pigment while in 3 challenges.\nReward:\nLose the ability to dye, but gain 10% of grey pigment gain per second.",
+
+            style: {
+                color: "#FD0",
+            },
+
+            done() {
+                return inNChallenges() == 3 && player.points.gte(1000000);
+            },
+            onComplete() {
+                if (player[this.layer].showPopups) {
+                    updateTemp();
+                    doPopup(
+                        "",
+                        tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
+                        
+                        tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
+                        5,
+                        "#DDD"
+                    );
+                }
             },
         },
     },
+});
+
+addLayer("secrets", {
+    layerShown() {
+        return player.secrets.achievements.length > 0;
+    },
+
+    shouldNotify() {
+        if (player.tab == "achievements" && player.subtabs.achievements.mainTabs == "Secrets") player[this.layer].shouldNotify = false;
+        return player[this.layer].shouldNotify;
+    },
+
+    startData() {
+        return {
+            pinkClicked: false,
+            funnyNumber: false,
+            multipleVersions: false,
+
+            shouldNotify: false,
+            showPopups: true,
+        };
+    },
+
+    tabFormat: [
+        "achievements",
+    ],
+
+    achievementPopups() {
+        return player[this.layer].showPopups;
+    },
+    achievements: {
+        rows: 5,
+        cols: 5,
+
+        11: {
+            name: "The Long<br>Haul",
+            tooltip: "Play multiple major versions of The Colour Tree.",
+
+            style() {
+                return (hasAchievement(this.layer, this.id) ? "" : {opacity: 0});
+            },
+
+            done() {
+                return player.secrets.multipleVersions;
+            },
+            onComplete() {
+                player[this.layer].shouldNotify = true;
+            },
+        },
+        12: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        13: {
+            name: "Ha Ha<br>Comedy",
+            tooltip: "Import a funny number.",
+
+            style() {
+                return (hasAchievement(this.layer, this.id) ? "" : {opacity: 0});
+            },
+
+            done() {
+                return player.secrets.funnyNumber;
+            },
+            onComplete() {
+                player[this.layer].shouldNotify = true;
+            },
+        },
+        14: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        15: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+
+        21: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        22: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        23: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        24: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        25: {
+            name: "Completely<br>Out of<br>Order",
+            tooltip: "Unlock an achievement before it is visible.",
+
+            style() {
+                return (hasAchievement(this.layer, this.id) ? "" : {opacity: 0});
+            },
+
+            done() {
+                let maxID = tmp.challenges.achievements.rows * 10 + 9;
+
+                return (max(player.challenges.achievements) > maxID);
+            },
+            onComplete() {
+                player[this.layer].shouldNotify = true;
+            },
+        },
+
+        31: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        32: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        33: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        34: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        35: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+
+        41: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        42: {
+            name: "Hidden Colour",
+            tooltip: "Attempt to find the colour pink.",
+
+            style() {
+                return (hasAchievement(this.layer, this.id) ? "" : {opacity: 0});
+            },
+
+            done() {
+                return player[this.layer].pinkClicked;
+            },
+            onComplete() {
+                player[this.layer].shouldNotify = true;
+            },
+        },
+        43: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        44: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        45: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+
+        51: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        52: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        53: {
+            name: "Blind<br>Luck",
+            tooltip: "Be lucky.",
+
+            style() {
+                return (hasAchievement(this.layer, this.id) ? "" : {opacity: 0});
+            },
+
+            done() {
+                return Math.floor(Math.random()*1000000) == 0;
+            },
+            onComplete() {
+                player[this.layer].shouldNotify = true;
+            },
+        },
+        54: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+        55: {
+            style: {
+                opacity: 0,
+            },
+
+            done() {
+                return false;
+            },
+        },
+    }
+});
+
+addLayer("help", {
+    symbol: "❔",
+    row: "side",
+    
+    tooltip: "Help",
+
+    layerShown: true,
+
+    startData() {
+        return {
+            showAll: false,
+        };
+    },
+
+    tabFormat: [
+        ["display-text", "<h1><u>Help</u></h1>"],
+        "blank",
+        ["display-text", "Show Spoilers?"],
+        "blank",
+        ["toggle", ["help", "showAll"]],
+        "blank",
+        ["infobox", "resets"],
+        "blank",
+    ],
+
+    infoboxes: {
+        resets: {
+            title: "Resets",
+            body() {
+                ret = "<br>";
+
+                if (player.orangePigment.unlocked || player.help.showAll) ret += "Orange pigment resets red and yellow pigment.<br>";
+                if (player.greenPigment.unlocked || player.help.showAll) ret += "Green pigment resets yellow and blue pigment.<br>";
+                if (player.purplePigment.unlocked || player.help.showAll) ret += "Purple pigment resets red and blue pigment.<br><br>";
+    
+                if (player.blackPigment.unlocked || player.help.showAll) ret += "Black pigment resets coloured pigment.<br>";
+                if (player.whitePigment.unlocked || player.help.showAll) ret += "White pigment resets coloured pigment.<br><br>";
+    
+                if (player.greyPigment.unlocked || player.help.showAll) ret += "Grey pigment resets black, white, and coloured pigment.<br><br>";
+    
+                return ret;
+            },
+            unlocked() {
+                return player.orangePigment.unlocked || player.greenPigment.unlocked || player.purplePigment.unlocked || player.help.showAll;
+            }
+        },
+    }
 });
 
 addLayer("statistics", {
@@ -992,6 +1372,49 @@ addLayer("statistics", {
 
     layerShown: true,
 
+    startData() {
+        return {
+            activeLayer: "none",
+        };
+    },
+    activeLayer() {
+        if (document.getElementById("selectLayer")) player[this.layer].activeLayer = document.getElementById("selectLayer").value;
+    },
+
+    createDropDownMenu() {
+        let ret = "<select id=selectLayer>";
+        for (let LAYER of ["none"].concat(LAYERS)) {
+            if (["info-tab", "options-tab", "changelog-tab", "blank", "tree-tab", "achievements", "milestones", "challenges", "secrets", "help", "statistics", "debug", "debugLayers", "debugOptions", "red", "yellow", "blue", "orange", "green", "purple", "black", "white", "grey", "pink"].includes(LAYER)) continue;
+            if (LAYER != "none" && !layerShown(LAYER)) continue;
+            let selected = (LAYER == player[this.layer].activeLayer ? "selected='selected'" : "");
+            ret += "<option value=" + LAYER + " " + selected + ">" + LAYER.charAt(0).toUpperCase() + LAYER.slice(1).replace(/([A-Z])/g,' $1') + "</option>";
+        }
+        ret += "</select>";
+        return ret;
+    },
+    attributeViewer() {
+        let ret = "<h2>Attributes</h2><br><br>";
+        let tableData = {};
+
+        let layer = player[this.layer].activeLayer;
+
+        if (layer == "none") return "<h2>Select A Layer</h2>";
+
+        for (let attribute in player[layer]) {
+            if (["achievements", "buyables", "challenges", "clickables", "milestones", "upgrades", "levels", "unlocked", "requiresExponent", "resetTime", "spentOnBuyables", "activeChallenge"].includes(attribute)) continue;
+
+            let name = attribute.charAt(0).toUpperCase() + attribute.slice(1).replace(/([A-Z])/g,' $1');
+
+            tableData[name] = player[layer][attribute];
+        }
+
+        ret += formatTable(tableData, {
+            headings: ["Attribute", "Value"],
+        }); 
+
+        return ret;
+    },
+
     tabFormat: {
         "Misc Stats": {
             content: [
@@ -1001,16 +1424,49 @@ addLayer("statistics", {
                     ret += "You started playing " + formatTime(Math.floor((Date.now()-player.stats.startTick)/1000)).slice(0, -4) + "s ago.<br>";
                     ret += "You have " + formatTime(Math.floor(player.timePlayed)).slice(0, -4) + "s of play time.<br><br>";
                     
-                    ret += "You have prestiged " + formatWhole(player.stats.resets) + " time" + (player.stats.resets != 1 ? "s" : "") + ".<br>";
+                    ret += "You have reset " + formatWhole(player.stats.resets) + " time" + (player.stats.resets != 1 ? "s" : "") + ".<br>";
                     ret += "You have bought " + formatWhole(player.stats.upgradesBought) + " upgrade" + (player.stats.upgradesBought != 1 ? "s" : "") + ".<br>";
                     ret += "You have completed " + formatWhole(player.stats.challengesCompleted) + " challenge" + (player.stats.challengesCompleted != 1 ? "s" : "") + ".<br>";
+                    ret += "You have bought " + formatWhole(player.stats.buyablesBought) + " buyable" + (player.stats.buyablesBought != 1 ? "s" : "") + ".<br>";
         
                     return ret;
                 }],
             ],
         },
-        "Layer Data": {
-            unlocked: false
+        "Layer Stats": {
+            content: [
+                ["display-text", function() {
+                    return tmp.statistics.createDropDownMenu;
+                }],
+                "blank",
+                ["display-text", function() {
+                    return tmp.statistics.attributeViewer;
+                }],
+            ]
         },
     },
 });
+
+addNode("pink", {
+    x() {
+        let ret = 1;
+        return ret;
+    },
+    y() {
+        let ret = 0;
+        return ret;
+    },
+    nodeStyle() {
+        return {
+            position: "absolute",
+            left: "calc((50% - 240px) + " + 120*tmp[this.layer].x + "px)",
+            top: "calc(180px + " + 120*tmp[this.layer].y + "px)",
+            opacity: 0,
+            cursor: "default",
+        };
+    },
+    
+    onClick() {
+        if (layerShown("white") && layerShown("red")) player.secrets.pinkClicked = true;
+    }
+})

@@ -315,6 +315,13 @@ function exportSave() {
 
 function importSave(imported=undefined, forced=false) {
 	if (imported===undefined) imported = prompt("Paste your save here")
+	switch(imported) {
+		case "69":
+		case "420":
+		case "80085":
+			player.secrets.funnyNumber = true;
+			break;
+	}
 	try {
 		tempPlr = Object.assign(getStartPlayer(), JSON.parse(atob(imported)))
 		if(tempPlr.versionType != modInfo.id && !forced && !confirm("This save appears to be for a different mod! Are you sure you want to import?")) // Wrong save (use "Forced" to force it to accept.)
@@ -600,12 +607,14 @@ function buyMaxBuyable(layer, id) {
 	updateBuyableTemp(layer)
 }
 
-function buyBuyable(layer, id) {
-	if (!player[layer].unlocked) return
-	if (!tmp[layer].buyables[id].unlocked) return
-	if (!tmp[layer].buyables[id].canAfford) return
+function buyBuyable(layer, id, force) {
+	if (!player[layer].unlocked && !force) return
+	if (!tmp[layer].buyables[id].unlocked && !force) return
+	if (!tmp[layer].buyables[id].canAfford && !force) return
 
-	run(layers[layer].buyables[id].buy, layers[layer].buyables[id])
+	if (force) setBuyableAmount(layer, id, getBuyableAmount(layer, id).add(1));
+	else run(layers[layer].buyables[id].buy, layers[layer].buyables[id])
+	if (!force) player.stats.buyablesBought += 1;
 	updateBuyableTemp(layer)
 }
 

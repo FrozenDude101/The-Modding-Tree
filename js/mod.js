@@ -19,6 +19,38 @@ let VERSION = {
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
+<h2 style='color: #D82'><u>v0.2: Expanded Gamut</u></h2><br>
+<br>
+<h3>Shades</h3><br>
+Combine all the colours together to make a shade.<br>
+2 new buyables.<br>
+2 new challenges.<br>
+9 new upgrades.<br>
+<br>
+<h3>Greys</h3><br>
+Combine all colours and shades to make grey!<br>
+1 new slider.<br>
+2 new buyables.<br>
+1 new challenge.<br>
+9 new upgrades.<br>
+<br>
+<h3>Milestone Achievements</h3><br>
+5 milestone achievements added.<br>
+A complete rework of their formulas.<br>
+Can now toggle popups.<br>
+<br>
+<h3>Challenge Achievements</h3><br>
+10 challenge achievements added.<br>
+Popups changed to increase visibility.<br>
+Can now toggle popups.<br>
+<br>
+<h3>Statistics</h3><br>
+Individual layer statistics.<br>
+New general statistics.<br>
+<br>
+<h3>Help</h3><br>
+Tries to explain mechanics.<br>
+<br>
 <h3>v0.1.1.1 - v0.1.1.6</h3><br>
 <br>
 Added an outline to big nodes.<br>
@@ -149,6 +181,8 @@ function getPointGen() {
 	}
 	// Exponation.
 
+	if (inChallenge("greyPigment", 11)) gain = gain.sqrt();
+
 	return gain;
 
 }
@@ -170,6 +204,7 @@ function addedPlayerData() {
 			resets: 0,
 			upgradesBought: 0,
 			challengesCompleted: 0,
+			buyablesBought: 0,
 		},
 		
 		hqTree: true,
@@ -184,7 +219,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.orangePigment.points.gte(10000000) && player.greenPigment.points.gte(10000000) && player.purplePigment.points.gte(10000000);
+	return player.greyPigment.points.gte(1e150);
 }
 
 
@@ -200,9 +235,8 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
 
-	for (let achievement of player.milestones.achievements.slice()) {
-		if (player.milestones.levels[achievement] >= layers.milestones.achievements[achievement].max) continue;
-		player.milestones.achievements.splice(player.milestones.achievements.indexOf(achievement), 1);
-	}
+	if (VERSION.num.substring(0, 3) > oldVersion.substring(0, 3)) player.secrets.multipleVersions = true;
+
+	player.milestones.levels = getStartPlayer().milestones.levels;
 
 }
