@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Colour Tree",
-	id: "FD101/TheColourTreeMajor",
+	id: "FD101/TheColourTree",
 	author: "FrozenDude101",
 	pointsName: "blank pigment",
 	discordName: "",
