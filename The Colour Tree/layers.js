@@ -968,7 +968,7 @@ addLayer("challenges", {
         },
         44: {
             name: "Coming Back For More",
-            tooltip: "Reach 1000 blank pigment with only a single layer visible.\nReward:\nGrey pigment buyables don't spend pigment.",
+            tooltip: "Reach 1,000 blank pigment with only a single layer visible.\nReward:\nGrey pigment buyables don't spend pigment.",
 
             style: {
                 color: "#FD0",

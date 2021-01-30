@@ -22,7 +22,7 @@ let changelog = `
 <h2 style='color: #D82'><u>v0.2: Expanded Gamut</u></h2><br>
 <br>
 <h3>Shades</h3><br>
-Combine all the colours together to make a shade.<br>
+Combine all the colours together to make a shade!<br>
 2 new buyables.<br>
 2 new challenges.<br>
 9 new upgrades.<br>
@@ -154,8 +154,6 @@ function getPointGen() {
 		if (hasUpgrade(colour, 11)) gain = gain.pow(upgradeEffect(colour, 11));
 	}
 	// Base exponation.
-
-	
 	
 	for (let colour of primary) {
 		if (hasUpgrade(colour, 12)) gain = gain.mul(upgradeEffect(colour, 12));
@@ -215,6 +213,7 @@ function addedPlayerData() {
 
 // Display extra things at the top of the page
 var displayThings = [
+	"Endgame: 1e150 grey pigment."
 ]
 
 // Determines when the game "ends"

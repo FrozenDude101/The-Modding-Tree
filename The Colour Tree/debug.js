@@ -252,12 +252,18 @@ addLayer("debugOptions", {
     infinitePoints() {
         if (!player[this.layer].infinitePoints) return;
         player.points = new Decimal("1eeeeeeeeee1");
+
         player.redPigment.points = new Decimal("1eeeeeeeeee1");
         player.yellowPigment.points = new Decimal("1eeeeeeeeee1");
         player.bluePigment.points = new Decimal("1eeeeeeeeee1");
+
         player.orangePigment.points = new Decimal("1eeeeeeeeee1");
         player.greenPigment.points = new Decimal("1eeeeeeeeee1");
         player.purplePigment.points = new Decimal("1eeeeeeeeee1");
+
+        player.blackPigment.points = new Decimal("1eeeeeeeeee1");
+        player.whitePigment.points = new Decimal("1eeeeeeeeee1");
+        player.greyPigment.points = new Decimal("1eeeeeeeeee1");
     },
 
     tabFormat: [
