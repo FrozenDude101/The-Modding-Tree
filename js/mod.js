@@ -237,7 +237,7 @@ function fixOldSave(oldVersion) {
 
 	if (VERSION.num.substring(0, 3) > oldVersion.substring(0, 3)) player.secrets.multipleVersions = true;
 
-	if (oldVersion.subString(0, 3) == "0.1") {
+	if (oldVersion.substring(0, 3) == "0.1") {
 		player.milestones.levels = getStartPlayer().milestones.levels;
 	}
 
