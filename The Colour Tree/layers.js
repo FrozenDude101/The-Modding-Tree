@@ -862,7 +862,7 @@ addLayer("challenges", {
             },
 
             done() {
-                return (player.firstShade == "blackPigment" ? hasChallenge("whitePigment", 13) && !hasChallenge("whitePigment", 11) : hasChallenge("blackPigment", 13) && !hasChallenge("blackPigment", 11));
+                return (player.stats.firstShade == "blackPigment" ? hasChallenge("whitePigment", 13) && !hasChallenge("whitePigment", 11) : hasChallenge("blackPigment", 13) && !hasChallenge("blackPigment", 11));
             },
             onComplete() {
                 if (player[this.layer].showPopups) {
