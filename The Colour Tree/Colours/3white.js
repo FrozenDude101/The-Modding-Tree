@@ -235,7 +235,7 @@ addLayer("whitePigment", {
             display() {
                 return `
                 Multiply all primary and secondary pigment gain by ` + format(tmp[this.layer].buyables[this.id].baseEffect) + `.<br>
-                Discover a new tint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` absorbed light.<br>
+                Discover a new tint for ` + formatWhole(tmp[this.layer].buyables[this.id].cost) + ` reflected light.<br>
                 You have discovered ` + formatWhole(getBuyableAmount(this.layer, this.id)) + ` different tint` + (getBuyableAmount(this.layer, this.id).neq(1) ? "s" : "") + `, multiplying all primary and secondary pigment gain by ` + format(tmp[this.layer].buyables[this.id].effect) + `.
                 ` + (buyableEffect(this.layer, this.id).gte(1e100) ? "<br>(Softcapped)" : "") + `
                 `
