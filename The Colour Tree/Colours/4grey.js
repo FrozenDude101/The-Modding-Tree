@@ -325,21 +325,21 @@ addLayer("greyPigment", {
         cols: 3,
 
         11: {
-            title: "Ebony",
+            title: "Silver",
             description: "Exponate base blank pigment gain by 1.5.",
 
             effect: 1.5,
             cost: new Decimal(1),
         },
         12: {
-            title: "Onyx",
+            title: "Slate",
             description: "Multiply blank pigment gain by 2.",
 
             effect: 2,
             cost: new Decimal(2),
         },
         13: {
-            title: "Black Olive",
+            title: "Gunmetal Grey",
             description: "Boost blank pigment gain based on blank pigment amount.",
             effectDisplay() {
                 return "x" + format(tmp[this.layer].upgrades[this.id].effect);
@@ -352,21 +352,21 @@ addLayer("greyPigment", {
         },
 
         21: {
-            title: "Jet",
+            title: "Ash Grey",
             description: "Exponate Tone cost exponent by 0.5.",
 
             effect: 0.5,
             cost: new Decimal(10),
         },
         22: {
-            title: "Smoky Black",
+            title: "Purple Grey",
             description: "Lose the ability to dye, but gain 10% of black and white pigment gain per second.",
 
             effect: 0.1,
             cost: new Decimal(25),
         },
         23: {
-            title: "Licorice",
+            title: "Battleship Grey",
             description: "Add 0.1 to the base effect of all coats of paint.",
 
             effect: 0.1,
@@ -374,20 +374,20 @@ addLayer("greyPigment", {
         },
 
         31: {
-            title: "Jet",
+            title: "Cool Grey",
             description: "Automatically purchase one of each black and white pigment buyable per second.",
 
             cost: new Decimal(10000),
         },
         32: {
-            title: "Smoky Black",
+            title: "Payne's Grey",
             description: "Halve the cost of all black, white, and grey pigment buyables.",
 
             effect: 0.5,
             cost: new Decimal(1e7),
         },
         33: {
-            title: "Licorice",
+            title: "Moli",
             description: "Double the effect of all coats of paint.",
 
             effect: 2,

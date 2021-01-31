@@ -357,7 +357,7 @@ addLayer("blackPigment", {
 
         21: {
             title: "Jet",
-            description: "Exponate Tint cost exponent by 0.5.",
+            description: "Exponate Shade cost exponent by 0.5.",
 
             effect: 0.5,
             cost: new Decimal(10),

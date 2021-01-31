@@ -12,12 +12,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
+	num: "0.2.0.1",
 	name: "Expanded Gamut",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
+<br>
+<h3>v0.2.0.1</h3><br>
+<br>
+Corrected grey pigment upgrade names.<br>
+Corrected black pigment upgrade (21) saying Tint instead of Shade.<br>
 <br>
 <h2 style='color: #D82'><u>v0.2: Expanded Gamut</u></h2><br>
 <br>
