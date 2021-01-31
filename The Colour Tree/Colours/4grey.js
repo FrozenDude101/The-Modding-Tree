@@ -406,7 +406,7 @@ addLayer("greyPigment", {
             rewardDescription: "Keep black and white pigment upgrades, challenges, and buyables when dying grey pigments.",
 
             unlocked() {
-                return hasChallenge(this.layer, this.id) || player[this.layer].unlocked || player.debugOptions.showAll;
+                return hasChallenge(this.layer, this.id) || hasUpgrade(this.layer, 13) || player.debugOptions.showAll;
             },
 
             canComplete() {

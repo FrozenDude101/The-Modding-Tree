@@ -176,7 +176,7 @@ addLayer("purplePigment", {
     },
 
     canReset() {
-        return tmp[this.layer].getResetGain.gte(1) && tmp.orangePigment.passiveGeneration < 0.5;
+        return tmp[this.layer].getResetGain.gte(1) && tmp.purplePigment.passiveGeneration < 0.5;
     },
     doReset(layer) {
         let keep = ALWAYS_KEEP_ON_RESET.slice();
