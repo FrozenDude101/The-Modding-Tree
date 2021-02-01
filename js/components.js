@@ -9,13 +9,21 @@ function loadVue() {
 		`
 	})
 
-// data = a function returning the content (actually HTML)
+	// data = a function returning the content (actually HTML)
 	Vue.component('raw-html', {
-			props: ['layer', 'data'],
-			template: `
-				<span class="instant"  v-html="data"></span>
-			`
-		})
+		props: ['layer', 'data'],
+		template: `
+			<span class="instant"  v-html="data"></span>
+		`
+	})
+
+	// data = a function returning the content (actually HTML)
+	Vue.component('code-block', {
+		props: ['layer', 'data'],
+		template: `
+			<span v-html="formatCodeBlock(data)"></span>
+		`
+	})
 
 	// Blank space, data = optional height in px or pair with width and height in px
 	Vue.component('blank', {

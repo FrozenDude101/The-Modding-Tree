@@ -1,0 +1,16 @@
+.codeBlock {
+    padding: 5px 10px;
+    
+    background-color: rgba(255, 255, 255, 0.1);
+
+    border-left: 5px solid #DFDFDF;
+    border-radius: 5px;
+
+    max-width: 500px;
+    
+    white-space:pre;
+}
+
+.codeLine {
+    float: left;
+}

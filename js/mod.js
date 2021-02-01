@@ -7,12 +7,12 @@ let modInfo = {
 	discordLink: "",
 	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	
-	offlineLimit: 1,  // In hours
+	offlineLimit: 0,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1",
+	num: "0.1",
 	name: "Javascript",
 }
 

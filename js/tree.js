@@ -16,5 +16,18 @@ addNode("blank", {
 
 
 addLayer("tree-tab", {
-    tabFormat: [["tree", function() {return (layoutInfo.treeLayout ? layoutInfo.treeLayout : TREE_LAYERS)}]]
+    tabFormat: {
+        JavaScript: {
+            content: [
+                ["tree", [
+                    ["JStypes", "JScomments", "JSvariables", "JSfunctions", "JSdebugging", "JSconditions", "JSobjects", "JSloops"],
+                ]]
+            ],
+
+            style: {
+                position: "relative",
+                top: "-75px",
+            }
+        },
+    },
 })
