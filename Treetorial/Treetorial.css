@@ -1,12 +1,12 @@
 .codeBlock {
-    padding: 5px 10px;
+    padding: 0.5em 1em;
     
     background-color: rgba(255, 255, 255, 0.1);
 
     border-left: 5px solid #DFDFDF;
     border-radius: 5px;
 
-    max-width: 500px;
+    width: 450px;
     
     white-space:pre;
 }
