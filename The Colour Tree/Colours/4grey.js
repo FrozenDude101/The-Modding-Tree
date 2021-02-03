@@ -202,7 +202,10 @@ addLayer("greyPigment", {
         if (hasAchievement("challenges", 43)) {
             for (let buyable in tmp[this.layer].buyables) {
                 if (["rows", "cols"].includes(buyable)) continue;
-                if (tmp[this.layer].buyables[buyable].canAfford) layers[this.layer].buyables[buyable].buy();
+                if (tmp[this.layer].buyables[buyable].canAfford) {
+                    layers[this.layer].buyables[buyable].buy();
+                    break;
+                }
             }
         }
 

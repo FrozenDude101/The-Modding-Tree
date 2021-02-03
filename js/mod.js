@@ -12,14 +12,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.0.4",
+	num: "0.2.0.5",
 	name: "Expanded Gamut",
 }
 
 let changelog = `
 <h1>Changelog</h1><br>
 <br>
-<h3>v0.2.0.1 - v0.2.0.4</h3><br>
+<h3>v0.2.0.1 - v0.2.0.5</h3><br>
 <br>
 Corrected grey pigment upgrade names.<br>
 Corrected black pigment upgrade (21) saying Tint instead of Shade.<br>
@@ -27,6 +27,7 @@ Fixed Tint claiming to use absorbed light.<br>
 Fixed Out of Order 2 being unbeatable if you choose black first.<br>
 Made Toner appear only after you have the first row of grey pigment upgrades.<br>
 Fixed purple pigment referencing orange pigment % gain per second.<br>
+Fixed buying grey pigment buyables when you couldn't afford them.<br>
 <br>
 <h2 style='color: #D82'><u>v0.2: Expanded Gamut</u></h2><br>
 <br>
