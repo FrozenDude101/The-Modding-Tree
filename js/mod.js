@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Javascript",
+	num: "0.0.1",
+	name: "JS - Types",
 }
 
 let changelog = ``;
