@@ -14,3 +14,8 @@
 .codeLine {
     float: left;
 }
+
+.questionNumber {
+    display: block;
+    width: 180px;
+}

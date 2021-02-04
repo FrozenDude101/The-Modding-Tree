@@ -13,10 +13,21 @@ addLayer("JStypes", {
     },
     layerShown: true,
 
+    componentStyles: {
+        clickables: {
+            width: "100px",
+            height: "80px",
+        },
+    },
+
     startData() {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
@@ -34,7 +45,7 @@ addLayer("JStypes", {
                 `],
                 "blank",
                 ["code-block", [
-                    `var result = "Dog" + 22;`
+                    `var result = "Dog" + 22;`,
                 ]],
                 "blank",
                 ["display-text", `
@@ -117,9 +128,77 @@ addLayer("JStypes", {
                 "blank",
             ],
         },
-        Test: {
-
+        Quiz: {
+            content: [
+                ["row", [
+                    ["clickable", "1000"],
+                    ["blank", ["50px"]],
+                    ["display-text", function() {
+                        return "<h2 class=questionNumber>" + (player.JStypes.question == tmp.JStypes.questions.length + 1 ? "Results" : "Question #" + player.JStypes.question) + "</h2>";
+                    }],
+                    ["blank", ["50px"]],
+                    ["clickable", function() {
+                        return (player.JStypes.question == tmp.JStypes.questions.length ? "1002" : "1001");
+                    }],
+                ]],
+                "blank",
+                ["column", function () {
+                    return tmp.JStypes.question;
+                }],
+            ],
         },
+    },
+
+    questions: [
+        {question: "Which of the following are valid strings?",        answers: [1]},
+        {question: "How would you insert a new line into a string?",   answers: []},
+        {question: "Which of the following are valid numbers?",        answers: []},
+        {question: "What is the result of (true && false || !false)?", answers: []},
+        {question: "Which of the following are truthy values?",        answers: []},
+        {question: "Can you put an Array inside of an Array?",         answers: []},
+        {question: "What does the .shift() Array method do?",          answers: []},
+        {question: "What is the data type is null?",                   answers: []},
+        {question: "What is the default value of a variable?",         answers: []},
+    ],
+    question() {
+        let question = player[this.layer].question;
+        switch(question) {
+            case tmp[this.layer].questions.length + 1:
+                return [
+                    ["display-text", `
+                        Your best score is ` + player.JStypes.best + `/` + tmp[this.layer].questions.length + `.<br>
+                        Your last score was ` + player.JStypes.last + `/` + tmp[this.layer].questions.length + `.<br>
+                    `],
+                    "blank",
+                    ["clickable", 1003],
+                ];
+            default:
+                let answers = ["column", []];
+                for (let i = 0; i <= 2; i ++) {
+                    answers[1].push(["row", []]);
+                    for (let j = 1; j <= 3; j ++) {
+                        answers[1][i][1].push(["clickable", question*10 + i*3 + j]);
+                    }
+                }
+                return [
+                    ["display-text", tmp[this.layer].questions[question-1].question],
+                    "blank",
+                    answers,
+                ];
+        }
+    },
+    markQuestions() {
+        let ret = 0;
+        for (let i = 0; i <= tmp[this.layer].questions.length; i ++) {
+            let score = 0;
+            for (let j = 1; j <= 9; j ++) {
+                if (getClickableState(this.layer, i+1 + "" + j) == undefined) break;
+                let multiplier = tmp[this.layer].questions[i].answers.includes(j) * 2 - 1;
+                score += multiplier * getClickableState(this.layer, i+1 + "" + j) / tmp[this.layer].questions[i].answers.length;
+            }
+            ret += Math.max(score, 0);
+        }
+        return Math.floor(ret * 10) / 10;
     },
 
     infoboxes: {
@@ -607,8 +686,8 @@ addLayer("JStypes", {
                 ["display-text", `
                     Arrays are a special object that can stored multiple bits of data.<br>
                     They are created by surrounding comma seperated data in [].<br>
-                    An array can have data of different types.<br>
-                    Here are some examples of arrays:<br>
+                    An Array can have data of different types.<br>
+                    Here are some examples of Arrays:<br>
                 `],
                 "blank",
                 ["code-block", [
@@ -618,8 +697,8 @@ addLayer("JStypes", {
                 ]],
                 "blank",
                 ["display-text", `
-                    You can also put arrays inside of arrays.<br>
-                    These are called nested arrays.<br>
+                    You can also put Arrays inside of Arrays.<br>
+                    These are called nested Arrays.<br>
                     They are useful for creating a grid, e.g for a 2D game.<br>
                 `],
                 "blank",
@@ -650,12 +729,12 @@ addLayer("JStypes", {
                 ]],
                 "blank",
                 ["display-text", `
-                    You can also get part of an array, using the .slice() method.<br>
+                    You can also get part of an Array, using the .slice() method.<br>
                     The first argument is the index to start at.<br>
                     The second argument is the index to end at.<br>
                     If the second argument is not given, it will continue to the end.<br>
-                    The returned array does not contain the item at the end index.<br>
-                    This does not altar the original array.<br>
+                    The returned Array does not contain the item at the end index.<br>
+                    This does not altar the original Array.<br>
                 `],
                 "blank",
                 ["code-block", [
@@ -674,8 +753,8 @@ addLayer("JStypes", {
             title: "Writing to Arrays",
             body: [
                 ["display-text", `
-                    You can write to arrays in the same way as you read from them.<br>
-                    However, this method is not always the best to use, as you can create "holes" in the array.<br>
+                    You can write to Arrays in the same way as you read from them.<br>
+                    However, this method is not always the best to use, as you can create "holes" in the Array.<br>
                     A hole exists when an unintended undefined exists between data.<br>
                 `],
                 "blank",
@@ -689,11 +768,11 @@ addLayer("JStypes", {
                 ]],
                 "blank",
                 ["display-text", `
-                    The .unshift() method adds data to the start of the list.<br>
-                    The .push() method adds data to the end of the list.<br>
+                    The .unshift() method adds data to the start of the Array.<br>
+                    The .push() method adds data to the end of the Array.<br>
                     The first argument is the data to be added.<br>
-                    They both alter the original list.<br>
-                    They both return the new length of the list.<br>
+                    They both alter the original Array.<br>
+                    They both return the new length of the Array.<br>
                 `],
                 "blank",
                 ["code-block", [
@@ -707,9 +786,9 @@ addLayer("JStypes", {
                 ]],
                 "blank",
                 ["display-text", `
-                    The .shift() method removes data from the start of the list.<br>
-                    The .pop() method removes data from the end of the list.<br>
-                    They both alter the original list.<br>
+                    The .shift() method removes data from the start of the Array.<br>
+                    The .pop() method removes data from the end of the Array.<br>
+                    They both alter the original Array.<br>
                     They both return the data that was removed.<br>
                 `],
                 "blank",
@@ -740,10 +819,10 @@ addLayer("JStypes", {
                 ]],
                 "blank",
                 ["display-text", `
-                    The .concat() method puts one array on the end of another.<br>
-                    The first argument is the array to add.<br>
-                    It does not alter the original array.
-                    It returns an array.<br>
+                    The .concat() method puts one Array on the end of another.<br>
+                    The first argument is the Array to add.<br>
+                    It does not alter the original Array.
+                    It returns an Array.<br>
                 `],
                 "blank",
                 ["code-block", [
@@ -790,7 +869,7 @@ addLayer("JStypes", {
                     If a variable is created, but is not given a value, it is set to undefined.<br>
                     You can also manually set a variable to be undefined.<br>
                     Setting a variable to undefined essentially resets it.<br>
-                    Empty strings, arrays, and objects are not the same as undefined.<br>
+                    Empty strings, Arrays, and objects are not the same as undefined.<br>
                 `],
                 "blank",
                 ["code-block", [
@@ -802,6 +881,92 @@ addLayer("JStypes", {
                 ]],
             ],
         },
+    },
+
+    clickables: {
+        1000: {
+            title: "🡸",
+            style() {
+                return {
+                    height: "40px",
+                    width: "80px",
+                    opacity: (player.JStypes.question == 1 ? 0 : 1),
+                };
+            },
+
+            canClick() {
+                return tmp[this.layer].clickables[this.id].style.opacity == 1;
+            },
+            onClick() {
+                player[this.layer].question --;
+            },
+        },
+        1001: {
+            title: "🡺",
+            style() {
+                return {
+                    height: "40px",
+                    width: "80px",
+                    opacity: (player.JStypes.question >= tmp.JStypes.questions.length ? 0 : 1),
+                };
+            },
+
+            canClick() {
+                return tmp[this.layer].clickables[this.id].style.opacity == 1;
+            },
+            onClick() {
+                player[this.layer].question ++;
+            },
+        },
+        1002: {
+            title: "Results",
+            style() {
+                return {
+                    height: "40px",
+                    width: "80px",
+                    opacity: (player.JStypes.question == tmp.JStypes.questions.length ? 1 : 0),
+                };
+            },
+
+            canClick() {
+                return tmp[this.layer].clickables[this.id].style.opacity == 1;
+            },
+            onClick() {
+                player[this.layer].question ++;
+                if (getClickableState(this.layer, this.id)) return;
+                setClickableState(this.layer, this.id, true);
+                player[this.layer].last = tmp[this.layer].markQuestions;
+                player[this.layer].best = Math.max(player[this.layer].best, tmp[this.layer].markQuestions);
+            },
+        },
+        1003: {
+            title: "Reset Quiz",
+            style() {
+                return {
+                    height: "40px",
+                    width: "80px",
+                    opacity: (player.JStypes.question > tmp.JStypes.questions.length ? 1 : 0),
+                };
+            },
+
+            canClick() {
+                return tmp[this.layer].clickables[this.id].style.opacity == 1;
+            },
+            onClick() {
+                player[this.layer].question = 1;
+                player[this.layer].clickables = getStartClickables(this.layer);
+            },
+        },
+
+        11: {
+            style() {
+                let colourIndex = getClickableState(this.layer, this.id)*1;
+                colourIndex += (getClickableState(this.layer, 1002) && tmp[this.layer].questions[Math.floor(this.id/10)-1].answers.includes(this.id%10))*2;
+                return {
+                    "border-color": answerColours[colourIndex],
+                };
+            },
+        }
     },
 });
 
