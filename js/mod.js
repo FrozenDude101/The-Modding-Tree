@@ -16,7 +16,13 @@ let VERSION = {
 	name: "JS - Types",
 }
 
-let changelog = ``;
+let changelog = `
+<h1><u>Available Modules</u></h1><br>
+<br>
+<h2>Javascript</h2><br>
+<br>
+Data Types
+`;
 
 let winText = ``;
 

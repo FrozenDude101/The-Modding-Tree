@@ -281,6 +281,11 @@ function clickableFunction(layer, id) {
             setClickableState(layer, id, true);
             player[layer].last = markQuestions(layer);
             player[layer].best = Math.max(player[layer].best, player[layer].last);
+            if (player[layer].last == QUESTIONS[layer].length) {
+                if (!player[layer].completed) player.points = player.points.add(1);
+                player[layer].completed = true;
+                needCanvasUpdate = true;
+            }
             break;
         case "1003":
             tmp[layer].refreshQuestion = true;
