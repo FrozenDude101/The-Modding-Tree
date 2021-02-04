@@ -4,22 +4,22 @@ const QUESTIONS = {
     JStypes: [
         {question: "Which of the following are valid strings?",        answers: [1, 3, 6],
         options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "How would you insert a new line into a string?",   answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "Which of the following are valid numbers?",        answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "What is the result of (true && false || !false)?", answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "Which of the following are truthy values?",        answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "Can you put an Array inside of an Array?",         answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "What does the .shift() Array method do?",          answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "What is the data type is null?",                   answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "What is the default value of a variable?",         answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
+        {question: "How would you insert a new line into a string?",   answers: [2],
+        options: ["\\b", "\\n", "\\b", "\\'", "\\t", "\\v"]},
+        {question: "Which of the following are valid numbers?",        answers: [1, 2, 4, 9],
+        options: ["Infinity", "3.4e27", "\"String\"", "0.001", "true", "[1, 2]", "`3`", "null", "NaN"]},
+        {question: "What is the result of (true && false) || false?", answers: [2],
+        options: ["true", "false"]},
+        {question: "Which of the following are truthy values?",        answers: [3, 4, 7, 8, 9],
+        options: ["undefined", "\"\"", "2", "\"String\"", "null", "false", "[]", "[\"String\"]", "true"]},
+        {question: "Can you put an Array inside of an Array?",         answers: [1],
+        options: ["Yes", "No"]},
+        {question: "What does the .shift() Array method do?",          answers: [3],
+        options: ["Add data to the start of the list.", "Add data to the end of the list.", "Remove data from the start of the list.", "Remove data from the end of the list."]},
+        {question: "What is the data type of null?",                   answers: [4],
+        options: ["string", "number", "boolean", "object", "undefined", "symbol"]},
+        {question: "What is the default value of a variable?",         answers: [4],
+        options: ["\"\"", "0", "[]", "undefined", "{}", "null"]},
     ]
 }
 
@@ -49,14 +49,14 @@ function getQuiz(layer) {
         ["row", [
             ["clickable", "1000"],
             ["blank", ["50px"]],
-            ["display-text", "<h2 class=questionNumber>" + (player.JStypes.question == QUESTIONS["JStypes"].length + 1 ? "Results" : "Question #" + player.JStypes.question) + "</h2>"],
+            ["display-text", "<h2 class=questionNumber>" + (player[layer].question == QUESTIONS[layer].length + 1 ? "Results" : "Question #" + player[layer].question) + "</h2>"],
             ["blank", ["50px"]],
-            ["clickable", (player.JStypes.question == QUESTIONS["JStypes"].length ? "1002" : "1001")]
+            ["clickable", 1001 + (player[layer].question >= QUESTIONS[layer].length) + (player[layer].question > QUESTIONS[layer].length)],
         ]],
         "blank",
-        ["column", tmp.JStypes.question]
+        ["column", tmp[layer].question]
     ];
-    
+
 }
 
 function getQuestion(layer) {
@@ -69,11 +69,9 @@ function getQuestion(layer) {
         case QUESTIONS[layer].length + 1:
             return [
                 ["display-text", `
-                    Your best score is ` + player[layer].best + `/` + QUESTIONS[layer].length + `.<br>
-                    Your last score was ` + player[layer].last + `/` + QUESTIONS[layer].length + `.<br>
+                    Your scored ` + player[layer].last + `/` + QUESTIONS[layer].length + `.<br>
+                    Your best ever score is ` + player[layer].best + `/` + QUESTIONS[layer].length + `.<br>
                 `],
-                "blank",
-                ["clickable", 1003],
             ];
         default:
             let answers = ["column", []];
@@ -218,29 +216,49 @@ function clickableStyle(layer, id) {
             return {
                 height: "40px",
                 width: "80px",
-                opacity: (player[layer].question > QUESTIONS[layer].length ? 1 : 0),
+                opacity: (player[layer].question > QUESTIONS[layer].length ? Math.min(tmp[layer].clickables[1003].style.opacity + 0.01, 1) : 0),
             };
         default:
-            let colour = (getClickableState(layer, 1002) ? 3 - (getClickableState(layer, id) ^ QUESTIONS[layer][Math.floor(id/10)-1].answers.includes(id%10)) : 1*getClickableState(layer, id));
-            switch(colour) {
+            let borderColour = 0;
+            let backgroundColour = "";
+
+            if (getClickableState(layer, id)) {
+                borderColour += 1;
+                if (getClickableState(layer, 1002)) {
+                    borderColour += 1;
+                    if (QUESTIONS[layer][Math.floor(id/10)-1].answers.includes(id%10)) {
+                        borderColour += 1;
+                    }
+                }
+            } else if (getClickableState(layer, 1002) && QUESTIONS[layer][Math.floor(id/10)-1].answers.includes(id%10)) {
+                borderColour += 2;
+            }
+
+            switch(borderColour) {
                 case 0:
-                    colour = "rgba(0, 0, 0, 0.125)";
+                    borderColour = "rgba(0, 0, 0, 0.125)";
+                    backgroundColour = "#EEE";
                     break;
                 case 1:
-                    colour = "#FD0";
+                    borderColour = "#FD0";
+                    backgroundColour = "#EEE";
                     break;
                 case 2:
-                    colour = "#C01";
+                    borderColour = "#FD0";
+                    backgroundColour = "#B88";
                     break;
                 case 3:
-                    colour = "#282";
+                    borderColour = "#FD0";
+                    backgroundColour = "#7B5";
                     break;
             }
+
             return {
                 height: "100px",
                 width: "150px",
-                "border": colour + " 5px solid",
-            }
+                border: borderColour + " 5px solid",
+                "background-color": backgroundColour,
+            };
     }
 
 }

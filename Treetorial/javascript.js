@@ -571,7 +571,16 @@ addLayer("JStypes", {
                     Other data types have truthy or falsey values.<br>
                     This simply means they will act like true or false when used with logic operators.<br>
                     There is no need to explicitly convert them into booleans.<br>
+                    All objects are truthy, even if they contain no data.<br>
                 `],
+                "blank",
+                ["code-block", [
+                    `var bool1 = [] && {} && 1;`,
+                    `var bool2 = "" || 0 || undefined;`,
+                    ``,
+                    `    bool1 -> true`,
+                    `    bool2 -> false`,
+                ]],
             ],
         },
         booleanOperators: {
