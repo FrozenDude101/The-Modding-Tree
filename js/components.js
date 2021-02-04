@@ -30,7 +30,7 @@ function loadVue() {
 		props: ['layer', 'data'],
 		template: `
 			<div class = "instant">
-			<div class = "instant" v-if="!data" v-bind:style="{'width': '8px', 'height': '17px'}"></div>
+			<div class = "instant" v-if="!data" v-bind:style="{'width': '17px', 'height': '17px'}"></div>
 			<div class = "instant" v-else-if="Array.isArray(data)" v-bind:style="{'width': data[0], 'height': data[1]}"></div>
 			<div class = "instant" v-else v-bind:style="{'width': '8px', 'height': data}"><br></div>
 			</div>

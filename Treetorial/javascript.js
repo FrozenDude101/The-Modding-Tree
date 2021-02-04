@@ -129,76 +129,14 @@ addLayer("JStypes", {
             ],
         },
         Quiz: {
-            content: [
-                ["row", [
-                    ["clickable", "1000"],
-                    ["blank", ["50px"]],
-                    ["display-text", function() {
-                        return "<h2 class=questionNumber>" + (player.JStypes.question == tmp.JStypes.questions.length + 1 ? "Results" : "Question #" + player.JStypes.question) + "</h2>";
-                    }],
-                    ["blank", ["50px"]],
-                    ["clickable", function() {
-                        return (player.JStypes.question == tmp.JStypes.questions.length ? "1002" : "1001");
-                    }],
-                ]],
-                "blank",
-                ["column", function () {
-                    return tmp.JStypes.question;
-                }],
-            ],
+            content() {
+                return getQuiz("JStypes");
+            } 
         },
     },
 
-    questions: [
-        {question: "Which of the following are valid strings?",        answers: [1]},
-        {question: "How would you insert a new line into a string?",   answers: []},
-        {question: "Which of the following are valid numbers?",        answers: []},
-        {question: "What is the result of (true && false || !false)?", answers: []},
-        {question: "Which of the following are truthy values?",        answers: []},
-        {question: "Can you put an Array inside of an Array?",         answers: []},
-        {question: "What does the .shift() Array method do?",          answers: []},
-        {question: "What is the data type is null?",                   answers: []},
-        {question: "What is the default value of a variable?",         answers: []},
-    ],
     question() {
-        let question = player[this.layer].question;
-        switch(question) {
-            case tmp[this.layer].questions.length + 1:
-                return [
-                    ["display-text", `
-                        Your best score is ` + player.JStypes.best + `/` + tmp[this.layer].questions.length + `.<br>
-                        Your last score was ` + player.JStypes.last + `/` + tmp[this.layer].questions.length + `.<br>
-                    `],
-                    "blank",
-                    ["clickable", 1003],
-                ];
-            default:
-                let answers = ["column", []];
-                for (let i = 0; i <= 2; i ++) {
-                    answers[1].push(["row", []]);
-                    for (let j = 1; j <= 3; j ++) {
-                        answers[1][i][1].push(["clickable", question*10 + i*3 + j]);
-                    }
-                }
-                return [
-                    ["display-text", tmp[this.layer].questions[question-1].question],
-                    "blank",
-                    answers,
-                ];
-        }
-    },
-    markQuestions() {
-        let ret = 0;
-        for (let i = 0; i <= tmp[this.layer].questions.length; i ++) {
-            let score = 0;
-            for (let j = 1; j <= 9; j ++) {
-                if (getClickableState(this.layer, i+1 + "" + j) == undefined) break;
-                let multiplier = tmp[this.layer].questions[i].answers.includes(j) * 2 - 1;
-                score += multiplier * getClickableState(this.layer, i+1 + "" + j) / tmp[this.layer].questions[i].answers.length;
-            }
-            ret += Math.max(score, 0);
-        }
-        return Math.floor(ret * 10) / 10;
+        return getQuestion(this.layer);
     },
 
     infoboxes: {
@@ -883,91 +821,7 @@ addLayer("JStypes", {
         },
     },
 
-    clickables: {
-        1000: {
-            title: "🡸",
-            style() {
-                return {
-                    height: "40px",
-                    width: "80px",
-                    opacity: (player.JStypes.question == 1 ? 0 : 1),
-                };
-            },
-
-            canClick() {
-                return tmp[this.layer].clickables[this.id].style.opacity == 1;
-            },
-            onClick() {
-                player[this.layer].question --;
-            },
-        },
-        1001: {
-            title: "🡺",
-            style() {
-                return {
-                    height: "40px",
-                    width: "80px",
-                    opacity: (player.JStypes.question >= tmp.JStypes.questions.length ? 0 : 1),
-                };
-            },
-
-            canClick() {
-                return tmp[this.layer].clickables[this.id].style.opacity == 1;
-            },
-            onClick() {
-                player[this.layer].question ++;
-            },
-        },
-        1002: {
-            title: "Results",
-            style() {
-                return {
-                    height: "40px",
-                    width: "80px",
-                    opacity: (player.JStypes.question == tmp.JStypes.questions.length ? 1 : 0),
-                };
-            },
-
-            canClick() {
-                return tmp[this.layer].clickables[this.id].style.opacity == 1;
-            },
-            onClick() {
-                player[this.layer].question ++;
-                if (getClickableState(this.layer, this.id)) return;
-                setClickableState(this.layer, this.id, true);
-                player[this.layer].last = tmp[this.layer].markQuestions;
-                player[this.layer].best = Math.max(player[this.layer].best, tmp[this.layer].markQuestions);
-            },
-        },
-        1003: {
-            title: "Reset Quiz",
-            style() {
-                return {
-                    height: "40px",
-                    width: "80px",
-                    opacity: (player.JStypes.question > tmp.JStypes.questions.length ? 1 : 0),
-                };
-            },
-
-            canClick() {
-                return tmp[this.layer].clickables[this.id].style.opacity == 1;
-            },
-            onClick() {
-                player[this.layer].question = 1;
-                player[this.layer].clickables = getStartClickables(this.layer);
-            },
-        },
-
-        11: {
-            style() {
-                let colourIndex = getClickableState(this.layer, this.id)*1;
-                colourIndex += (getClickableState(this.layer, 1002) && tmp[this.layer].questions[Math.floor(this.id/10)-1].answers.includes(this.id%10))*2;
-                return {
-                    "border-color": answerColours[colourIndex],
-                };
-            },
-        }
-    },
+    clickables: getClickables("JStypes"),
 });
 
 addLayer("JScomments", {

@@ -380,6 +380,7 @@ function hardReset() {
 	player = null
 	save();
 	window.location.reload();
+	clearInterval(interval);
 }
 
 var ticking = false
