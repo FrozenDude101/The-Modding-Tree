@@ -1,0 +1,104 @@
+/* vscode-fold=1 */
+
+.overlayThing {
+    z-index: 100;
+}
+
+.treeNode:not(.smallNode) .nodeSymbol {
+    font: inherit;
+    font-size: 50px;
+    color: rgba(0, 0, 0, 0.6);
+    text-shadow: 0 0 10px #FFF;
+    transition-duration: 0s;
+}
+
+.treeNode {
+    transition-property: transform, border-color, box-shadow, left, top;
+}
+
+.smallNode {
+    margin: 25%;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+div.achievement {
+    transition-property: box-shadow, z-index;
+
+}
+
+.formattedTable, .formattedTable tr th, .formattedTable tr td {
+    border: 2px solid white;
+    border-collapse: collapse;
+    padding: 10px;
+}
+
+select {
+    border: none;
+
+    font-family: "Inconsolata", monospace;
+    font-size: 2em;
+    color: inherit;
+
+    background-color: inherit;
+}
+
+option {
+    background-color: #222;
+}
+
+.resetButton {
+    color: inherit;
+    
+    background-color: #444;
+}
+
+.debugButton {
+    width: 60px;
+    height: 60px;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 100%;
+    height: 25px;
+
+    background: #606060;
+    opacity: 0.75;
+
+    border-radius: 12.5px;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+	transform: scale(1.05, 1.05);    
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 25px;
+    height: 25px;
+
+    background: #000;
+    opacity: 0.5;
+
+    cursor: pointer;
+
+    border-radius: 12.5px;
+}
+
+.slider::-moz-slider-thumb {
+    width: 25px;
+    height: 25px;
+
+    background: #000;
+    opacity: 0.5;
+
+    cursor: pointer;
+
+    border: 4px solid white;
+    border-radius: 12.5px;
+}
