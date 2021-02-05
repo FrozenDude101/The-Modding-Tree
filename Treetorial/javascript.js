@@ -39,6 +39,15 @@ addLayer("JStypes", {
         Introduction: {
             content: [
                 ["display-text", `
+                This module will go over:<br>
+                What data types exist.<br>
+                How to create each data type.<br>
+                What you can do to each data type.<br>
+                `],
+                "blank",
+                ["h-line", "50%"],
+                "blank",
+                ["display-text", `
                 JavaScript can store data in several different ways.<br>
                 The type of data determines what can be done to it.<br>
                 Without these the computer would not know what to do if it encountered:<br>
@@ -66,13 +75,6 @@ addLayer("JStypes", {
                     `    intendedResult -> true`,
                     `    actualResult   -> false`,
                 ]],
-                "blank",
-                ["display-text", `
-                This module will go over:<br>
-                What data types exist.<br>
-                How to create each data type.<br>
-                What you can do to each data type.<br>
-                `],
                 "blank",
             ],
         },
@@ -201,7 +203,7 @@ addLayer("JStypes", {
             ],
         },
         stringOperators: {
-            title: "String Operators",
+            title: "Operators",
             body: [
                 ["display-text", `
                     Strings use the + operator for concatenation.<br>
@@ -251,7 +253,7 @@ addLayer("JStypes", {
             ],
         },
         stringMethods: {
-            title: "String Methods",
+            title: "Methods",
             body: [
                 ["display-text", `
                     The .length property returns the length of the string.<br>
@@ -428,7 +430,7 @@ addLayer("JStypes", {
             ],
         },
         numberOperators: {
-            title: "Number Operators",
+            title: "Operators",
             body: [
                 ["display-text", `
                     Numbers use the +, -, *, / operators as you would expect.<br>
@@ -489,7 +491,7 @@ addLayer("JStypes", {
             ],
         },
         numberMethods: {
-            title: "Numeric Methods",
+            title: "Methods",
             body: [
                 ["display-text", `
                     The .toExponential() method converts the number to a string in exponential form.<br>
@@ -584,7 +586,7 @@ addLayer("JStypes", {
             ],
         },
         booleanOperators: {
-            title: "Boolean Operators",
+            title: "Operators",
             body: [
                 ["display-text", `
                     Booleans have several different operators that differ from the numerical operators.<br>
@@ -751,7 +753,7 @@ addLayer("JStypes", {
             ],
         },
         arrayMethods: {
-            title: "Array Methods",
+            title: "Methods",
             body: [
                 ["display-text", `
                     The .length property returns the length of the string.<br>
@@ -858,7 +860,173 @@ addLayer("JScomments", {
     },
 
     tabFormat: {
-    }
+        Introduction: {
+            content: [
+                ["display-text", `
+                    This module will go over:<br>
+                    The different types of comments.<br>
+                    The best places to use them.<br>
+                `],
+                "blank",
+                ["h-line", "50%"],
+                "blank",
+                ["display-text", `
+                    Code can be very confusing to read.<br>
+                    Just because you can understand it now, doesn't mean you will later.<br>
+                    Other people trying to learn will also be confused.<br>
+                    Here's an example from this mod:
+                `],
+                "blank",
+                ["code-block", [
+                    `let points = 0;`,
+                    `for (let module in QUESTIONS) {`,
+                    `    if (player[module].completed) points ++;`,
+                    `}`,
+                    `player.points = new Decimal(points);`,
+                    `// Calculates the player's points each tick.`,
+                ]],
+                "blank",
+                ["display-text", `
+                    If I need to come back to this code, I will instantly know what its purpose is.<br>
+                    Anyone else reading it, even non-programmers, will also know what it does.<br>
+                    Even if they don't actually understand any JavaScript.<br>
+                    <br>
+                    Comments are ignored by JavaScript, and anything inside them won't be run.<br>
+                    You can use this to stop code from executing.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `var num = 0;`,
+                    `// num = 10;    I do not get executed.`,
+                    ``,
+                    `    num -> 0`,
+                    ``
+                ]],
+                "blank",
+            ],
+        },
+        "Comments": {
+            content: [
+                ["infobox-column", "singleLine"],
+                "blank",
+                ["infobox-column", "multiLine"],
+                "blank",
+                ["infobox-column", "usage"],
+                "blank",
+            ],
+        },
+        Quiz: {
+            content() {
+                return getQuiz("JScomments");
+            } 
+        },
+    },
+
+    question() {
+        return getQuestion(this.layer);
+    },
+
+    infoboxes: {
+        singleLine: {
+            title: "Single Line Comments",
+            body: [
+                ["display-text", `
+                    Single line comments are created using "//".<br>
+                    They continue until the end of the line.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `// I am a single line comment.`,
+                    `var num = 0; // I can be placed anywhere.`,
+                    `// I continue until the end of the line.`,
+                ]],
+                "blank",
+                ["display-text", `
+                    Single line comments cannot be cancelled later on in the line.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `// I am a comment.         // This is still a comment.`
+                ]],
+            ],
+        },
+        multiLine: {
+            title: "Multi Line Comments",
+            body: [
+                ["display-text", `
+                    Multi line comments start with "/*" and end with "*/".<br>
+                    Some IDEs add a * to keep the comment lined up.<br>
+                    If you do not end the comment, it will error.<br>
+                    They can start and end anywhere, and go over as many lines as you want.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `/* I am a`,
+                    ` * multi line`,
+                    ` * comment.`,
+                    `*/`,
+                ]],
+                "blank",
+            ],
+        },
+        usage: {
+            title: "Usage",
+            body: [
+                ["display-text", `
+                    Comments are used to explain what the code does and how to use it.<br>
+                    They are especially helpful when other people will be looking at your code.<br>
+                    <br>
+                    Single line comments are usually used to explain a block of code.<br>
+                    Try to break functions and methods into smaller blocks of code.<br>
+                    Then put a comment saying what the block of code does.<br>
+                    This allows someone to simply read the comment, rather than going through the code to try to work out what it does.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `var gain = amount * multiplier;`,
+                    `gain = gain + bonus * bonusMultiplier;`,
+                    `gain = gain / softcap;`,
+                    `// Calculates total gain.`,
+                ]],
+                "blank",
+                ["display-text", `
+                    Multi line comments are usually used to explain functions.<br>
+                    If included, this comment should contain:<br>
+                    A description of the functions purpose.<br>
+                    A description of each argument, and any restraints they have.<br>
+                    A description of the retun value.<br>
+                    <br>
+                    Using this format, or similar, is fairly common, as it allows quick understanding of the function, and how to use it.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `function calc(a) {`,
+                    `    /* Square roots a number.`,
+                    `     * a      -> number, >=0`,
+                    `     * return -> number`,
+                    `    */`,
+                    `    return Math.sqrt(a);`,
+                    `}`,
+                ]],
+                "blank",
+                ["display-text", `
+                    Comments can also be used to omit code.<br>
+                    Any code placed inside of a comment will never be executed.<br>
+                    This lets you easily test and compare multiple versions.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `var num = 10;`,
+                    `// num = 2;`,
+                    `// num = 3;`,
+                    ``,
+                    `    num -> 10`,
+                ]],
+            ],
+        },
+    },
+
+    clickables: getClickables("JScomments"),
 });
 
 addLayer("JSvariables", {

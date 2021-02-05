@@ -1,3 +1,5 @@
+//vscode-fold=1
+
 //  -------- Constants --------
 
 const QUESTIONS = {
@@ -20,7 +22,43 @@ const QUESTIONS = {
         options: ["string", "number", "boolean", "object", "undefined", "symbol"]},
         {question: "What is the default value of a variable?",         answers: [4],
         options: ["\"\"", "0", "[]", "undefined", "{}", "null"]},
-    ]
+    ],
+    JScomments: [
+        {question: "How do you start a single line comment?", answers: [3],
+        options: ["#", "/*", "//", "<!--", "*/", "\""]},
+        {question: "How do you end a single line comment?", answers: [1],
+        options: ["You can't.", "//", "*/"]},
+        {question: "When does a multi line comment end?", answers: [2],
+        options: ["At the end of the file.", "When it reaches */", "At the end of the line."]},
+        {question: "What are the main purposes of comments?", answers: [1, 5],
+        options: ["To explain complicated code.", "To store strings.", "To draw ASCII art.", "To give feedback.", "To stop parts of code from being executed."]},
+        {question: "Does code in comments get executed?", answers: [2],
+        options: ["Yes", "No"]},
+    ],
+    JSvariables: [
+        {question: "1", answers: [],
+        options: []},
+    ],
+    JSdebugging: [
+        {question: "1", answers: [],
+        options: []},
+    ],
+    JSconditions: [
+        {question: "1", answers: [],
+        options: []},
+    ],
+    JSfunctions: [
+        {question: "1", answers: [],
+        options: []},
+    ],
+    JSloops: [
+        {question: "1", answers: [],
+        options: []},
+    ],
+    JSobjects: [
+        {question: "1", answers: [],
+        options: []},
+    ],
 }
 
 //  -------- Formatting Functions --------
@@ -70,7 +108,7 @@ function getQuestion(layer) {
             return [
                 ["display-text", `
                     Your scored ` + player[layer].last + `/` + QUESTIONS[layer].length + `.<br>
-                    Your best ever score is ` + player[layer].best + `/` + QUESTIONS[layer].length + `.<br>
+                    Your best ever score was ` + player[layer].best + `/` + QUESTIONS[layer].length + `.<br>
                 `],
             ];
         default:
@@ -213,6 +251,7 @@ function clickableStyle(layer, id) {
                 opacity: (player[layer].question == QUESTIONS[layer].length ? 1 : 0),
             };
         case "1003":
+            if (isNaN(tmp[layer].clickables[1003].style.opacity)) tmp[layer].clickables[1003].style.opacity = 0;
             return {
                 height: "40px",
                 width: "80px",
@@ -295,5 +334,18 @@ function clickableFunction(layer, id) {
         default:
             setClickableState(layer, id, !getClickableState(layer, id));
     }
+
+}
+
+//  -------- Other Functions --------
+
+function update(diff) {
+
+    let points = 0;
+    for (let module in QUESTIONS) {
+        if (player[module].completed) points ++;
+    }
+    player.points = new Decimal(points);
+    // Calculates the player's points every tick.
 
 }

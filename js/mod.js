@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.1",
-	name: "JS - Types",
+	num: "0.0.2",
+	name: "JS - Comments",
 }
 
 let changelog = `
@@ -22,6 +22,7 @@ let changelog = `
 <h2>Javascript</h2><br>
 <br>
 Data Types
+Comments
 `;
 
 let winText = ``;
