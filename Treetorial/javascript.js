@@ -852,6 +852,10 @@ addLayer("JScomments", {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
@@ -1048,6 +1052,10 @@ addLayer("JSvariables", {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
@@ -1076,6 +1084,10 @@ addLayer("JSdebugging", {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
@@ -1106,6 +1118,10 @@ addLayer("JSconditions", {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
@@ -1136,6 +1152,10 @@ addLayer("JSfunctions", {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
@@ -1166,6 +1186,10 @@ addLayer("JSloops", {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
@@ -1196,6 +1220,10 @@ addLayer("JSobjects", {
         return {
             unlocked: false,
             completed: false,
+
+            question: 1,
+            best: 0,
+            last: 0,
         }
     },
     unlocked() {
