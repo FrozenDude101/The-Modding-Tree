@@ -1,10 +1,6 @@
 var layoutInfo = {
     startTab: "none",
 	showTree: true,
-
-    treeLayout: ""
-
-    
 }
 
 
@@ -16,5 +12,32 @@ addNode("blank", {
 
 
 addLayer("tree-tab", {
-    tabFormat: [["tree", function() {return (layoutInfo.treeLayout ? layoutInfo.treeLayout : TREE_LAYERS)}]]
+    tabFormat: [
+        ["clickable", 11],
+        ["tree", [
+            ["base", "trunk"],
+        ]]
+    ],
+
+    clickables: {
+        11: {
+            title() {
+                return "Current State<br>" + player.growthState;
+            },
+            canClick: true,
+            onClick() {
+                let states = ["initial", "growth1", "growth2", "growth3"];
+                let state = player.growthState;
+                while (state == player.growthState) {
+                    state = states[Math.floor(Math.random()*states.length)];
+                }
+                setGrowthState(state);
+            },
+
+            style: {
+                position: "relative",
+                top: "-45px",
+            }
+        },
+    }
 })

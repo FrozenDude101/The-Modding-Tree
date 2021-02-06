@@ -190,7 +190,6 @@ function showTab(name) {
 	player.tab = name
 	if (player.navTab == "none" && (tmp[name].row !== "side") && (tmp[name].row !== "otherside")) player.lastSafeTab = name
 	delete player.notify[name]
-	needCanvasUpdate = true
 	document.activeElement.blur()
 }
 
@@ -200,7 +199,6 @@ function showNavTab(name) {
 	var toTreeTab = name == "tree"
 	player.navTab = name
 	player.notify[name] = false
-	needCanvasUpdate = true
 }
 
 
@@ -264,7 +262,6 @@ function layerunlocked(layer) {
 
 function keepGoing() {
 	player.keepGoing = true;
-	needCanvasUpdate = true;
 }
 
 function toNumber(x) {

@@ -40,7 +40,7 @@ function drawTree() {
 	if (!retrieveCanvasData()) return;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for (layer in layers){
-		if (tmp[layer].layerShown == true && tmp[layer].branches){
+		if (tmp[layer].layerShown && tmp[layer].branches){
 			for (branch in tmp[layer].branches)
 				{
 					drawTreeBranch(layer, tmp[layer].branches[branch])
@@ -52,10 +52,15 @@ function drawTree() {
 function drawTreeBranch(num1, data) { // taken from Antimatter Dimensions & adjusted slightly
 	let num2 = data
 	let color_id = 1
+	let width = 15;
 
-	if (Array.isArray(data)){
-		num2 = data[0]
-		color_id = data[1]
+	if (typeof data == "object"){
+		num2 = data.id;
+		color_id = data.color;
+		if (color_id == undefined) color_id = data.colour;
+		if (color_id == undefined) color_id = 1;
+		width = data.width;
+		if (width == undefined) width = 15;
 	}
 
 	if(typeof(color_id) == "number")
@@ -70,7 +75,7 @@ function drawTreeBranch(num1, data) { // taken from Antimatter Dimensions & adju
     let y1 = start.top + (start.height / 2) + document.body.scrollTop;
     let x2 = end.left + (end.width / 2) + document.body.scrollLeft;
     let y2 = end.top + (end.height / 2) + document.body.scrollTop;
-    ctx.lineWidth = 15;
+    ctx.lineWidth = width;
     ctx.beginPath();
     ctx.strokeStyle = color_id
     ctx.moveTo(x1, y1);

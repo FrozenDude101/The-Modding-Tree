@@ -1,6 +1,6 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
+	name: "The Apple Tree",
+	id: "FD101/TheAppleTree",
 	author: "nobody",
 	pointsName: "points",
 	discordName: "",
@@ -12,14 +12,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.1",
+	name: "Apples",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+let changelog = `
+`;
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -46,8 +44,13 @@ function getPointGen() {
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
-function addedPlayerData() { return {
-}}
+function addedPlayerData() {
+	return {
+		growthState: "initial",
+		previousGrowthState: "initial",
+		growthTime: 0,
+	}
+}
 
 // Display extra things at the top of the page
 var displayThings = [

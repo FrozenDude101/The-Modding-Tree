@@ -376,6 +376,10 @@ function gameLoop(diff) {
 		if (layers[layer].achievements) updateAchievements(layer)
 	}
 
+	update(diff);
+
+	drawTree();
+
 }
 
 function hardReset() {
