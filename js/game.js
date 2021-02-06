@@ -378,8 +378,6 @@ function gameLoop(diff) {
 
 	update(diff);
 
-	drawTree();
-
 }
 
 function hardReset() {
