@@ -27,6 +27,6 @@ function colourApproach(colour1, colour2, percent) {
 
 function update(diff) {
 
-
+    drawTree();
 
 }

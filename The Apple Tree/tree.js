@@ -9,7 +9,7 @@ var NODE_DATA = {
     initial: {
         base:  {position: [2, 4], branches: []},
         trunk: {position: [2, 4], branches: []},
-        time: 0.5,
+        time: 0,
     },
     growth1: {
         base:  {position: [2, 4], branches: []},
@@ -96,7 +96,7 @@ for (let LAYER of TREE_DATA) {
             };
         },
 
-        layerShown: true,
+        layerShown: "ghost",
 
     });
 
