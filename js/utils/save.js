@@ -164,11 +164,12 @@ function fixData(defaultData, newData) {
 	}
 }
 function load() {
-	let get = localStorage.getItem(modInfo.id);
-	if (get === null || get === undefined)
+	get = localStorage.getItem(modInfo.id);
+	if (get === null || get === undefined) {
 		player = getStartPlayer();
-	else
+	} else {
 		player = Object.assign(getStartPlayer(), JSON.parse(atob(get)));
+	}
 	fixSave();
 
 	if (player.offlineProd) {
@@ -177,6 +178,9 @@ function load() {
 		player.offTime.remain += (Date.now() - player.time) / 1000;
 	}
 	player.time = Date.now();
+
+	onLoad();
+
 	versionCheck();
 	changeTheme();
 	changeTreeQuality();

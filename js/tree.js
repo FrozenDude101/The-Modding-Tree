@@ -10,34 +10,24 @@ addNode("blank", {
 }, 
 )
 
-
 addLayer("tree-tab", {
     tabFormat: [
         ["clickable", 11],
-        ["tree", [
-            ["base", "trunk"],
-        ]]
+        "blank",
+        ["tree", function() {
+            return [data.IDS];
+        }],
     ],
 
     clickables: {
         11: {
             title() {
-                return "Current State<br>" + player.growthState;
+                return "New Tree<br><br>Current Seed<br>" + player.seed;
             },
             canClick: true,
             onClick() {
-                let states = ["initial", "growth1", "growth2", "growth3"];
-                let state = player.growthState;
-                while (state == player.growthState) {
-                    state = states[Math.floor(Math.random()*states.length)];
-                }
-                setGrowthState(state);
+                newTree();
             },
-
-            style: {
-                position: "relative",
-                top: "-45px",
-            }
-        },
+        }
     }
 })

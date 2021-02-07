@@ -60,7 +60,7 @@
 		<div id="treeOverlay" v-if="!(gameEnded && !player.keepGoing)" class="treeOverlay" onscroll="resizeCanvas()"
 			v-bind:class="{ fullWidth: (player.tab == 'none' || player.navTab == 'none'), col: (player.tab !== 'none' && player.navTab !== 'none'), left: (player.tab !== 'none' && player.navTab !== 'none')}">
 			<div id="version" onclick="showTab('changelog-tab')" class="overlayThing" style="margin-right: 13px">
-				{{VERSION.withoutName}}</div>
+				{{VERSION.withName}}</div>
 			<button
 				v-if="player.navTab == 'none' && (tmp[player.tab].row == 'side' || tmp[player.tab].row == 'otherside')"
 				class="other-back overlayThing" onclick="goBack()">←</button>

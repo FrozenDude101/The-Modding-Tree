@@ -23,7 +23,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = []
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -31,7 +31,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return true
+	return false;
 }
 
 // Calculate points/sec!
@@ -46,10 +46,7 @@ function getPointGen() {
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() {
 	return {
-		growthState: "initial",
-		previousGrowthState: "initial",
-		growthTime: 0,
-	}
+	};
 }
 
 // Display extra things at the top of the page

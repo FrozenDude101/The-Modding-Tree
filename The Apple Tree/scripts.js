@@ -2,26 +2,36 @@
 
 // -------- Constants --------
 
+const data = {
+    previousRandom: undefined,
+    IDS: undefined,
+    TREE: undefined,
+};
+
 // -------- Multi Layer Functions --------
 
-// ---- Other ----
+// ---- Random ----
 
-function approach(num1, num2, percent) {
+function rand(previous = data.previousRandom) {
 
-    return num1 - (num1 - num2) * percent;
+    if (previous == undefined) previous = player.seed;
+    let result = (181 * previous + 157) % 256;
+    data.previousRandom = result;
+    return result;
 
 }
 
-function colourApproach(colour1, colour2, percent) {
+function nRand() {
 
-    let ret = "#";
-    for (let i = 1; i <= 3; i ++) {
-        let colour = Math.floor(approach(parseInt(colour1[i].repeat(2), 16), parseInt(colour2[i].repeat(2), 16), percent)).toString(16)
-        if (colour.length == 1) colour = "0" + colour;
-        ret += colour;
-    }
+    return rand()/255;
 
-    return ret;
+}
+
+// ---- Other ----
+
+function onLoad() {
+
+    newTree(player.seed);
 
 }
 
