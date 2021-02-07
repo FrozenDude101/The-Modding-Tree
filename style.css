@@ -677,6 +677,10 @@ button > * {
     margin-bottom: -2px;
 }
 
+#treeTab {
+	overflow-x: hidden;
+}
+
 #treeTab td button {
     margin: 0 10px;
 }

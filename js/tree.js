@@ -12,7 +12,7 @@ addNode("blank", {
 
 addLayer("tree-tab", {
     tabFormat: [
-        ["clickable", 11],
+        "clickables",
         "blank",
         ["tree", function() {
             return [data.IDS];
@@ -20,13 +20,34 @@ addLayer("tree-tab", {
     ],
 
     clickables: {
+        rows: 1,
+        cols: 2,
+
         11: {
             title() {
-                return "New Tree<br><br>Current Seed<br>" + player.seed;
+                return "New Seed<br><br>Current Seed<br>" + player.seed;
             },
             canClick: true,
             onClick() {
                 newTree();
+            },
+            style: {
+                position: "relative",
+                top: "-60px",
+            },
+        },
+        12: {
+            title() {
+                return (player.state == 6 ? "Reset State" : "Increment Growth") + "<br><br>Current State<br>" + player.state;
+            },
+            canClick: true,
+            onClick() {
+                player.state ++;
+                player.state %= 7;
+            },
+            style: {
+                position: "relative",
+                top: "-60px",
             },
         }
     }

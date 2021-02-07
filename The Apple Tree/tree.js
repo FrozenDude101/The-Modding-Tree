@@ -48,24 +48,70 @@ function generateTree() {
             case "base":
                 treeData[ID] = {
                     type: "base",
-                    position: [2, 4],
+                    states: {},
                 };
+                for (let i = 0; i <= 6; i++) {
+                    treeData[ID].states[i] = {
+                        position: [2, 4],
+                        branches: [],
+                    };
+                }
                 break;
             case "trunk":
                 treeData[ID] = {
                     type: "trunk",
                     root: (ID == "trunk1" ? "base" : "trunk" + (ID[5]-1)),
-                    position: [0, -1],
+                    length: 0.5 + nRand(),
+                    states: {},
                 };
-                treeData[ID].position = [treeData[treeData[ID].root].position[0] + treeData[ID].position[0], treeData[treeData[ID].root].position[1] + treeData[ID].position[1]];
+                for (let i = ID[5]; i <= 6; i++) {
+                    treeData[ID].states[i] = {
+                        position: [
+                            treeData[treeData[ID].root].states[i].position[0] + 0,
+                            treeData[treeData[ID].root].states[i].position[1] - treeData[ID].length
+                        ],
+                        branches: [],
+                    };
+                }
+                for (let i = 0; i < ID[5]; i++) {
+                    treeData[ID].states[i] = {
+                        position: [
+                            treeData[treeData[ID].root].states[i].position[0],
+                            treeData[treeData[ID].root].states[i].position[1]
+                        ],
+                        branches: [],
+                    };
+                }
                 break;
             case "branch":
                 treeData[ID] = {
                     type: "branch",
                     root: (ID.length == 8 ? "trunk" + ID[6] : ID.substring(0, ID.length-1)),
-                    position: [ID[7]*2-3, 0.5**(ID.length-7)*(ID.length == 8 ? 0 : ID[ID.length-1]*2-3)],
+                    length: 0.5 + nRand()/2,
+                    angle: (bRand()*2 - 1) * Math.PI/2 + nRand() * Math.PI/3 - Math.PI/6,
+                    states: {},
                 };
-                treeData[ID].position = [treeData[treeData[ID].root].position[0] + treeData[ID].position[0], treeData[treeData[ID].root].position[1] + treeData[ID].position[1]];
+                if (ID.length > 8) {
+                    treeData[ID].angle = treeData[treeData[ID].root].angle + (bRand()*2 - 1) * Math.PI/9 + (bRand()*2 - 1) * Math.PI/18;
+                }
+                for (let i = ID[6] - 7 + ID.length; i <= 6; i++) {
+                    treeData[ID].states[i] = {
+                        position: [
+                            treeData[treeData[ID].root].states[i].position[0] + treeData[ID].length * Math.sin(treeData[ID].angle),
+                            treeData[treeData[ID].root].states[i].position[1] + treeData[ID].length * Math.cos(treeData[ID].angle),
+                        ],
+                        branches: [],
+                    };
+                }
+                for (let i = 0; i < ID[6] - 7 + ID.length; i++) {
+                    treeData[ID].states[i] = {
+                        position: [
+                            treeData[treeData[ID].root].states[i].position[0],
+                            treeData[treeData[ID].root].states[i].position[1]
+                        ],
+                        branches: [],
+                    };
+                }
                 break;
         }
     }
@@ -77,6 +123,7 @@ function generateTree() {
 function newTree(seed = Math.floor(Math.random()*255)) {
 
     player.seed = seed;
+    data.previousRandom = seed;
     data.IDS = generateIDs();
     data.TREE = generateTree();
 
@@ -111,8 +158,8 @@ function generateLayers() {
                 if (!data.IDS.includes(ID)) return {};
                 return {
                     position: "absolute",
-                    top: "calc(120px + " + 120*data.TREE[ID].position[1] + "px)",
-                    left: "calc((50% - 300px) + " + 120*data.TREE[ID].position[0] + "px)",
+                    top: "calc(120px + " + 120*data.TREE[ID].states[player.state].position[1] + "px)",
+                    left: "calc((50% - 300px) + " + 120*data.TREE[ID].states[player.state].position[0] + "px)",
                 };
             },
 

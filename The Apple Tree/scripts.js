@@ -27,6 +27,12 @@ function nRand() {
 
 }
 
+function bRand() {
+
+    return rand() > 127;
+
+}
+
 // ---- Other ----
 
 function onLoad() {
