@@ -46,7 +46,11 @@ function getPointGen() {
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() {
 	return {
-		state: 0,
+		state: {
+			current: 0,
+			previous: 0,
+			time: 0,
+		}
 	};
 }
 

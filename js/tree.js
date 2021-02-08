@@ -38,12 +38,13 @@ addLayer("tree-tab", {
         },
         12: {
             title() {
-                return (player.state == 6 ? "Reset State" : "Increment Growth") + "<br><br>Current State<br>" + player.state;
+                return (player.state.current == 4 ? "Reset Growth" : "Increment Growth") + "<br><br>Current State<br>" + player.state.current;
             },
-            canClick: true,
+            canClick() {
+                return player.time - player.state.time > 10000 || player.state.current == 0;
+            },
             onClick() {
-                player.state ++;
-                player.state %= 7;
+                setState((player.state.current + 1) % 5)
             },
             style: {
                 position: "relative",
