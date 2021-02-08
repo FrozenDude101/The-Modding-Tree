@@ -4,6 +4,7 @@ function generateTree() {
 
     const DATA = [{id: "0"}].concat(generateIDs());
     const TREE = {};
+    data.IDS = [];
     for (let OBJ of DATA) {
         ID = OBJ.id;
         LEN = OBJ.length;
