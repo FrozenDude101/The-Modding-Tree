@@ -25,7 +25,7 @@ addLayer("tree-tab", {
 
         11: {
             title() {
-                return "New Seed<br><br>Current Seed<br>" + player.seed;
+                return "New Seed<br><br>Current Seed<br>" + player.seed%256;
             },
             canClick: true,
             onClick() {
