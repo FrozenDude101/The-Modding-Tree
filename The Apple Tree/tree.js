@@ -45,7 +45,7 @@ function generateTree() {
                             TREE[TREE[ID].root].states[i].position[0]-LEN*Math.sin(TREE[TREE[ID].root].angle + TREE[ID].angle),
                             TREE[TREE[ID].root].states[i].position[1]-LEN*Math.cos(TREE[TREE[ID].root].angle + TREE[ID].angle),
                         ],
-                        branches: [{id: TREE[ID].root, colour: colourApproach("#862", "#530", i/4), width: approach(0, LEN*30, i/4)}],
+                        branches: [{id: TREE[ID].root, colour: colourApproach("#862", "#530", i/4), width: approach(0, (7-ID.length)*5, i/4)}],
                     };
                 }
             }
@@ -61,7 +61,7 @@ function generateIDs(id = "00", growth = 4, split = false) {
     let r1, r2;
     let IDs;
 
-    r1 = growth*0/6 + growth/3;
+    r1 = growth*nRand()/6 + growth/3;
     if (r1 < 0.3) return [];
     IDs = [{id: id, length: r1, split: split}];
     r2 = bRand(0.75);
@@ -144,7 +144,7 @@ function generateLayers() {
                             }
                         }
                         if (!match) {
-                            branches.push({id: newBranch.id, colour: colourApproach(data.TREE[data.TREE[ID].root].states[player.state.previous].branches[0].colour, newBranch.colour, stateTime), width: newBranch.width});
+                            branches.push({id: newBranch.id, colour: colourApproach(data.TREE[data.TREE[ID].root].states[player.state.previous].branches[0].colour, newBranch.colour, stateTime), width: approach(newBranch.width/2, newBranch.width, stateTime)});
                         }
                     }
                 }
