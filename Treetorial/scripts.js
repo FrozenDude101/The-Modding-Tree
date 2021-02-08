@@ -3,62 +3,6 @@
 //  -------- Constants --------
 
 const QUESTIONS = {
-    JStypes: [
-        {question: "Which of the following are valid strings?",        answers: [1, 3, 6],
-        options: ["\"String\"", "true", "'a'", "[\"String\", 2]", "3.4e27", "`3`"]},
-        {question: "How would you insert a new line into a string?",   answers: [2],
-        options: ["\\b", "\\n", "\\b", "\\'", "\\t", "\\v"]},
-        {question: "Which of the following are valid numbers?",        answers: [1, 2, 4, 9],
-        options: ["Infinity", "3.4e27", "\"String\"", "0.001", "true", "[1, 2]", "`3`", "null", "NaN"]},
-        {question: "What is the result of (true && false) || false?", answers: [2],
-        options: ["true", "false"]},
-        {question: "Which of the following are truthy values?",        answers: [3, 4, 7, 8, 9],
-        options: ["undefined", "\"\"", "2", "\"String\"", "null", "false", "[]", "[\"String\"]", "true"]},
-        {question: "Can you put an Array inside of an Array?",         answers: [1],
-        options: ["Yes", "No"]},
-        {question: "What does the .shift() Array method do?",          answers: [3],
-        options: ["Add data to the start of the list.", "Add data to the end of the list.", "Remove data from the start of the list.", "Remove data from the end of the list."]},
-        {question: "What is the data type of null?",                   answers: [4],
-        options: ["string", "number", "boolean", "object", "undefined", "symbol"]},
-        {question: "What is the default value of a variable?",         answers: [4],
-        options: ["\"\"", "0", "[]", "undefined", "{}", "null"]},
-    ],
-    JScomments: [
-        {question: "How do you start a single line comment?", answers: [3],
-        options: ["#", "/*", "//", "<!--", "*/", "\""]},
-        {question: "How do you end a single line comment?", answers: [1],
-        options: ["You can't.", "//", "*/"]},
-        {question: "When does a multi line comment end?", answers: [2],
-        options: ["At the end of the file.", "When it reaches */", "At the end of the line."]},
-        {question: "What are the main purposes of comments?", answers: [1, 5],
-        options: ["To explain complicated code.", "To store strings.", "To draw ASCII art.", "To give feedback.", "To stop parts of code from being executed."]},
-        {question: "Does code in comments get executed?", answers: [2],
-        options: ["Yes", "No"]},
-    ],
-    JSvariables: [
-        {question: "1", answers: [],
-        options: []},
-    ],
-    JSdebugging: [
-        {question: "1", answers: [],
-        options: []},
-    ],
-    JSconditions: [
-        {question: "1", answers: [],
-        options: []},
-    ],
-    JSfunctions: [
-        {question: "1", answers: [],
-        options: []},
-    ],
-    JSloops: [
-        {question: "1", answers: [],
-        options: []},
-    ],
-    JSobjects: [
-        {question: "1", answers: [],
-        options: []},
-    ],
 }
 
 //  -------- Formatting Functions --------
@@ -79,9 +23,9 @@ function formatCodeBlock(lines) {
 
 }
 
-//  -------- Multi Layer Functions --------
+//  -------- Quiz Functions --------
 
-function getQuiz(layer) {
+/*function getQuiz(layer) {
 
     return [
         ["row", [
@@ -335,7 +279,7 @@ function clickableFunction(layer, id) {
             setClickableState(layer, id, !getClickableState(layer, id));
     }
 
-}
+}*/
 
 //  -------- Other Functions --------
 

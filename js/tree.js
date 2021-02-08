@@ -17,7 +17,7 @@ addLayer("tree-tab", {
         JavaScript: {
             content: [
                 ["tree", [
-                    ["JStypes", "JScomments", "JSvariables", "JSfunctions", "JSdebugging", "JSconditions", "JSobjects", "JSloops"],
+                    ["Cupgrades"],
                 ]]
             ],
 

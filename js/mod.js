@@ -12,17 +12,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.2",
-	name: "JS - Comments",
+	num: "0.0.1",
+	name: "Components - Upgrades",
 }
 
 let changelog = `
 <h1><u>Available Modules</u></h1><br>
 <br>
-<h2>Javascript</h2><br>
+<h2>Components</h2><br>
 <br>
-Data Types
-Comments
+Upgrades<br>
 `;
 
 let winText = ``;
@@ -75,5 +74,10 @@ function maxTickLength() {
 
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
-function fixOldSave(oldVersion){
+function fixOldSave(oldVersion) {
+
+	if (oldVersion != "0.0.1") {
+		hardReset();
+	}
+
 }
