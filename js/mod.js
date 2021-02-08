@@ -76,8 +76,9 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
 
+	console.log(oldVersion);
 	if (oldVersion != "0.0.1") {
-		hardReset();
+		player = getStartPlayer();
 	}
 
 }
