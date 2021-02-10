@@ -9,6 +9,15 @@ function loadVue() {
 		`
 	})
 
+	Vue.component('left-align', {
+		props: ['layer', 'data'],
+		template: `
+			<div style="text-align:left">
+				<span class="instant" v-html="data"></span>
+			</div>
+		`
+	})
+
 	// data = a function returning the content (actually HTML)
 	Vue.component('raw-html', {
 		props: ['layer', 'data'],
@@ -94,22 +103,6 @@ function loadVue() {
 			</button>
 			<div v-if="!player.infoboxes[layer][data]" class="story-text" v-bind:style="tmp[layer].infoboxes[data].bodyStyle">
 				<span v-html="tmp[layer].infoboxes[data].body ? tmp[layer].infoboxes[data].body : 'Blah'"></span>
-			</div>
-		</div>
-		`
-	})
-
-	Vue.component('infobox-column', {
-		props: ['layer', 'data'],
-		template: `
-		<div class="story instant" v-if="tmp[layer].infoboxes && tmp[layer].infoboxes[data]!== undefined && tmp[layer].infoboxes[data].unlocked" v-bind:style="[{'border-color': tmp[layer].color, 'border-radius': player.infoboxes[layer][data] ? 0 : '8px'}, tmp[layer].infoboxes[data].style]">
-			<button class="story-title" v-bind:style="[{'background-color': tmp[layer].color}, tmp[layer].infoboxes[data].titleStyle]"
-				v-on:click="player.infoboxes[layer][data] = !player.infoboxes[layer][data]">
-				<span class="story-toggle">{{player.infoboxes[layer][data] ? "+" : "-"}}</span>
-				<span v-html="tmp[layer].infoboxes[data].title ? tmp[layer].infoboxes[data].title : (tmp[layer].name)"></span>
-			</button>
-			<div v-if="!player.infoboxes[layer][data]" class="story-text" v-bind:style="tmp[layer].infoboxes[data].bodyStyle">
-				<column :layer = "layer" :data = tmp[layer].infoboxes[data].body></column>
 			</div>
 		</div>
 		`

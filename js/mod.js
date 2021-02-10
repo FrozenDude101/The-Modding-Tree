@@ -75,8 +75,7 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
-
-	console.log(oldVersion);
+	
 	if (oldVersion != "0.0.1") {
 		player = getStartPlayer();
 	}

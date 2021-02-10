@@ -654,7 +654,7 @@ button > * {
     color: black;
     cursor: pointer;
     border: none;
-    padding: 5px 10px;
+    padding: 2px;
     border-radius: 8px 8px 0 0;
 }
 
@@ -669,12 +669,16 @@ button > * {
 }
 
 .story-text {
-	padding: 1em;
+	padding: 2px;
     border: solid 4px;
     border-color: inherit;
     border-radius: inherit;
     border-top-left-radius: 0;
-	margin-bottom: -2px;
+    margin-bottom: -2px;
+}
+
+#treeTab {
+    overflow: hidden;
 }
 
 #treeTab td button {

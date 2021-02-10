@@ -18,7 +18,7 @@ var systemComponents = {
 			v-bind:id="layer"
 			v-on:click="function() {
 				if(tmp[layer].isLayer) {showTab(layer)}
-				else {run(layers[layer].onClick, layers[layer])}
+				if(layers[layer].onClick) {run(layers[layer].onClick, layers[layer])}
 			}"
 
 			v-bind:tooltip="(tmp[layer].tooltip == '') ? false : (tmp[layer].isLayer) ? (
@@ -30,20 +30,9 @@ var systemComponents = {
 				: (tmp[layer].tooltipLocked ? tmp[layer].tooltipLocked : 'I am a button!')
 			)
 			"
-			v-bind:class="{
-				treeNode: tmp[layer].isLayer,
-				treeButton: !tmp[layer].isLayer,
-				smallNode: size == 'small',
-				[layer]: true,
-				ghost: tmp[layer].layerShown == 'ghost',
-				hidden: !tmp[layer].layerShown,
-				locked: tmp[layer].isLayer ? !(player[layer].unlocked || tmp[layer].canReset) : !(tmp[layer].canClick),
-				notify: tmp[layer].notify,
-				resetNotify: tmp[layer].prestigeNotify,
-				can: ((player[layer].unlocked || tmp[layer].isLayer) && tmp[layer].isLayer) || (!tmp[layer].isLayer && tmp[layer].canClick),
-			}"
-			v-bind:style="tmp[layer].computedNodeStyle">
-			{{(abb !== '' && tmp[layer].image === undefined) ? abb : '&nbsp;'}}
+			v-bind:class="getNodeClasses(layer, size)"
+			v-bind:style="tmp[layer].computedNodeStyle"
+			v-html="(tmp[layer].image ? tmp[layer].image : tmp[layer].symbol)">
 		</button>
 		`
 	},

@@ -14,16 +14,17 @@ addNode("blank", {
 
 addLayer("tree-tab", {
     tabFormat: {
-        JavaScript: {
+        Components: {
             content: [
+                ["display-text", "Click a component to find out about it.", {position: "relative", top: "-10px"}],
                 ["tree", [
-                    ["Cupgrades"],
+                    ["Cachievements", "Cbuyables", "Cchallenges", "Cclickables", "Cmilestones", "Cother", "Ctabs", "Ctrees", "CtreesNode", "Cupgrades"],
                 ]]
             ],
 
             style: {
                 position: "relative",
-                top: "-75px",
+                top: "-90px",
             }
         },
     },
