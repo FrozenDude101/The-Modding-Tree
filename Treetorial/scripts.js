@@ -23,6 +23,10 @@ function formatCodeBlock(lines) {
 
 }
 
+function formatGraph(data) {
+
+}
+
 //  -------- Multi Layer Functions --------
 
 function getNodeStyle(x, y) {

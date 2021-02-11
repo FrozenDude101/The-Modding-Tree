@@ -74,6 +74,8 @@ function getStartLayerData(layer) {
 	layerdata.buyables = getStartBuyables(layer);
 	if (layerdata.clickables == undefined)
 		layerdata.clickables = getStartClickables(layer);
+	if (layerdata.inputs == undefined)
+		layerdata.inputs = getStartInputs(layer);
 	layerdata.spentOnBuyables = new Decimal(0);
 	layerdata.upgrades = [];
 	layerdata.milestones = [];
@@ -96,6 +98,14 @@ function getStartClickables(layer) {
 		for (id in layers[layer].clickables)
 			if (isPlainObject(layers[layer].clickables[id]))
 				data[id] = "";
+	}
+	return data;
+}
+function getStartInputs(layer) {
+	let data = {};
+	if (layers[layer].inputs) {
+		for (id in layers[layer].inputs)
+			data[id] = layers[layer].inputs[id];
 	}
 	return data;
 }

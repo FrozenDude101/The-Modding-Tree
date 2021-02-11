@@ -1,20 +1,60 @@
 var app;
 
 function loadVue() {
-	// data = a function returning the content (actually HTML)
-	Vue.component('display-text', {
+
+	// Custom components.
+	
+	Vue.component('code-block', {
 		props: ['layer', 'data'],
 		template: `
-			<span class="instant" v-html="data"></span>
+			<span v-html="formatCodeBlock(data)"></span>
+		`
+	})
+	
+	Vue.component('graph', {
+		props: ['layer', 'data'],
+		template: `
+			<span v-html="formatGraph(data)"></span>
+		`
+	})
+	
+	Vue.component('text-input', {
+		props: ['layer', 'data'],
+		template: `
+			<input
+				class="text-input"
+				:value="player[layer].inputs[data]"
+				v-on:input="function handleInput(e) { setInput(layer, data, e.target.value); }">
+			</input>
 		`
 	})
 
-	Vue.component('left-align', {
+	Vue.component('infobox-column', {
 		props: ['layer', 'data'],
 		template: `
-			<div style="text-align:left">
-				<span class="instant" v-html="data"></span>
+		<div class="story instant" v-if="tmp[layer].infoboxes && tmp[layer].infoboxes[data]!== undefined && tmp[layer].infoboxes[data].unlocked" v-bind:style="[{'border-color': tmp[layer].color, 'border-radius': player.infoboxes[layer][data] ? 0 : '8px'}, tmp[layer].infoboxes[data].style]">
+			<button class="story-title" v-bind:style="[{'background-color': tmp[layer].color}, tmp[layer].infoboxes[data].titleStyle]"
+				v-on:click="player.infoboxes[layer][data] = !player.infoboxes[layer][data]">
+				<span class="story-toggle">{{player.infoboxes[layer][data] ? "+" : "-"}}</span>
+				<span v-html="tmp[layer].infoboxes[data].title ? tmp[layer].infoboxes[data].title : (tmp[layer].name)"></span>
+			</button>
+			<div v-if="!player.infoboxes[layer][data]" class="story-text" v-bind:style="tmp[layer].infoboxes[data].bodyStyle">
+				<blank></blank>
+				<column :layer="layer" :data="tmp[layer].infoboxes[data].body"></column>
+				<blank></blank>
 			</div>
+		</div>
+		`
+	})
+
+	// Standard components.
+	// Might contain edits.
+
+	// data = a function returning the content (actually HTML)
+	Vue.component('display-text', {
+		props: ['layer', 'data', 'style'],
+		template: `
+			<span class="instant" v-html="data"></span>
 		`
 	})
 
@@ -23,14 +63,6 @@ function loadVue() {
 		props: ['layer', 'data'],
 		template: `
 			<span class="instant"  v-html="data"></span>
-		`
-	})
-
-	// data = a function returning the content (actually HTML)
-	Vue.component('code-block', {
-		props: ['layer', 'data'],
-		template: `
-			<span v-html="formatCodeBlock(data)"></span>
 		`
 	})
 
@@ -107,7 +139,6 @@ function loadVue() {
 		</div>
 		`
 	})
-
 
 	// Data = width in px, by default fills the full area
 	Vue.component('h-line', {

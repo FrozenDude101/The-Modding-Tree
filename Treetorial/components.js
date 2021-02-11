@@ -114,29 +114,267 @@ addLayer("Cupgrades", {
 
     tabFormat: {
         Visuals: {
+            content: [
+                ["upgrade", 11],
+                "blank",
+                ["clickable", 11],
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>title</h3><br>
+                            <br>
+                            A larger title displayed at the top of the upgrade.<br>
+                            It can including formatting and HTML.<br>
+                        `],
+                        "blank",
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "title"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>description</h3><br>
+                            <br>
+                            Smaller text placed beneath the title. Should describe what the upgrade does.<br>
+                            It can including formatting and HTML.<br>
+                        `],
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "description"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+            ],
         },
-        "Cost / Effect": {
-
+        Cost: {
+            content: [
+                ["upgrade", 11],
+                "blank",
+                ["clickable", 11],
+                "blank",
+                ["display-text", `
+                    <h3>cost</h3><br>
+                    <br>
+                    A Decimal for how much the upgrade will cost to buy.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "new Decimal(\""],
+                    ["text-input", "cost"],
+                    ["display-text", "\")"],
+                ]],
+                "blank",
+                "blank",
+                ["infobox-column", "currency"],
+            ],
+        },
+        Effect: {
+            content: [
+                ["upgrade", 11],
+                "blank",
+                ["clickable", 11],
+                "blank",
+                ["display-text", `
+                    <h3>effect()</h3><br>
+                    <br>
+                    This function should calculate and return the current effect of the upgrade.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>effectDisplay()</h3><br>
+                    <br>
+                    This should display the current effect of the upgrade.<br>
+                    It can including formatting and HTML.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "effectDisplay"],
+                    ["display-text", "\" + upgradeEffect(this.layer, this.id)"],
+                ]],
+                "blank",
+            ],
         },
         Functions: {
             content: [
-                ["left-align", `
+                ["display-text", `
                     <h3>hasUpgrade(layer, id)</h3><br>
-                    <h3>➔ returns Boolean</h3><br>
                     <br>
                     Checks if the player has an upgrade.<br>
-                    <br>
+                    Returns true if the have, false if they don't.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
                     <h3>upgradeEffect(layer, id)</h3><br>
-                    <h3>➔ returns effect()</h3><br>
                     <br>
                     Gets the effect of the upgrade.<br>
-                    <br>
+                    Returns the result of the upgrade's effect() function.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
                     <h3>buyUpgrade(layer, id)</h3><br>
                     <br>
                     Attempts to buy an upgrade.<br>
-                    <br>
-                `]
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `if (hasUpgrade("p", 11)) {`,
+                    `    gain = gain.mul(upgradeEffect("p", 11));`,
+                    `}`
+                ]],
+                ["display-text", `
+                    Applies an upgrade's effect to gain.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `if (hasUpgrade("q", 11)) {`,
+                    `    buyUpgrade("p", 11);`,
+                    `    buyUpgrade("p", 12);`,
+                    `    buyUpgrade("p", 13);`,
+                    `}`
+                ]],
+                ["display-text", `
+                    Attempts to buy the first 3 "p" upgrades.<br>
+                `],
             ]
+        },
+    },
+
+    inputs: {
+        title: "Title",
+        description: "Description",
+
+        cost: "0",
+        currencyDisplayName: "",
+
+        effectDisplay: "",
+    },
+
+    infoboxes: {
+        currency: {
+            title: "Custom Currencies",
+            body: [
+                ["display-text", `
+                    <h3>currencyDisplayName</h3><br>
+                    <br>
+                    The name of the currency to display.<br>
+                    It can including formatting and HTML.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "currencyDisplayName"],
+                    ["display-text", "\""],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>currencyLocation() & currencyInternalName</h3><br>
+                    <br>
+                    currencyLocation returns the object the currency is stored in.<br>
+                    currencyInternalName is the attribute the currency is stored in.<br>
+                    The attribute must be a Decimal.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `currencyLocation() { return player.p; },`,
+                    `currencyInternalName: "points",`,
+                    `//  The upgrade will use points from the "p" layer.`,
+                    ``,
+                    `currencyLocation() { return player.p.buyables; },`,
+                    `currencyInternalName: "11",`,
+                    `//  The upgrade will use buyable (ID 11)`,
+                    `//  levels from the "p" layer.`,
+                    ``,
+                    `currencyLocation() { return obj; },`,
+                    `currencyInternalName: "amount",`,
+                    `//  The upgrade will use the Decimal stored in obj.amount.`,
+                ]],
+            ],
+        },
+    },
+
+    clickables: {
+        11: {
+            display() {
+                switch (getClickableState("Cupgrades", 11)) {
+                    case "":
+                        return "<h3>Change Style</h3><br>Currently locked.";
+                    case "locked":
+                    case "buyable":
+                    case "bought":
+                        return "<h3>Change Style</h3><br>Currently " + getClickableState("Cupgrades", 11) + ".";
+                }
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                switch (getClickableState("Cupgrades", 11)) {
+                    case "":
+                    case "locked":
+                        setClickableState("Cupgrades", 11, "buyable");
+                        break;
+                    case "buyable":
+                        player.Cupgrades.upgrades = [11];
+                        setClickableState("Cupgrades", 11, "bought");
+                        break;
+                    case "bought":
+                        player.Cupgrades.upgrades = [];
+                        setClickableState("Cupgrades", 11, "locked");
+                        break;
+                }
+            },
+        },
+    },
+
+    upgrades: {
+        11: {
+            title() {
+                return player.Cupgrades.inputs.title;
+            },
+            description() {
+                return player.Cupgrades.inputs.description;
+            },
+            effectDisplay() {
+                if (player.Cupgrades.inputs.effectDisplay) return player.Cupgrades.inputs.effectDisplay + 2.67;
+            },
+
+            cost() {
+                return new Decimal(player.Cupgrades.inputs.cost);
+            },
+            currencyDisplayName() {
+                return player.Cupgrades.inputs.currencyDisplayName;
+            },
+
+            canAfford() {
+                return getClickableState("Cupgrades", 11) == "buyable";
+            },
+            pay() {
+                return;
+            },
+            onPurchase() {
+                player.Cupgrades.upgrades = [];
+            },
         },
     },
 });
