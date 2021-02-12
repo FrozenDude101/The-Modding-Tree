@@ -266,12 +266,6 @@ addLayer("Cupgrades", {
                     It should return a boolean.<br>
                 `],
                 "blank",
-                ["row", [
-                    ["display-text", "\""],
-                    ["text-input", "fullDisplay"],
-                    ["display-text", "\""],
-                ]],
-                "blank",
                 "blank",
             ],
         },
