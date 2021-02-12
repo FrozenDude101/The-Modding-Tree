@@ -231,8 +231,7 @@ function NaNcheck(data) {
 		}
 	}
 }
-function exportSave() {
-	let str = btoa(JSON.stringify(player));
+function exportSave(str = btoa(JSON.stringify(player))) {
 
 	const el = document.createElement("textarea");
 	el.value = str;
