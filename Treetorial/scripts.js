@@ -76,7 +76,7 @@ function merge(obj1, obj2) {
 function update(diff) {
 
     let points = 0;
-    for (let module in QUESTIONS) {
+    for (let module of LAYERS) {
         if (player[module].completed) points ++;
     }
     player.points = new Decimal(points);
