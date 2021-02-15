@@ -116,24 +116,30 @@ addLayer("Cupgrades", {
 
         let upgrade = "{\n";
 
-        if (player.Cupgrades.inputs.fullDisplay) {
-            upgrade += "    fullDisplay: \"" + player.Cupgrades.inputs.fullDisplay + "\",\n";
+        if (getInputState(this.layer, "fullDisplay")) {
+            upgrade += "    fullDisplay: \"" + getInputState(this.layer, "fullDisplay") + "\",\n";
         } else {
-            upgrade += "    title: \"" + player.Cupgrades.inputs.title + "\",\n";
-            upgrade += "    description: \"" + player.Cupgrades.inputs.description + "\",\n";
+            upgrade += "    title: \"" + getInputState(this.layer, "title") + "\",\n";
+            upgrade += "    description: \"" + getInputState(this.layer, "description") + "\",\n";
         }
 
         upgrade += "\n";
 
-        upgrade += "    cost: new Decimal(\"" + (player.Cupgrades.inputs.cost ? player.Cupgrades.inputs.cost : 0) + "\"),\n";
-        if (player.Cupgrades.inputs.currencyDisplayName) {
-            upgrade += "    currencyDisplayName: \"" + player.Cupgrades.inputs.currencyDisplayName + "\",\n";
+        upgrade += "    cost: new Decimal(\"" + (getInputState(this.layer, "cost") ? getInputState(this.layer, "cost") : 0) + "\"),\n";
+        if (getInputState(this.layer, "currencyDisplayName")) {
+            upgrade += "    currencyDisplayName: \"" + getInputState(this.layer, "currencyDisplayName") + "\",\n";
         }
 
         upgrade += "\n";
 
-        if (player.Cupgrades.inputs.effectDisplay) {
-            upgrade += "    effectDisplay() {\n        return \"" + player.Cupgrades.inputs.effectDisplay + "\" + upgradeEffect(this.layer, this.id);\n    },\n";
+        if (getInputState(this.layer, "effectDisplay")) {
+            upgrade += "    effect() { },\n"
+            upgrade += "    effectDisplay() {\n        return \"" + getInputState(this.layer, "effectDisplay") + "\" + upgradeEffect(this.layer, this.id);\n    },\n";
+        }
+
+        let style = convertStyleToString(generateStyle(this.layer));
+        if (style) {
+            upgrade += "    style: " + style + "\n";
         }
 
         exportSave(upgrade + "}");
@@ -201,7 +207,7 @@ addLayer("Cupgrades", {
                     ["clickable", 11],
                 ]],
                 "blank",
-                "h-line",
+                ["h-line", "500px"],
                 "blank",
                 ["row", [
                     ["column", [
@@ -265,6 +271,34 @@ addLayer("Cupgrades", {
                     Locked upgrades don't effect the positions of other upgrades.<br>
                     It should return a boolean.<br>
                 `],
+                "blank",
+                "blank",
+            ],
+        },
+        Style: {
+            content: [
+                ["upgrade", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 12],
+                    "blank",
+                    ["clickable", 11],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>style</h3><br>
+                    <br>
+                    style allows you to set CSS values for this specific component.<br>
+                    The attribute is the CSS property, and the value is the value of the property.<br>
+                    These should both be strings.<br>
+                    style itself is an object.<br>
+                `],
+                "blank",
+                ["column", function() {
+                    return generateStyleEditor("Cupgrades");
+                }],
                 "blank",
                 "blank",
             ],
@@ -471,9 +505,12 @@ addLayer("Cupgrades", {
         fullDisplay: "",
 
         cost: "0",
-        currencyDisplayName: "points",
+        currencyDisplayName: "",
 
         effectDisplay: "",
+
+        property1: "",
+        value1: "",
     },
     infoboxes: {
         currency: {
@@ -483,6 +520,7 @@ addLayer("Cupgrades", {
                     <h3>currencyDisplayName</h3><br>
                     <br>
                     The name of the currency to display.<br>
+                    By default it is the name of the resource of the layer.<br>
                     It can including formatting and HTML.<br>
                     It should be a string.<br>
                 `],
@@ -588,13 +626,13 @@ addLayer("Cupgrades", {
         },
         12: {
             display() {
-                switch (getClickableState("Cupgrades", 11)) {
+                switch (getClickableState(this.layer, 11)) {
                     default:
-                        return "<h3>Change Style</h3><br>Currently unaffordable.";
+                        return "<h3>Change State</h3><br>Currently unaffordable.";
                     case "unaffordable":
                     case "buyable":
                     case "bought":
-                        return "<h3>Change Style</h3><br>Currently " + getClickableState("Cupgrades", 11) + ".";
+                        return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, 11) + ".";
                 }
             },
             style: {
@@ -605,18 +643,18 @@ addLayer("Cupgrades", {
 
             canClick: true,
             onClick() {
-                switch (getClickableState("Cupgrades", 11)) {
+                switch (getClickableState(this.layer, 11)) {
                     default:
                     case "unaffordable":
-                        setClickableState("Cupgrades", 11, "buyable");
+                        setClickableState(this.layer, 11, "buyable");
                         break;
                     case "buyable":
                         player.Cupgrades.upgrades = [11];
-                        setClickableState("Cupgrades", 11, "bought");
+                        setClickableState(this.layer, 11, "bought");
                         break;
                     case "bought":
                         player.Cupgrades.upgrades = [];
-                        setClickableState("Cupgrades", 11, "unaffordable");
+                        setClickableState(this.layer, 11, "unaffordable");
                         break;
                 }
             },
@@ -625,27 +663,30 @@ addLayer("Cupgrades", {
     upgrades: {
         11: {
             title() {
-                return player.Cupgrades.inputs.title;
+                return getInputState(this.layer, "title");
             },
             description() {
-                return player.Cupgrades.inputs.description;
+                return getInputState(this.layer, "description");
             },
             effectDisplay() {
-                if (player.Cupgrades.inputs.effectDisplay) return player.Cupgrades.inputs.effectDisplay + 2.67;
+                if (getInputState(this.layer, "effectDisplay")) return getInputState(this.layer, "effectDisplay" + 2.67);
             },
             fullDisplay() {
-                return player.Cupgrades.inputs.fullDisplay;
+                return getInputState(this.layer, "fullDisplay");
+            },
+            style() {
+                return generateStyle(this.layer);
             },
 
             cost() {
-                return new Decimal(player.Cupgrades.inputs.cost);
+                return new Decimal(getInputState(this.layer, "cost"));
             },
             currencyDisplayName() {
-                return player.Cupgrades.inputs.currencyDisplayName;
+                return (getInputState(this.layer, "currencyDisplayName") ? getInputState(this.layer, "currencyDisplayName") : "points");
             },
 
             canAfford() {
-                return getClickableState("Cupgrades", 11) == "buyable";
+                return getClickableState(this.layer, 11) == "buyable";
             },
             pay() {
                 return;
@@ -656,15 +697,3 @@ addLayer("Cupgrades", {
         },
     },
 });
-
-x = {
-    title: "Faster GPUs",
-    description: "The RGB really speeds them up.",
-
-    cost: new Decimal("10"),
-    currencyDisplayName: "Bitcoins",
-
-    effectDisplay() {
-        return x + upgradeEffect(this.layer, this.id);
-    },
-};

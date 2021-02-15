@@ -24,7 +24,7 @@ function loadVue() {
 			<input
 				class="text-input"
 				:value="player[layer].inputs[data]"
-				v-on:input="function handleInput(e) { setInput(layer, data, e.target.value); }">
+				v-on:input="function handleInput(e) { setInputState(layer, data, e.target.value); }">
 			</input>
 		`
 	})

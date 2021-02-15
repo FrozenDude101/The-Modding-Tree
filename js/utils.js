@@ -56,8 +56,16 @@ function setClickableState(layer, id, state) {
 	player[layer].clickables[id] = state
 }
 
-function setInput(layer, id, value) {
+function getInputState(layer, id) {
+	return (player[layer].inputs[id]);
+}
+
+function setInputState(layer, id, value) {
 	player[layer].inputs[id] = value;
+}
+
+function deleteInputState(layer, id) {
+	delete player[layer].inputs[id];
 }
 
 function upgradeEffect(layer, id) {

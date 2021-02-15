@@ -64,6 +64,93 @@ function getNodeClasses(layer, size) {
 
 }
 
+function generateStyleEditor(layer) {
+
+    let rows = 0;
+    do {
+        rows ++;
+        if (["", undefined].includes(getInputState(layer, "property" + rows)) && ["", undefined].includes(getInputState(layer, "value" + rows))) {
+            let rows2 = rows;
+            do {
+                setInputState(layer, "property" + rows2, getInputState(layer, "property" + (rows2 + 1)));
+                setInputState(layer, "value" + rows2, getInputState(layer, "value" + (rows2 + 1)));
+                rows2 ++;
+            } while(!["", undefined].includes(getInputState(layer, "property" + (rows2 - 1))) || !["", undefined].includes(getInputState(layer, "value" + (rows2 - 1))));
+            deleteInputState(layer, "property" + rows2);
+            deleteInputState(layer, "value" + rows2);
+        }
+    } while (!["", undefined].includes(getInputState(layer, "property" + rows)) || !["", undefined].includes(getInputState(layer, "value" + rows)));
+
+    let col = [
+        ["row", [
+            ["column", [
+                ["display-text", "Property"],
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "property1"],
+                    ["display-text", "\""],
+                ]],
+            ]],
+            ["column", [
+                ["display-text", " Value", {"white-space": "pre"}],
+                ["row", [
+                    ["display-text", ": \""],
+                    ["text-input", "value1"],
+                    ["display-text", "\","],
+                ]],
+            ]],
+        ]],
+    ];
+
+    for (let i = 2; i <= rows; i ++) {
+        col.push(["row", [
+            ["display-text", "\""],
+            ["text-input", "property"+i],
+            ["display-text", "\""],
+            ["display-text", ": \""],
+            ["text-input", "value"+i],
+            ["display-text", "\","],
+        ]]);
+    }
+
+    return col;
+
+}
+
+function generateStyle(layer, obj) {
+
+    let rows = 1;
+    while (getInputState(layer, "property" + rows) || getInputState(layer, "value" + rows)) {
+        rows ++;
+    }
+
+    let style = {};
+
+    for (let i = 1; i <= rows; i ++) {
+        if (["", undefined].includes(getInputState(layer, "property" + i)) || ["", undefined].includes(getInputState(layer, "value" + i))) continue;
+        style[getInputState(layer, "property" + i)] = getInputState(layer, "value" + i);
+    }
+
+    return style;
+
+}
+
+function convertStyleToString(style) {
+
+    if (Object.keys(style).length) {
+        let ret = "{";
+
+        for (let property in style) {
+            ret += "\n        \"" + property + "\": \"" + style[property] + "\",";
+        }
+
+        return ret + "\n    }";
+    } else {
+        return "";
+    }
+
+}
+
 //  -------- Other Functions --------
 
 function merge(obj1, obj2) {
