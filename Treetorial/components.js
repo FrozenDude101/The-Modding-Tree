@@ -290,11 +290,11 @@ addLayer("Cmilestones", {
                 "blank",
                 ["code-block", [
                     `rewardDescription() { return player.points; },`,
-                    `done: false,`,
+                    `unlocked: false,`,
                 ]],
                 ["display-text", `
                     The reward description will be the player's current points.<br>
-                    The milestone will never be automatically completed.<br>
+                    The milestone will never be shown.<br>
                 `],
                 "blank",
                 "h-line",
@@ -432,7 +432,9 @@ addLayer("Cmilestones", {
                 return generateStyle(this.layer);
             },
 
-            done: false,
+            done() {
+                return false;
+            },
             toggles() {
                 let toggles = generateToggles(this.layer);
                 for (let i = 0; i < toggles.length; i ++) {
