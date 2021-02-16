@@ -1,7 +1,5 @@
 //vscode-fold=1
 
-// MILESTONE AND TAB 200PX WIDE.
-
 addLayer("Cachievements", {
     symbol: "<h3>Achievement</h3>",
     tooltip: "Achievements",
@@ -25,13 +23,570 @@ addLayer("Cchallenges", {
             <h3>Challenges</h3><br><br>
             <button class=longUpg>` + (player.tab == "Cchallenges" ? "Exit Early" : "Start") + `</button><br><br>
             <span>Reduce production and reach<br>a goal for an award!</span><br>
-            Goal: <span>Challenge Module Completed</span><br>
-            Reward: <span>Challenge Knowledge</span><br>
+            <span>Goal: Challenge Module Completed</span><br>
+            <span>Reward: Challenge Knowledge</span><br>
         `
     },
     tooltip: "Challenges",
-    classes: ["hChallenge", "locked"],
+    classes() {
+        let ret = ["hChallenge"];
+        if (player[this.layer].finished) {
+            ret.push("done")
+        } else if (player[this.layer].completed && player.tab == "Cchallenges") {
+            ret.push("canComplete")
+        }
+        return ret;
+    },
     nodeStyle: getNodeStyle(25, 24),
+
+    onClick() {
+        if (player[this.layer].completed && player.tab == "Cchallenges") player[this.layer].finished = true;
+    },
+
+    generateComponent() {
+
+        let component = "{\n";
+
+        if (getInputState(this.layer, "fullDisplay")) {
+            component += "    fullDisplay: \"" + getInputState(this.layer, "fullDisplay") + "\",\n";
+        } else {
+            component += "    name: \"" + getInputState(this.layer, "name") + "\",\n";
+            component += "    challengeDescription: \"" + getInputState(this.layer, "challengeDescription") + "\",\n";
+            component += "    goalDescription: \"" + getInputState(this.layer, "goalDescription") + "\",\n";
+            component += "    rewardDescription: \"" + getInputState(this.layer, "rewardDescription") + "\",\n";
+        }
+
+        component += "\n";
+
+        component += "    canComplete() { },\n"
+
+        component += "\n";
+
+        if (getInputState(this.layer, "rewardDisplay")) {
+            component += "    rewardEffect() { },\n"
+            component += "    rewardDisplay() {\n        return \"" + getInputState(this.layer, "rewardDisplay") + "\" + challengeEffect(this.layer, this.id);\n    },\n";
+            component += "\n";
+        }
+
+        let style = convertStyleToString(generateStyle(this.layer));
+        if (style) {
+            component += "    style: " + style + ",\n";
+        }
+
+        exportSave(component + "},\n");
+        player[this.layer].completed = true;
+
+    },
+
+    tabFormat: {
+        Base: {
+            content: [
+                ["display-text", `
+                    To create challenges, you must put them inside "challenges".<br>
+                    This is a special attribute in the layer object.<br>
+                    <br>
+                    This object can be given 2 attributes.<br>
+                    rows defines the maximum number of rows to display.<br>
+                    cols defines the maximum number of columns to display.<br>
+                    These are both regular numbers, not Decimals.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `challenges: {`,
+                    `    rows: 2,`,
+                    `    cols: 3,`,
+                    `},`,
+                ]],
+                ["display-text", `
+                    In this layer, at most, only a 3x2 block of challenges will appear.<br>
+                    All other challenges, such as 14, 25, 33 will not appear.<br>
+                `],
+                "blank",
+                ["display-text", `
+                    Challenges come with 2 automatic attributes, "layer" and "id",<br>
+                    corresponding to the layer the challenge is in, and the id of the challenge.<br>
+                    These can be accessed in any function of the upgrade.<br>
+                    <br>
+                    The id serves a second purpose: positioning the challenge.<br>
+                    The first digits are the row, and the final digit is the column.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `addLayer("p", {`,
+                    `    ...`,
+                    `    challenges: {`,
+                    `        ...`,
+                    `        123: {},`,
+                    `    },`,
+                    `})`,
+                ]],
+                ["display-text", `
+                    This challenge has a layer attribute of "p", and an id attribute of "123".<br>
+                    It is in the 12th row, and the 3rd column.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+        Visuals: {
+            content: [
+                ["challenge", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>name</h3><br>
+                            <br>
+                            A larger title displayed above the button.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "name"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>challengeDescription</h3><br>
+                            <br>
+                            A description of the challenge displayed directly below the button.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "challengeDescription"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+                "blank",
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>goalDescription</h3><br>
+                            <br>
+                            A description of the goal required to beat the challenge.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "goalDescription"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>rewardDescription</h3><br>
+                            <br>
+                            A description of the reward for completing the challenge.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        ["blank", "16px"],
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "rewardDescription"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>fullDisplay()</h3><br>
+                    <br>
+                    fullDisplay() overwrites all display attributes except name.<br>
+                    It overwrites the entire description of the challenge.<br>
+                    It can including formatting and HTML.<br>
+                    It should return a string.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "fullDisplay"],
+                    ["display-text", "\""],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>unlocked()</h3><br>
+                    <br>
+                    unlocked() determines whether or not to show the upgrade.<br>
+                    Locked upgrades don't effect the positions of other upgrades.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        Style: {
+            content: [
+                ["challenge", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>style</h3><br>
+                    <br>
+                    This is intended, but currently broken in the latest TMT.<br>
+                    <br>
+                    style allows you to set CSS values for this specific component.<br>
+                    The attribute is the CSS property, and the value is the value of the property.<br>
+                    These should both be strings.<br>
+                    style itself is an object.<br>
+                `],
+                "blank",
+                ["column", function() {
+                    return generateStyleEditor("Cchallenges");
+                }],
+                "blank",
+                "blank",
+            ],
+        },
+        Completion: {
+            content: [
+                ["challenge", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>canComplete()</h3><br>
+                    <br>
+                    canComplete() determines whether or not a challenge can be completed.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>completionLimit</h3><br>
+                    <br>
+                    completionLimit allows a challenge to be beaten multiplie times.<br>
+                    This works best if the goal and rewards scales with the number of completions.<br>
+                    You can also have a unique reward for each completion.<br>
+                    It should be a number.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>countsAs</h3><br>
+                    <br>
+                    countsAs is an Array of challenge ids in this layer that you want to also take effect.<br>
+                    It should be an Array of strings.<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `canComplete() { return player.p.points.gt(50); }`,
+                    `completionLimit: 3,`,
+                    `countsAs: [11, 12, 13],`,
+                ]],
+                ["display-text", `
+                    The challenge is completed once the player has 50 "p" points.<br>
+                    It can be completed 3 times.<br>
+                    Challenges 11, 12, and 13 are also in effect.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        Reward: {
+            content: [
+                ["challenge", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>rewardEffect()</h3><br>
+                    <br>
+                    rewardEffect() should calculate and return the current effect of the challenge.<br>
+                    You will have to implement the effect where it is needed.<br>
+                    It should return a Decimal.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>rewardDisplay()</h3><br>
+                    <br>
+                    rewardDisplay() should create the display of the effect of the upgrade.<br>
+                    It can including formatting and HTML.<br>
+                    It should return a string.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "rewardDisplay"],
+                    ["display-text", "\" + challengeEffect(this.layer, this.id)"],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>onComplete()</h3><br>
+                    <br>
+                    onComplete() is called when the challenge is completed.<br>
+                    It is useful for setting values.<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `rewardEffect() {`,
+                    `    return new Decimal(2);`,
+                    `},`,
+                    `rewardDisplay() {`,
+                    `    return "x" + upgradeEffect(this.layer, this.id);`,
+                    `},`,
+                    `onComplete() {`,
+                    `    player.generating = true;`,
+                    `},`,
+                ]],
+                ["display-text", `
+                    This challenge multiplies something by 2.<br>
+                    It also sets the generating flag to true.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        Functions: {
+            content: [
+                ["display-text", `
+                    <h3>inChallenge(layer, id)</h3><br>
+                    <br>
+                    Checks if the player is in a challenge.<br>
+                    It returns true if they are, false if they aren't.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>hasChallenge(layer, id)</h3><br>
+                    <br>
+                    Checks if the player has completed a challenge.<br>
+                    It returns true if they have, false if they haven't.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>challengeCompletions(layer, id)</h3><br>
+                    <br>
+                    It returns how many times a challenge has been completed.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>maxedChallenge(layer, id)</h3><br>
+                    <br>
+                    Checks if the player has maxed a challenge.<br>
+                    It returns true if they have, false if they haven't.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>challengeEffect(layer, id)</h3><br>
+                    <br>
+                    challengeEffect gets the effect of a challenge.<br>
+                    It returns the result of the challenge's rewardEffect() function.<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `if (inChallenge("p", 11)) gain = gain.div(2);`,
+                ]],
+                ["display-text", `
+                    Divides gain by 2 if the player is in "p" challenge 11.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `if (hasChallenge("p", 11)) {`,
+                    `    gain = gain.mul(challengeEffect("p", 11));`,
+                    `}`,
+                ]],
+                ["display-text", `
+                    Multiplies gain by the challenge's effect if the player has completed it.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+        Tips: {
+            content: [
+                ["display-text", `
+                    If a function will always return the same value,<br>
+                    you can turn it into an attribute to increase performance!<br>
+                    If you want any attribute to change, you can turn it into a function,<br>
+                    and it will automatically update.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `rewardEffect() {`,
+                    `    return challengeCompletions(this.layer, this.id);`,
+                    `},`,
+                    `canComplete: true,`,
+                ]],
+                ["display-text", `
+                    The challenge's effect is equal to the number of times completed.<br>
+                    The challenge is always completable.<br>
+                `],
+                "blank",
+                "h-line",
+                "blank",
+                ["display-text", `
+                    Try to avoid challenges that are just waiting to reach the goal.<br>
+                    They are not as fun, as if you can't complete them, you have just wasted time.<br>
+                    Challenges which require the player to do something new/different are best.<br>
+                    The first set of challenges in <a href="https://ivark.github.io/" target="_blank">Antimatter Dimensions</a> are a good example.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+    },
+
+    inputs: {
+        name: "Name",
+        challengeDescription: "Challenge Description",
+        goalDescription: "Goal Description",
+        rewardDescription: "Reward Description",
+        fullDisplay: "",
+
+        rewardDisplay: "",
+
+        property1: "",
+        value1: "",
+    },
+    clickables: {
+        11: {
+            display() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                        return "<h3>Change State</h3><br>Currently inactive.";
+                    case "inactive":
+                    case "active":
+                    case "completable":
+                    case "completed":
+                        return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, this.id) + ".";
+                }
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                    case "inactive":
+                        player[this.layer].activeChallenge = 11;
+                        setClickableState(this.layer, this.id, "active");
+                        break;
+                    case "active":
+                        setClickableState(this.layer, this.id, "completable");
+                        break;
+                    case "completable":
+                        player[this.layer].activeChallenge = null;
+                        player[this.layer].challenges[11] = 1;
+                        setClickableState(this.layer, this.id, "completed");
+                        break;
+                    case "completed":
+                        player[this.layer].challenges[11] = 0;
+                        setClickableState(this.layer, this.id, "inactive");
+                        break;
+                }
+            },
+        },
+        12: {
+            display() {
+                return "<h3>Export Challenge</h3>";
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                layers[this.layer].generateComponent();
+            },
+        },
+    },
+    challenges: {
+        11: {
+            name() {
+                return getInputState(this.layer, "name");
+            },
+            challengeDescription() {
+                return getInputState(this.layer, "challengeDescription");
+            },
+            goalDescription() {
+                return getInputState(this.layer, "goalDescription");
+            },
+            rewardDescription() {
+                return getInputState(this.layer, "rewardDescription");
+            },
+            rewardDisplay() {
+                return getInputState(this.layer, "rewardDisplay") + challengeEffect(this.layer, this.id);
+            },
+            fullDisplay() {
+                return getInputState(this.layer, "fullDisplay");
+            },
+            style() {
+                return generateStyle("Cchallenges");
+            },
+
+            canComplete() {
+                return getClickableState(this.layer, 11) == "completable";
+            },
+
+            rewardEffect: 2.67,
+        },
+    },
 });
 
 addLayer("Cclickables", {
@@ -253,6 +808,8 @@ addLayer("Cmilestones", {
                 "blank",
                 "blank",
                 ["infobox-column", "toggles"],
+                "blank",
+                "blank",
             ],
         },
         Functions: {
@@ -323,6 +880,8 @@ addLayer("Cmilestones", {
                 ["code-block", [
                     `effectDescription: "Automatically purchase P upgrades.",`
                 ]],
+                "blank",
+                "blank",
             ]
         },
     },
@@ -642,7 +1201,7 @@ addLayer("Cupgrades", {
                 "blank",
                 "blank",
                 ["display-text", `
-                    <h3>fullDisplay</h3><br>
+                    <h3>fullDisplay()</h3><br>
                     <br>
                     fullDisplay() overwrites the entire content of the upgrade.<br>
                     It can including formatting and HTML.<br>
@@ -811,6 +1370,14 @@ addLayer("Cupgrades", {
                 "blank",
                 "blank",
                 ["display-text", `
+                    <h3>canAffordUpgrade(layer, id)</h3><br>
+                    <br>
+                    Checks if the player can afford an upgrade.<br>
+                    It will return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
                     <h3>buyUpgrade(layer, id)</h3><br>
                     <br>
                     buyUpgrade attempts to buy an upgrade.<br>
@@ -837,7 +1404,9 @@ addLayer("Cupgrades", {
                 ["display-text", `
                     Attempts to buy the first 3 "p" upgrades.<br>
                 `],
-            ]
+                "blank",
+                "blank",
+            ],
         },
         Tips: {
             content: [
@@ -886,7 +1455,9 @@ addLayer("Cupgrades", {
                 ["display-text", `
                     <a href="https://www.desmos.com/calculator" target="_blank">Desmos</a>  is a great tool for visualising graphs!<br>
                     However, it only goes up to 1e308.<br>
-                `]
+                `],
+                "blank",
+                "blank",
             ]
         },
     },
