@@ -117,7 +117,7 @@ function generateStyleEditor(layer) {
 
 }
 
-function generateStyle(layer, obj) {
+function generateStyle(layer) {
 
     let rows = 1;
     while (getInputState(layer, "property" + rows) || getInputState(layer, "value" + rows)) {
@@ -145,6 +145,105 @@ function convertStyleToString(style) {
         }
 
         return ret + "\n    }";
+    } else {
+        return "";
+    }
+
+}
+
+function generateToggleEditor(layer) {
+
+    let rows = 0;
+    do {
+        rows ++;
+        if (["", undefined].includes(getInputState(layer, "toggle" + rows)) && ["", undefined].includes(getInputState(layer, "toggleValue" + rows))) {
+            let rows2 = rows;
+            do {
+                setInputState(layer, "toggle" + rows2, getInputState(layer, "toggle" + (rows2 + 1)));
+                setInputState(layer, "toggleValue" + rows2, getInputState(layer, "toggleValue" + (rows2 + 1)));
+                rows2 ++;
+            } while(!["", undefined].includes(getInputState(layer, "toggle" + (rows2 - 1))) || !["", undefined].includes(getInputState(layer, "toggleValue" + (rows2 - 1))));
+            deleteInputState(layer, "toggle" + rows2);
+            deleteInputState(layer, "toggleValue" + rows2);
+        }
+    } while (!["", undefined].includes(getInputState(layer, "toggle" + rows)) || !["", undefined].includes(getInputState(layer, "toggleValue" + rows)));
+
+    for (let attribute in player.Cmilestones) {
+        if (getStartLayerData(layer)[attribute] != undefined) continue;
+        let remove = true;
+        for (let i = 1; i <= rows; i ++) {
+            if (getInputState(layer, "toggleValue" + i) == attribute) {
+                remove = false;
+                break;
+            }
+        }
+        if (remove) {
+            delete player.Cmilestones[attribute];
+        }
+    }
+
+    let col = [
+        ["row", [
+            ["column", [
+                ["display-text", "Layer"],
+                ["row", [
+                    ["display-text", "[\""],
+                    ["text-input", "toggle1"],
+                    ["display-text", "\""],
+                ]],
+            ]],
+            ["column", [
+                ["display-text", " Property", {"white-space": "pre"}],
+                ["row", [
+                    ["display-text", ", \""],
+                    ["text-input", "toggleValue1"],
+                    ["display-text", "\"],"],
+                ]],
+            ]],
+        ]],
+    ];
+
+    for (let i = 2; i <= rows; i ++) {
+        col.push(["row", [
+            ["display-text", "[\""],
+            ["text-input", "toggle"+i],
+            ["display-text", "\""],
+            ["display-text", ", \""],
+            ["text-input", "toggleValue"+i],
+            ["display-text", "\"],"],
+        ]]);
+    }
+
+    return col;
+
+}
+
+function generateToggles(layer) {
+    
+    let rows = 1;
+    while (getInputState(layer, "toggle" + rows) || getInputState(layer, "toggleValue" + rows)) {
+        rows ++;
+    }
+
+    let toggles = [];
+
+    for (let i = 1; i <= rows; i ++) {
+        if (!getInputState(layer, "toggle" + i) && !getInputState(layer, "toggleValue" + i)) continue;
+        toggles.push([getInputState(layer, "toggle" + i), getInputState(layer, "toggleValue" + i)]);
+    }
+
+    return toggles;
+
+}
+
+function convertTogglesToString(toggles) {
+
+    if (toggles.length) {
+        let ret = "[\n";
+        for (let toggle of toggles) {
+            ret += "        [\"" + toggle[0] + "\", \"" + toggle[1] + "\"],\n";
+        }
+        return ret + "    ]";
     } else {
         return "";
     }

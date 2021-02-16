@@ -50,8 +50,398 @@ addLayer("Cmilestones", {
         Milestone Module Completed
     `,
     tooltip: "Milestones",
-    classes: ["milestone", "locked"],
+    classes() {
+        let ret = [];
+        if (player[this.layer].completed) ret.push("milestoneDone");
+        else ret.push("milestone");
+        return ret;
+    },
     nodeStyle: merge(getNodeStyle(0, 14), {"font-size": "18px", height: "75px", width: "260px"}),
+
+    startData() {
+        return {
+            completed: false,
+        };
+    },
+
+    generateComponent() {
+
+        let component = "{\n";
+
+        if (getInputState(this.layer, "requirementDescription")) {
+            component += "    requirementDescription: \"" + getInputState(this.layer, "requirementDescription") + "\",\n";
+        }
+        if (getInputState(this.layer, "effectDescription")) {
+            component += "    effectDescription: \"" + getInputState(this.layer, "effectDescription") + "\",\n";
+        }
+
+        component += "\n";
+
+        component += "    done() { },\n";
+
+        let toggles = convertTogglesToString(generateToggles(this.layer));
+        if (toggles) {
+            component += "    toggles: " + toggles + ",\n";
+        }
+
+        component += "\n";
+
+        let style = convertStyleToString(generateStyle(this.layer));
+        if (style) {
+            component += "    style: " + style + ",\n";
+        }
+
+        exportSave(component + "},\n");
+        player[this.layer].completed = true;
+
+    },
+
+    tabFormat: {
+        Base: {
+            content: [
+                ["display-text", `
+                    To create milestones, you must put them inside "milestones".<br>
+                    This is a special attribute in the layer object.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `milestones: {`,
+                    `},`,
+                ]],
+                "blank",
+                ["display-text", `
+                    Upgrades come with 2 automatic attributes, "layer" and "id",<br>
+                    corresponding to the layer the milestone is in, and the id of the milestone.<br>
+                    These can be accessed in any function of the milestone.<br>
+                    <br>
+                    The id serves a second purpose: positioning the milestone.<br>
+                    The smaller the id, the higher up it is placed.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `addLayer("p", {`,
+                    `    ...`,
+                    `    milestones: {`,
+                    `        30: {},`,
+                    `        20: {},`,
+                    `    },`,
+                    `})`,
+                ]],
+                ["display-text", `
+                    These milestones have a layer attribute of "p".<br>
+                    One milestone has an id of "30", the other an id of "20".<br>
+                    Milestone 20 will be placed above 30.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+        Visuals: {
+            content: [
+                "milestones",
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>requirementDescription</h3><br>
+                    <br>
+                    A larger title placed at the top of the milestone.<br>
+                    It should describe what the player must do to get the milestone.<br>
+                    It can including formatting and HTML.<br>
+                    It should return a string.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "requirementDescription"],
+                    ["display-text", "\""],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>effectDescription</h3><br>
+                    <br>
+                    Smaller text placed beneath the title.<br>
+                    It should explain the rewards for completing the milestone.<br>
+                    The effects will have to implemented where they are needed.<br>
+                    It can including formatting and HTML.<br>
+                    It should return a string.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "effectDescription"],
+                    ["display-text", "\""],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>unlocked()</h3><br>
+                    <br>
+                    unlocked() determines whether or not to show the milestone.<br>
+                    Locked upgrades do effect the positions of other milestone.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        Style: {
+            content: [
+                "milestones",
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>style</h3><br>
+                    <br>
+                    style allows you to set CSS values for this specific component.<br>
+                    The attribute is the CSS property, and the value is the value of the property.<br>
+                    These should both be strings.<br>
+                    style itself is an object.<br>
+                `],
+                "blank",
+                ["column", function() {
+                    return generateStyleEditor("Cmilestones");
+                }],
+                "blank",
+                "blank",
+            ],
+        },
+        Completion: {
+            content: [
+                "milestones",
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                "h-line",
+                "blank",
+                ["display-text", `
+                    <h3>done()</h3><br>
+                    <br>
+                    done() should determine if the milestone is completed.<br>
+                    TMT will throw an error if you do not include this function in the milestone.<br>
+                    It should return true when the milestone is completed, and false when it isn't.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `done() {`,
+                    `    return player.points.gt(100);`,
+                    `},`,
+                ]],
+                ["display-text", `
+                    The milestone is completed when the player has more than 100 points.<br>
+                `],
+                "blank",
+                "blank",
+                ["infobox-column", "toggles"],
+            ],
+        },
+        Functions: {
+            content: [
+                ["display-text", `
+                    <h3>hasMilestone(layer, id)</h3><br>
+                    <br>
+                    hasUpgrade() checks if the player has a milestone.<br>
+                    It returns true if the have, false if they don't.<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `if (hasMilestone("q", 0)) {`,
+                    `    buyUpgrade("p", 11);`,
+                    `    buyUpgrade("p", 12);`,
+                    `    buyUpgrade("p", 13);`,
+                    `}`
+                ]],
+                ["display-text", `
+                    Attempts to buy the first 3 "p" upgrades when you have the milestone.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+        Tips: {
+            content: [
+                ["display-text", `
+                    If a function will always return the same value,<br>
+                    you can turn it into an attribute to increase performance!<br>
+                    If you want any attribute to change, you can turn it into a function,<br>
+                    and it will automatically update.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `rewardDescription() { return player.points; },`,
+                    `done: false,`,
+                ]],
+                ["display-text", `
+                    The reward description will be the player's current points.<br>
+                    The milestone will never be automatically completed.<br>
+                `],
+                "blank",
+                "h-line",
+                "blank",
+                ["display-text", `
+                    It is best, but not required, to base milestones off of total currency.<br>
+                    Instead of using .points, use .total.
+                `],
+                "blank",
+                ["code-block", [
+                    `done() { return player.p.total.gte(10); },`
+                ]],
+                ["display-text", `
+                    The milestone will be completed once the player reaches 10 total points.<br>
+                    They do not need 10 points at the same time.<br>
+                `],
+                "blank",
+                "h-line",
+                "blank",
+                ["display-text", `
+                    As milestones don't have an equivalent to upgradeEffect(),<br>
+                    they are best used for QOL or content unlocks.<br>
+                    These effects will have to implemented where they are needed.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `effectDescription: "Automatically purchase P upgrades.",`
+                ]],
+            ]
+        },
+    },
+
+    inputs: {
+        requirementDescription: "Requirement Description",
+        effectDescription: "Effect Description",
+
+        property1: "",
+        value1: "",
+
+        toggle1: "",
+        toggleValue1: "",
+    },
+    infoboxes: {
+        toggles: {
+            title: "Toggles",
+            body: [
+                ["display-text", `
+                    Toggles can be used to add a button to a milestone.<br>
+                    They come as pairs of strings.<br>
+                    The first string is the layer to store under.<br>
+                    The second string is the attribute to store under.<br>
+                    It should be a 2D array.<br>
+                `],
+                "blank",
+                ["column", function() {
+                    return generateToggleEditor("Cmilestones");
+                }],
+                ["display-text", `
+                    Warning certain values can brick your save.<br>
+                    Do not set the property to something TMT uses, such as "milestones".<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `toggles: [`,
+                    `    ["p", "auto"],`,
+                    `    ["q", "buy"],`,
+                    `],`,
+                ]],
+                ["display-text", `
+                    This will create 2 toggle buttons.<br>
+                    One will toggle "player.p.auto".<br>
+                    The other will toggle "player.q.buy".<br>
+                `],
+            ],
+        },
+    },
+    clickables: {
+        11: {
+            display() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                        return "<h3>Change State</h3><br>Currently locked.";
+                    case "locked":
+                    case "unlocked":
+                        return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, this.id) + ".";
+                }
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                    case "locked":
+                        player[this.layer].milestones = [0];
+                        setClickableState(this.layer, this.id, "unlocked");
+                        break;
+                    case "unlocked":
+                        player[this.layer].milestones = [];
+                        setClickableState(this.layer, this.id, "locked");
+                        break;
+                }
+            },
+        },
+        12: {
+            display() {
+                return "<h3>Export Milestone</h3>";
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                layers[this.layer].generateComponent();
+            },
+        },
+    },
+    milestones: {
+        0: {
+            requirementDescription() {
+                return player[this.layer].inputs.requirementDescription;
+            },
+            effectDescription() {
+                return player[this.layer].inputs.effectDescription;
+            },
+            style() {
+                return generateStyle(this.layer);
+            },
+
+            done: false,
+            toggles() {
+                let toggles = generateToggles(this.layer);
+                for (let i = 0; i < toggles.length; i ++) {
+                    toggles[i][0] = "Cmilestones";
+                }
+                return toggles;
+            },
+        },
+    },
 });
 
 addLayer("Cother", {
@@ -95,14 +485,14 @@ addLayer("Cupgrades", {
     tooltip: "Upgrades",
     classes() {
         let ret = ["upg"];
-        if (!player.Cupgrades.completed) ret.push("locked");
-        if (player.Cupgrades.bought)     ret.push("bought");
+        if (!player[this.layer].completed) ret.push("locked");
+        if (player[this.layer].bought)     ret.push("bought");
         return ret;
     },
     nodeStyle: merge(getNodeStyle(0, 0), {color: "#000"}),
 
     onClick() {
-        if (player.Cupgrades.completed) player.Cupgrades.bought = true;
+        if (player[this.layer].completed) player[this.layer].bought = true;
     },
 
     startData() {
@@ -114,36 +504,36 @@ addLayer("Cupgrades", {
 
     generateComponent() {
 
-        let upgrade = "{\n";
+        let component = "{\n";
 
         if (getInputState(this.layer, "fullDisplay")) {
-            upgrade += "    fullDisplay: \"" + getInputState(this.layer, "fullDisplay") + "\",\n";
+            component += "    fullDisplay: \"" + getInputState(this.layer, "fullDisplay") + "\",\n";
         } else {
-            upgrade += "    title: \"" + getInputState(this.layer, "title") + "\",\n";
-            upgrade += "    description: \"" + getInputState(this.layer, "description") + "\",\n";
+            component += "    title: \"" + getInputState(this.layer, "title") + "\",\n";
+            component += "    description: \"" + getInputState(this.layer, "description") + "\",\n";
         }
 
-        upgrade += "\n";
+        component += "\n";
 
-        upgrade += "    cost: new Decimal(\"" + (getInputState(this.layer, "cost") ? getInputState(this.layer, "cost") : 0) + "\"),\n";
+        component += "    cost: new Decimal(\"" + (getInputState(this.layer, "cost") ? getInputState(this.layer, "cost") : 0) + "\"),\n";
         if (getInputState(this.layer, "currencyDisplayName")) {
-            upgrade += "    currencyDisplayName: \"" + getInputState(this.layer, "currencyDisplayName") + "\",\n";
+            component += "    currencyDisplayName: \"" + getInputState(this.layer, "currencyDisplayName") + "\",\n";
         }
 
-        upgrade += "\n";
+        component += "\n";
 
         if (getInputState(this.layer, "effectDisplay")) {
-            upgrade += "    effect() { },\n"
-            upgrade += "    effectDisplay() {\n        return \"" + getInputState(this.layer, "effectDisplay") + "\" + upgradeEffect(this.layer, this.id);\n    },\n";
+            component += "    effect() { },\n"
+            component += "    effectDisplay() {\n        return \"" + getInputState(this.layer, "effectDisplay") + "\" + upgradeEffect(this.layer, this.id);\n    },\n\n";
         }
 
         let style = convertStyleToString(generateStyle(this.layer));
         if (style) {
-            upgrade += "    style: " + style + "\n";
+            component += "    style: " + style + ",\n";
         }
 
-        exportSave(upgrade + "}");
-        player.Cupgrades.completed = true;
+        exportSave(component + "},\n");
+        player[this.layer].completed = true;
 
     },
 
@@ -202,9 +592,9 @@ addLayer("Cupgrades", {
                 ["upgrade", 11],
                 "blank",
                 ["row", [
-                    ["clickable", 12],
-                    "blank",
                     ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
                 ]],
                 "blank",
                 ["h-line", "500px"],
@@ -280,9 +670,9 @@ addLayer("Cupgrades", {
                 ["upgrade", 11],
                 "blank",
                 ["row", [
-                    ["clickable", 12],
-                    "blank",
                     ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
                 ]],
                 "blank",
                 ["h-line", "500px"],
@@ -308,9 +698,9 @@ addLayer("Cupgrades", {
                 ["upgrade", 11],
                 "blank",
                 ["row", [
-                    ["clickable", 12],
-                    "blank",
                     ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
                 ]],
                 "blank",
                 "h-line",
@@ -341,9 +731,9 @@ addLayer("Cupgrades", {
                 ["upgrade", 11],
                 "blank",
                 ["row", [
-                    ["clickable", 12],
-                    "blank",
                     ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
                 ]],
                 "blank",
                 "h-line",
@@ -611,6 +1001,41 @@ addLayer("Cupgrades", {
     clickables: {
         11: {
             display() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                        return "<h3>Change State</h3><br>Currently unaffordable.";
+                    case "unaffordable":
+                    case "buyable":
+                    case "bought":
+                        return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, this.id) + ".";
+                }
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                    case "unaffordable":
+                        setClickableState(this.layer, this.id, "buyable");
+                        break;
+                    case "buyable":
+                        player[this.layer].upgrades = [11];
+                        setClickableState(this.layer, this.id, "bought");
+                        break;
+                    case "bought":
+                        player[this.layer].upgrades = [];
+                        setClickableState(this.layer, this.id, "unaffordable");
+                        break;
+                }
+            },
+        },
+        12: {
+            display() {
                 return "<h3>Export Upgrade</h3>";
             },
             style: {
@@ -622,41 +1047,6 @@ addLayer("Cupgrades", {
             canClick: true,
             onClick() {
                 layers[this.layer].generateComponent();
-            },
-        },
-        12: {
-            display() {
-                switch (getClickableState(this.layer, 11)) {
-                    default:
-                        return "<h3>Change State</h3><br>Currently unaffordable.";
-                    case "unaffordable":
-                    case "buyable":
-                    case "bought":
-                        return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, 11) + ".";
-                }
-            },
-            style: {
-                height: "45px",
-                width: "150px",
-                "border-radius": "15px",
-            },
-
-            canClick: true,
-            onClick() {
-                switch (getClickableState(this.layer, 11)) {
-                    default:
-                    case "unaffordable":
-                        setClickableState(this.layer, 11, "buyable");
-                        break;
-                    case "buyable":
-                        player.Cupgrades.upgrades = [11];
-                        setClickableState(this.layer, 11, "bought");
-                        break;
-                    case "bought":
-                        player.Cupgrades.upgrades = [];
-                        setClickableState(this.layer, 11, "unaffordable");
-                        break;
-                }
             },
         },
     },
@@ -692,7 +1082,7 @@ addLayer("Cupgrades", {
                 return;
             },
             onPurchase() {
-                player.Cupgrades.upgrades = [];
+                player[this.layer].upgrades = [];
             },
         },
     },
