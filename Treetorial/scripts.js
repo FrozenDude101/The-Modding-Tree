@@ -66,20 +66,27 @@ function getNodeClasses(layer, size) {
 
 function generateStyleEditor(layer) {
 
-    let rows = 0;
-    do {
-        rows ++;
-        if (["", undefined].includes(getInputState(layer, "property" + rows)) && ["", undefined].includes(getInputState(layer, "value" + rows))) {
-            let rows2 = rows;
-            do {
-                setInputState(layer, "property" + rows2, getInputState(layer, "property" + (rows2 + 1)));
-                setInputState(layer, "value" + rows2, getInputState(layer, "value" + (rows2 + 1)));
-                rows2 ++;
-            } while(!["", undefined].includes(getInputState(layer, "property" + (rows2 - 1))) || !["", undefined].includes(getInputState(layer, "value" + (rows2 - 1))));
-            deleteInputState(layer, "property" + rows2);
-            deleteInputState(layer, "value" + rows2);
+    let rows = 1;
+    while (true) {
+        if (!getInputState(layer, "property" + rows) && !getInputState(layer, "value" + rows)) {
+            while (getInputState(layer, "property" + rows) != undefined && getInputState(layer, "value" + rows) != undefined) {
+                setInputState(layer, "property" + rows, getInputState(layer, "property" + (rows + 1)));
+                setInputState(layer, "value" + rows, getInputState(layer, "value" + (rows + 1)));
+                rows ++;
+            }
+            deleteInputState(layer, "property" + rows);
+            deleteInputState(layer, "value" + rows);
+            break;
         }
-    } while (!["", undefined].includes(getInputState(layer, "property" + rows)) || !["", undefined].includes(getInputState(layer, "value" + rows)));
+        rows ++;
+    }
+
+    let alt = "";
+    if (tmp[layer].generateStyleEditor) {
+        if (rows != tmp[layer].generateStyleEditor.length) {
+            alt = "2";
+        }
+    }
 
     let col = [
         ["row", [
@@ -87,7 +94,7 @@ function generateStyleEditor(layer) {
                 ["display-text", "Property"],
                 ["row", [
                     ["display-text", "\""],
-                    ["text-input", "property1"],
+                    ["text-input" + alt, "property1"],
                     ["display-text", "\""],
                 ]],
             ]],
@@ -95,7 +102,7 @@ function generateStyleEditor(layer) {
                 ["display-text", " Value", {"white-space": "pre"}],
                 ["row", [
                     ["display-text", ": \""],
-                    ["text-input", "value1"],
+                    ["text-input" + alt, "value1"],
                     ["display-text", "\","],
                 ]],
             ]],
@@ -105,14 +112,15 @@ function generateStyleEditor(layer) {
     for (let i = 2; i <= rows; i ++) {
         col.push(["row", [
             ["display-text", "\""],
-            ["text-input", "property"+i],
+            ["text-input" + alt, "property"+i],
             ["display-text", "\""],
             ["display-text", ": \""],
-            ["text-input", "value"+i],
+            ["text-input" + alt, "value"+i],
             ["display-text", "\","],
         ]]);
     }
 
+    tmp[layer].generateStyleEditor = (alt ? undefined : col);
     return col;
 
 }
@@ -153,51 +161,44 @@ function convertStyleToString(style) {
 
 function generateToggleEditor(layer) {
 
-    let rows = 0;
-    do {
-        rows ++;
-        if (["", undefined].includes(getInputState(layer, "toggle" + rows)) && ["", undefined].includes(getInputState(layer, "toggleValue" + rows))) {
-            let rows2 = rows;
-            do {
-                setInputState(layer, "toggle" + rows2, getInputState(layer, "toggle" + (rows2 + 1)));
-                setInputState(layer, "toggleValue" + rows2, getInputState(layer, "toggleValue" + (rows2 + 1)));
-                rows2 ++;
-            } while(!["", undefined].includes(getInputState(layer, "toggle" + (rows2 - 1))) || !["", undefined].includes(getInputState(layer, "toggleValue" + (rows2 - 1))));
-            deleteInputState(layer, "toggle" + rows2);
-            deleteInputState(layer, "toggleValue" + rows2);
-        }
-    } while (!["", undefined].includes(getInputState(layer, "toggle" + rows)) || !["", undefined].includes(getInputState(layer, "toggleValue" + rows)));
-
-    for (let attribute in player.Cmilestones) {
-        if (getStartLayerData(layer)[attribute] != undefined) continue;
-        let remove = true;
-        for (let i = 1; i <= rows; i ++) {
-            if (getInputState(layer, "toggleValue" + i) == attribute) {
-                remove = false;
-                break;
+    let rows = 1;
+    while (true) {
+        if (!getInputState(layer, "toggle" + rows) && !getInputState(layer, "toggleValue" + rows)) {
+            while (getInputState(layer, "toggle" + rows) != undefined && getInputState(layer, "toggleValue" + rows) != undefined) {
+                setInputState(layer, "toggle" + rows, getInputState(layer, "toggle" + (rows + 1)));
+                setInputState(layer, "toggleValue" + rows, getInputState(layer, "toggleValue" + (rows + 1)));
+                rows ++;
             }
+            deleteInputState(layer, "toggle" + rows);
+            deleteInputState(layer, "toggleValue" + rows);
+            break;
         }
-        if (remove) {
-            delete player.Cmilestones[attribute];
+        rows ++;
+    }
+
+    let alt = "";
+    if (tmp[layer].generateToggleEditor) {
+        if (rows != tmp[layer].generateToggleEditor.length) {
+            alt = "2";
         }
     }
 
     let col = [
         ["row", [
             ["column", [
-                ["display-text", "Layer"],
+                ["display-text", "Property"],
                 ["row", [
-                    ["display-text", "[\""],
-                    ["text-input", "toggle1"],
+                    ["display-text", "\""],
+                    ["text-input" + alt, "toggle1"],
                     ["display-text", "\""],
                 ]],
             ]],
             ["column", [
-                ["display-text", " Property", {"white-space": "pre"}],
+                ["display-text", " Value", {"white-space": "pre"}],
                 ["row", [
-                    ["display-text", ", \""],
-                    ["text-input", "toggleValue1"],
-                    ["display-text", "\"],"],
+                    ["display-text", ": \""],
+                    ["text-input" + alt, "toggleValue1"],
+                    ["display-text", "\","],
                 ]],
             ]],
         ]],
@@ -205,15 +206,16 @@ function generateToggleEditor(layer) {
 
     for (let i = 2; i <= rows; i ++) {
         col.push(["row", [
-            ["display-text", "[\""],
-            ["text-input", "toggle"+i],
             ["display-text", "\""],
-            ["display-text", ", \""],
-            ["text-input", "toggleValue"+i],
-            ["display-text", "\"],"],
+            ["text-input" + alt, "toggle"+i],
+            ["display-text", "\""],
+            ["display-text", ": \""],
+            ["text-input" + alt, "toggleValue"+i],
+            ["display-text", "\","],
         ]]);
     }
 
+    tmp[layer].generateToggleEditor = (alt ? undefined : col);
     return col;
 
 }

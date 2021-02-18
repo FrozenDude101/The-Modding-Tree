@@ -28,6 +28,14 @@ function loadVue() {
 			</input>
 		`
 	})
+	
+	// This duplicate fixes an issue with the style editor.
+	Vue.component('text-input2', {
+		props: ['layer', 'data'],
+		template: `
+			<text-input :layer = "layer" :data="data"></text-input>
+		`
+	})
 
 	Vue.component('infobox-column', {
 		props: ['layer', 'data'],
