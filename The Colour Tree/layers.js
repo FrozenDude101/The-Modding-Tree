@@ -958,7 +958,6 @@ addLayer("challenges", {
                     doPopup(
                         "",
                         tmp[this.layer].achievements[this.id].tooltip.split("\n")[2],
-                        
                         tmp[this.layer].achievements[this.id].name.replaceAll(/<[^>]*>/g, " "),
                         5,
                         "#DDD"
