@@ -3,8 +3,8 @@ let modInfo = {
 	id: "FD101/Treetorial",
 	author: "FrozenDude101",
 	pointsName: "completed modules",
-	discordName: "",
-	discordLink: "",
+	discordName: "Treetorial Server",
+	discordLink: "https://discord.gg/YWUqwBSb9M",
 	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	
 	offlineLimit: 0,  // In hours
@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0.1",
-	name: "Components - Upgrades",
+	num: "0.0.4",
+	name: "Components - Clickables",
 }
 
 let changelog = `
@@ -21,6 +21,9 @@ let changelog = `
 <br>
 <h2>Components</h2><br>
 <br>
+Challenges<br>
+Clickables<br>
+Milestones<br>
 Upgrades<br>
 `;
 
