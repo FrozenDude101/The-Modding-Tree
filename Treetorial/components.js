@@ -346,7 +346,6 @@ addLayer("Cchallenges", {
                     <br>
                     rewardEffect() should calculate and return the current effect of the challenge.<br>
                     You will have to implement the effect where it is needed.<br>
-                    It should return a Decimal.<br>
                 `],
                 "blank",
                 "blank",
@@ -597,6 +596,429 @@ addLayer("Cclickables", {
     tooltip: "Clickables",
     classes: ["upg"],
     nodeStyle: merge(getNodeStyle(14, 0), {color: "#000"}),
+
+    generateComponent() {
+
+        let component = "{\n";
+
+        if (getInputState(this.layer, "title")) {
+            component += "    title: \"" + getInputState(this.layer, "title") + "\",\n";
+        }
+        if (getInputState(this.layer, "display")) {
+            component += "    display: \"" + getInputState(this.layer, "display") + "\",\n";
+        }
+
+        let style = convertStyleToString(generateStyle(this.layer));
+        if (style) {
+            component += "\n    style: " + style + ",\n";
+        }
+
+        exportSave(component + "},\n");
+        player[this.layer].completed = true;
+
+    },
+
+    tabFormat: {
+        Base: {
+            content: [
+                ["display-text", `
+                    To create clickables, you must put them inside "challenges".<br>
+                    This is a special attribute in the layer object.<br>
+                    <br>
+                    This object can be given 2 attributes.<br>
+                    rows defines the maximum number of rows to display.<br>
+                    cols defines the maximum number of columns to display.<br>
+                    These are both regular numbers, not Decimals.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `clickables: {`,
+                    `    rows: 2,`,
+                    `    cols: 3,`,
+                    `},`,
+                ]],
+                ["display-text", `
+                    In this layer, at most, only a 3x2 block of clickables will appear.<br>
+                    All other clickables, such as 14, 25, 33 will not appear.<br>
+                `],
+                "blank",
+                ["display-text", `
+                    Clickables come with 2 automatic attributes, "layer" and "id",<br>
+                    corresponding to the layer the clickable is in, and the id of the clickable.<br>
+                    These can be accessed in any function of the upgrade.<br>
+                    <br>
+                    The id serves a second purpose: positioning the clickable.<br>
+                    The first digits are the row, and the final digit is the column.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `addLayer("p", {`,
+                    `    ...`,
+                    `    clickables: {`,
+                    `        ...`,
+                    `        123: {},`,
+                    `    },`,
+                    `})`,
+                ]],
+                ["display-text", `
+                    This clickable has a layer attribute of "p", and an id attribute of "123".<br>
+                    It is in the 12th row, and the 3rd column.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+        Visuals: {
+            content: [
+                ["clickable", 13],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>title</h3><br>
+                            <br>
+                            A larger title displayed above the clickable.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "title"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>display</h3><br>
+                            <br>
+                            Smaller text placed beneath the title. Should describe what the clickable does.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "display"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>unlocked()</h3><br>
+                    <br>
+                    unlocked() determines whether or not to show the upgrade.<br>
+                    Locked upgrades don't effect the positions of other upgrades.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        Style: {
+            content: [
+                ["clickable", 13],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>style</h3><br>
+                    <br>
+                    style allows you to set CSS values for this specific component.<br>
+                    The attribute is the CSS property, and the value is the value of the property.<br>
+                    These should both be strings.<br>
+                    style itself is an object.<br>
+                `],
+                "blank",
+                ["column", function() {
+                    return generateStyleEditor("Cclickables");
+                }],
+                "blank",
+                "blank",
+            ],
+        },
+        Effect: {
+            content: [
+                ["display-text", `
+                    <h3>canClick()</h3><br>
+                    <br>
+                    canClick() determines whether or not the upgrade can be clicked.<br>
+                    If not included, the clickable can always be clicked on.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>onClick()</h3><br>
+                    <br>
+                    onClick() is the function called when the clickable is clicked.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>effect()</h3><br>
+                    <br>
+                    effect() should calculate and return the current effect of the clickable.<br>
+                    You will have to implement the effect where it is needed.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        "Master Button": {
+            content: [
+                "clickables",
+                ["clickable", 13],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    The master button applies to all clickables.<br>
+                    It goes in the clickables object, not in each clickable.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `clickables: {`,
+                    `    ...`,
+                    `    masterButtonPress() {`,
+                    `        player.p.points = player.p.points.add(1);`,
+                    `    },`,
+                    `    11: {`,
+                    `        ...`,
+                    `    },`,
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>masterButtonPress()</h3><br>
+                    <br>
+                    A larger title displayed above the clickable.<br>
+                    This function must be included for the other attributes to take effect.<br>
+                    It can including formatting and HTML.<br>
+                    It should be a string.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>masterButtonText</h3><br>
+                    <br>
+                    A larger title displayed above the clickable.<br>
+                    It can including formatting and HTML.<br>
+                    It should be a string.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", "\""],
+                    ["text-input", "masterButtonText"],
+                    ["display-text", "\""],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>showMasterButton()</h3><br>
+                    <br>
+                    A larger title displayed above the clickable.<br>
+                    It can including formatting and HTML.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                ["row", [
+                    ["display-text", ""],
+                    ["text-input", "showMasterButton"],
+                    ["display-text", ""],
+                ]],
+                "blank",
+                "blank",
+            ],
+        },
+        Functions: {
+            content: [
+                ["display-text", `
+                    <h3>getClickableState(layer, id)</h3><br>
+                    <br>
+                    getClickableState() gets the state of the clickable.<br>
+                    By default, a clickables state is an empty string.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>setClickableState(layer, id, value)</h3><br>
+                    <br>
+                    setClickableState() sets the state of the clickable.<br>
+                    Clickable states can be any primitive value.<br>
+                    They cannot be Decimals, objects, or arrays.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>clickableEffect(layer, id)</h3><br>
+                    <br>
+                    upgradeEffect() gets the effect of the clickable.<br>
+                    It returns the result of the clickable's effect() function.<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `if (getClickableState("p", 11) == "build") {`,
+                    `    gain = gain.mul(clickableEffect("p", 11));`,
+                    `}`
+                ]],
+                ["display-text", `
+                    Applies an upgrade's effect to gain, if the clickable's state is "build".<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `setClickableState("p", 12,`,
+                    `    new Decimal(getClickableState("p", 12).add(1)))`,
+                ]],
+                ["display-text", `
+                    Increments a clickable's state by 1.<br>
+                    This correctly deals with the default state.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        Tips: {
+            content: [
+                ["display-text", `
+                    If a function will always return the same value,<br>
+                    you can turn it into an attribute to increase performance!<br>
+                    If you want any attribute to change, you can turn it into a function,<br>
+                    and it will automatically update.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `title() { return player.points; },`,
+                    `showMasterButton: true,`,
+                ]],
+                ["display-text", `
+                    The title will be the player's current points.<br>
+                    The master button will always be shown.<br>
+                `],
+                "blank",
+                "h-line",
+                "blank",
+                ["display-text", `
+                    Don't make clickables give a bonus based on the number of times clicked.<br>
+                    These aren't fun to use, and encourage autoclickers.<br>
+                    Clickables work very well with custom features.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+    },
+
+    inputs: {
+        title: "Title",
+        display: "Display",
+
+        masterButtonText: "Master Button Text",
+        showMasterButton: "",
+
+        property1: "",
+        value1: "",
+    },
+    clickables: {
+        masterButtonPress() {},
+        masterButtonText() {
+            return player.Cclickables.inputs.masterButtonText;
+        },
+        showMasterButton() {
+            return player.Cclickables.inputs.showMasterButton != "false" && player.Cclickables.inputs.showMasterButton;
+        },
+
+        11: {
+            display() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                        return "<h3>Change State</h3><br>Currently locked.";
+                    case "disabled":
+                    case "enabled":
+                        return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, this.id) + ".";
+                }
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                    case "disabled":
+                        player[this.layer].milestones = [0];
+                        setClickableState(this.layer, this.id, "enabled");
+                        break;
+                    case "enabled":
+                        player[this.layer].milestones = [];
+                        setClickableState(this.layer, this.id, "disabled");
+                        break;
+                }
+            },
+        },
+        12: {
+            display() {
+                return "<h3>Export Milestone</h3>";
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                layers[this.layer].generateComponent();
+            },
+        },
+        13: {
+            title() {
+                return player.Cclickables.inputs.title;
+            },
+            display() {
+                return player.Cclickables.inputs.display;
+            },
+            style() {
+                return generateStyle("Cclickables");
+            },
+
+            canClick() {
+                return getClickableState(this.layer, 11) == "enabled";
+            },
+        },
+    },
 });
 
 addLayer("Cmilestones", {
@@ -1304,7 +1726,6 @@ addLayer("Cupgrades", {
                     <br>
                     effect() should calculate and return the current effect of the upgrade.<br>
                     You will have to implement the effect where it is needed.<br>
-                    It should return a Decimal.<br>
                 `],
                 "blank",
                 "blank",
@@ -1364,7 +1785,7 @@ addLayer("Cupgrades", {
                 ["display-text", `
                     <h3>upgradeEffect(layer, id)</h3><br>
                     <br>
-                    upgradeEffect gets the effect of the upgrade.<br>
+                    upgradeEffect() gets the effect of the upgrade.<br>
                     It returns the result of the upgrade's effect() function.<br>
                 `],
                 "blank",
@@ -1380,7 +1801,7 @@ addLayer("Cupgrades", {
                 ["display-text", `
                     <h3>buyUpgrade(layer, id)</h3><br>
                     <br>
-                    buyUpgrade attempts to buy an upgrade.<br>
+                    buyUpgrade() attempts to buy an upgrade.<br>
                     It will only buy upgrades you can afford.<br>
                 `],
                 "blank",
