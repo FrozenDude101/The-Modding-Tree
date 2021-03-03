@@ -851,9 +851,7 @@ addLayer("Cclickables", {
                 `],
                 "blank",
                 ["row", [
-                    ["display-text", ""],
-                    ["text-input", "showMasterButton"],
-                    ["display-text", ""],
+                    ["checkbox", "showMasterButton"],
                 ]],
                 "blank",
                 "blank",
@@ -943,7 +941,7 @@ addLayer("Cclickables", {
         display: "Display",
 
         masterButtonText: "Master Button Text",
-        showMasterButton: "",
+        showMasterButton: true,
 
         property1: "",
         value1: "",
@@ -954,7 +952,7 @@ addLayer("Cclickables", {
             return player.Cclickables.inputs.masterButtonText;
         },
         showMasterButton() {
-            return player.Cclickables.inputs.showMasterButton != "false" && player.Cclickables.inputs.showMasterButton;
+            return player.Cclickables.inputs.showMasterButton;
         },
 
         11: {
