@@ -8,12 +8,18 @@ addLayer("Cachievements", {
 });
 
 addLayer("Cbuyables", {
-    symbol: `
-        <span><h2>Buyables</h2><br></span>
-        <span><br>A repeatable upgrade!<br><br>Cost: 1 Completed<br>Buyable Module</span>
-    `,
+    symbol() { 
+        return `
+            <span><h2>Buyables</h2><br></span>
+            <span><br>A repeatable upgrade!<br><br>Cost: ` + (player[this.layer].bought ? 2 : 1) + ` Completed<br>Buyable Module</span>
+        `
+    },
     tooltip: "Buyables",
-    classes: ["buyable", "locked"],
+    classes() {
+        let ret = ["buyable"];
+        if (player[this.layer].bought || !player[this.layer].completed) ret.push("locked");
+        return ret;
+    },
     nodeStyle: merge(getNodeStyle(30, 0), {color: "#000"}),
 });
 
@@ -597,6 +603,14 @@ addLayer("Cclickables", {
     classes: ["upg"],
     nodeStyle: merge(getNodeStyle(14, 0), {color: "#000"}),
 
+    startData() {
+
+        return {
+            showMasterButton: false,
+        };
+
+    },
+
     generateComponent() {
 
         let component = "{\n";
@@ -850,9 +864,7 @@ addLayer("Cclickables", {
                     It should return a boolean.<br>
                 `],
                 "blank",
-                ["row", [
-                    ["checkbox", "showMasterButton"],
-                ]],
+                ["toggle", ["Cclickables", "showMasterButton"]],
                 "blank",
                 "blank",
             ],
@@ -941,7 +953,6 @@ addLayer("Cclickables", {
         display: "Display",
 
         masterButtonText: "Master Button Text",
-        showMasterButton: true,
 
         property1: "",
         value1: "",
@@ -952,7 +963,7 @@ addLayer("Cclickables", {
             return player.Cclickables.inputs.masterButtonText;
         },
         showMasterButton() {
-            return player.Cclickables.inputs.showMasterButton;
+            return player.Cclickables.showMasterButton;
         },
 
         11: {

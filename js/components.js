@@ -29,18 +29,6 @@ function loadVue() {
 		`
 	})
 	
-	Vue.component('checkbox', {
-		props: ['layer', 'data'],
-		template: `
-			<input
-				class="checkbox"
-				type="checkbox"
-				:checked="player[layer].inputs[data]"
-				v-on:click="function handleInput(e) { setInputState(layer, data, e.target.checked); }">
-			</input>
-		`
-	})
-	
 	// This duplicate fixes an issue with the style editor.
 	Vue.component('text-input2', {
 		props: ['layer', 'data'],
