@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2",
-	name: "Wood",
+	num: "0.3",
+	name: "Leaves",
 }
 
 let changelog = `

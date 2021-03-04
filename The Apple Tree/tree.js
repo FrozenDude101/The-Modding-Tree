@@ -50,6 +50,7 @@ function generateTree() {
                     };
                 }
             }
+            if (ID.length != 2 ) generateLeaves(ID, TREE);
         }
     }
 
@@ -63,7 +64,7 @@ function generateIDs(id = "00", growth = 4, split = false) {
     let IDs;
 
     r1 = growth*nRand()/6 + growth/3;
-    if (r1 < 0.3) return [];
+    if (r1 < 0.3 || id.length > 5) return [];
     IDs = [{id: id, length: r1, split: split}];
     r2 = bRand(0.75);
 
@@ -73,6 +74,45 @@ function generateIDs(id = "00", growth = 4, split = false) {
     }
 
     return IDs;
+}
+
+function generateLeaves(ID, TREE) {
+
+    const ROOT = TREE[ID];
+    const offset = nRand()*Math.PI*2;
+    for (let i = 0; i < 3; i ++) {
+        data.IDS.push("L" + i + ID);
+        let leafID = "L" + i + ID;
+        TREE[leafID] = {
+            root: ID,
+            angle: offset + Math.PI*2*i/3,
+            states: {},
+        }
+        for (let j = 0; j <= 4; j ++) {
+            if (j+1 < ID.length) {
+                TREE[leafID].states[j] = {
+                    time: 0,
+                    scale: 0,
+                    position: [
+                        TREE[TREE[leafID].root].states[j].position[0],
+                        TREE[TREE[leafID].root].states[j].position[1],
+                    ],
+                    colour: "#CF9",
+                };
+            } else {
+                TREE[leafID].states[j] = {
+                    time: 10000,
+                    scale: 1,
+                    position: [
+                        TREE[TREE[leafID].root].states[j].position[0]-0.4*Math.sin(TREE[TREE[leafID].root].angle + TREE[leafID].angle),
+                        TREE[TREE[leafID].root].states[j].position[1]-0.4*Math.cos(TREE[TREE[leafID].root].angle + TREE[leafID].angle),
+                    ],
+                    colour: colourApproach("#CF9", "#5A0", j/4),
+                };
+            }
+        }
+    }
+
 }
 
 function newTree(seed = Math.floor(Math.random()*255)) {
@@ -98,71 +138,127 @@ function generateLayers() {
         IDs.push("0" + i);
         for (let j = 0; j <= 1; j ++) {
             IDs.push("0" + i + j);
+            IDs.push("L00" + i + j);
+            IDs.push("L10" + i + j);
+            IDs.push("L20" + i + j);
             for (let k = 0; k <= 1; k ++) {
                 IDs.push("0" + i + j + k);
+                IDs.push("L00" + i + j + k);
+                IDs.push("L10" + i + j + k);
+                IDs.push("L20" + i + j + k);
                 for (let l = 0; l <= 1; l ++) {
                     IDs.push("0" + i + j + k + l);
+                    IDs.push("L00" + i + j + k + l);
+                    IDs.push("L10" + i + j + k + l);
+                    IDs.push("L20" + i + j + k + l);
                 }
             }
         }
     }
 
     for (let ID of IDs) {
-        addNode(ID, {
-            branches() {
-                if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
-                return tmp[ID].state.branches;
-            },
+        let nodeData;
+        if (ID[0] == "L") {
+            nodeData = {
+                symbol: "",
+                tooltip: "",
+                color() {
+                    if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
+                    return tmp[ID].state.colour;
+                },
 
-            nodeStyle() {
-                if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
-                return {
-                    position: "absolute",
-                    top: "calc(120px + " + 120*tmp[ID].state.position[1] + "px)",
-                    left: "calc((50% - 300px) + " + 120*tmp[ID].state.position[0] + "px)",
-                };
-            },
-
-            state() {
-                if (data.TREE[ID] == undefined) return;
-                let stateTime = (player.time - player.state.time)/data.TREE[ID].states[player.state.current].time;
-                if (stateTime > 1) return {
-                    position: data.TREE[ID].states[player.state.current].position,
-                    branches: data.TREE[ID].states[player.state.current].branches,
-                };
-
-                let branches = [];
-                if (data.TREE[ID].states[player.state.current].branches) {
-                    for (let newBranch of data.TREE[ID].states[player.state.current].branches) {
-                        let match = false;
-                        if (data.TREE[ID].states[player.state.previous].branches) {
-                            for (let oldBranch of data.TREE[ID].states[player.state.previous].branches) {
-                                if (newBranch.id == oldBranch.id) {
-                                    match = true;
-                                    branches.push({id: newBranch.id, colour: colourApproach(oldBranch.colour, newBranch.colour, stateTime), width: approach(oldBranch.width, newBranch.width, stateTime)});
-                                    break;
+                nodeStyle() {
+                    if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
+                    return {
+                        position: "absolute",
+                        top: "calc(120px + " + 120*tmp[ID].state.position[1] + "px)",
+                        left: "calc((50% - 300px) + " + 120*tmp[ID].state.position[0] + "px)",
+                        background: tmp[ID].state.colour,
+                        transform: "scale(" + tmp[ID].state.scale + "," + tmp[ID].state.scale + ")",
+                    };
+                },
+    
+                state() {
+                    if (data.TREE[ID] == undefined) return;
+                    let stateTime = (player.time - player.state.time)/data.TREE[ID].states[player.state.current].time;
+                    if (stateTime > 1) return {
+                        position: data.TREE[ID].states[player.state.current].position,
+                        colour: data.TREE[ID].states[player.state.current].colour,
+                        scale: data.TREE[ID].states[player.state.current].scale,
+                    };
+    
+                    return {
+                        position: [
+                            approach(data.TREE[ID].states[player.state.previous].position[0], data.TREE[ID].states[player.state.current].position[0], stateTime),
+                            approach(data.TREE[ID].states[player.state.previous].position[1], data.TREE[ID].states[player.state.current].position[1], stateTime),
+                        ],
+                        colour: colourApproach(data.TREE[ID].states[player.state.previous].colour, data.TREE[ID].states[player.state.current].colour, stateTime),
+                        scale: approach(data.TREE[ID].states[player.state.previous].scale, data.TREE[ID].states[player.state.current].scale, stateTime),
+                    };
+                },
+                
+                layerShown() {
+                    return player.state.current > (ID.length - 4);
+                },
+            };
+        } else {
+            nodeData = {
+                branches() {
+                    if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
+                    return tmp[ID].state.branches;
+                },
+    
+                nodeStyle() {
+                    if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
+                    return {
+                        position: "absolute",
+                        top: "calc(120px + " + 120*tmp[ID].state.position[1] + "px)",
+                        left: "calc((50% - 300px) + " + 120*tmp[ID].state.position[0] + "px)",
+                    };
+                },
+    
+                state() {
+                    if (data.TREE[ID] == undefined) return;
+                    let stateTime = (player.time - player.state.time)/data.TREE[ID].states[player.state.current].time;
+                    if (stateTime > 1) return {
+                        position: data.TREE[ID].states[player.state.current].position,
+                        branches: data.TREE[ID].states[player.state.current].branches,
+                    };
+    
+                    let branches = [];
+                    if (data.TREE[ID].states[player.state.current].branches) {
+                        for (let newBranch of data.TREE[ID].states[player.state.current].branches) {
+                            let match = false;
+                            if (data.TREE[ID].states[player.state.previous].branches) {
+                                for (let oldBranch of data.TREE[ID].states[player.state.previous].branches) {
+                                    if (newBranch.id == oldBranch.id) {
+                                        match = true;
+                                        branches.push({id: newBranch.id, colour: colourApproach(oldBranch.colour, newBranch.colour, stateTime), width: approach(oldBranch.width, newBranch.width, stateTime)});
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        if (!match) {
-                            branches.push({id: newBranch.id, colour: colourApproach(data.TREE[data.TREE[ID].root].states[player.state.previous].branches[0].colour, newBranch.colour, stateTime), width: approach(newBranch.width/2, newBranch.width, stateTime)});
+                            if (!match) {
+                                branches.push({id: newBranch.id, colour: colourApproach(data.TREE[data.TREE[ID].root].states[player.state.previous].branches[0].colour, newBranch.colour, stateTime), width: approach(newBranch.width/2, newBranch.width, stateTime)});
+                            }
                         }
                     }
-                }
-
-                return {
-                    position: [
-                        approach(data.TREE[ID].states[player.state.previous].position[0], data.TREE[ID].states[player.state.current].position[0], stateTime),
-                        approach(data.TREE[ID].states[player.state.previous].position[1], data.TREE[ID].states[player.state.current].position[1], stateTime),
-                    ],
-                    branches: branches,
-                };
-            },
-
-            layerShown() {
-                return (data.TREE[ID] == undefined ? false : "ghost")
-            },
-        })
+    
+                    return {
+                        position: [
+                            approach(data.TREE[ID].states[player.state.previous].position[0], data.TREE[ID].states[player.state.current].position[0], stateTime),
+                            approach(data.TREE[ID].states[player.state.previous].position[1], data.TREE[ID].states[player.state.current].position[1], stateTime),
+                        ],
+                        branches: branches,
+                    };
+                },
+    
+                layerShown() {
+                    return (data.TREE[ID] == undefined ? false : "ghost")
+                },
+            }
+        }
+        addNode(ID, nodeData)
     }
 
 }
