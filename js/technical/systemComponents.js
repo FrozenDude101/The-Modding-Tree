@@ -99,7 +99,7 @@ var systemComponents = {
 		<br>
 		<span v-if="player.points.lt('1e1000')"  class="overlayThing">You have </span>
 		<h2  class="overlayThing" id="points">{{format(player.points)}}</h2>
-		<span v-if="player.points.lt('1e1e6')"  class="overlayThing"> {{modInfo.pointsName}}</span>
+		<span v-if="player.points.lt('1e1e6')"  class="overlayThing"> {{modInfo.pointsName}}</span><span v-if="player.points.neq(1)"  class="overlayThing">s</span>
 		<br>
 		<span v-if="canGenPoints()"  class="overlayThing">({{format(getPointGen())}}/sec)</span>
 		<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>

@@ -51,5 +51,5 @@ addLayer("tree-tab", {
                 top: "-60px",
             },
         }
-    }
+    },
 })

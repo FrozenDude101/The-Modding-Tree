@@ -1,19 +1,19 @@
 let modInfo = {
 	name: "The Apple Tree",
 	id: "FD101/TheAppleTree",
-	author: "nobody",
-	pointsName: "points",
-	discordName: "",
-	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	author: "FrozenDude101",
+	pointsName: "apple",
+	discordName: "Friendly Robot Games",
+	discordLink: "https://discord.gg/qcXwBYSBr3",
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.3",
-	name: "Leaves",
+	num: "0.4",
+	name: "Apples",
 }
 
 let changelog = `
@@ -45,12 +45,31 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() {
+	let apples = {};
+    for (let i = 0; i < 2; i ++) {
+        for (let j = 0; j <= 1; j ++) {
+            for (let k = 0; k < 2; k ++) {
+                for (let l = 0; l < 3; l ++) {
+                    apples["A" + l + "0" + i + j + k] = DEFAULT_APPLE();
+                }
+                for (let l = 0; l < 2; l ++) {
+                    for (let m = 0; m < 3; m ++) {
+						apples["A" + m + "0" + i + j + k + l] = DEFAULT_APPLE();
+                    }
+                }
+            }
+        }
+    }
+
 	return {
 		state: {
 			current: 0,
 			previous: 0,
 			time: 0,
-		}
+		},
+		apples: apples,
+		fruiting: [],
+		appleTime: 0,
 	};
 }
 

@@ -1,3 +1,16 @@
+#treeTab {
+    overflow: hidden;
+}
+
 .treeButton {
     transition-property: transform, box-shadow, z-index;
+
+    cursor: default;
+
+}
+
+.treeButton.can {
+
+    cursor: grab;
+
 }

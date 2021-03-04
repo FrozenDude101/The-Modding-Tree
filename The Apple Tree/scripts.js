@@ -10,6 +10,15 @@ const data = {
     transitionTime: 0,
 };
 
+function DEFAULT_APPLE() {
+    return {
+        state: 0,
+        offset: [0, 0],
+        time: 0,
+        colour: "#5A0",
+    };
+};
+
 // -------- Multi Layer Functions --------
 
 // ---- Number ----
@@ -74,5 +83,27 @@ function onLoad() {
 function update(diff) {
 
     drawTree();
+
+    if (player.state.current == 4 && player.time > player.state.time + 10000 && player.time > player.appleTime) {
+        player.appleTime = player.time + Math.floor(Math.random()*5000) + 5000;
+        let leaves = [];
+        for (id of data.IDS) {
+            if (id[0] == "L" && id.length > 5) leaves.push(id);
+        }
+        let leafID = leaves[Math.floor(Math.random()*leaves.length)];
+        let appleID = "A" + leafID.slice(1);
+        if (!player.fruiting.includes(appleID)) {
+            player.fruiting.push(appleID);
+            player.apples[appleID] = {
+                state: 1,
+                offset: [
+                    Math.floor(Math.random()*25)+12.5,
+                    Math.floor(Math.random()*25)+12.5,
+                ],
+                time: player.time,
+            };
+        }
+
+    }
 
 }
