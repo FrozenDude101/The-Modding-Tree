@@ -5,6 +5,7 @@ function generateTree() {
     const DATA = [{id: "0"}].concat(generateIDs());
     const TREE = {};
     data.IDS = [];
+    let mult = 1.2 ** parseInt(player["tree-tab"].buyables[13]);
     for (let OBJ of DATA) {
         ID = OBJ.id;
         LEN = OBJ.length;
@@ -46,7 +47,7 @@ function generateTree() {
                             TREE[TREE[ID].root].states[i].position[0]-LEN*Math.sin(TREE[TREE[ID].root].angle + TREE[ID].angle),
                             TREE[TREE[ID].root].states[i].position[1]-LEN*Math.cos(TREE[TREE[ID].root].angle + TREE[ID].angle),
                         ],
-                        branches: [{id: TREE[ID].root, colour: colourApproach("#862", "#530", i/4), width: approach(0, (7-ID.length)*5, i/4)}],
+                        branches: [{id: TREE[ID].root, colour: colourApproach("#862", "#530", i/4), width: approach(0, (7-ID.length)*5*mult, i/4)}],
                     };
                 }
             }
@@ -132,12 +133,6 @@ function newTree(seed = Math.floor(Math.random()*255)) {
     player.seed = seed;
     data.previousRandom = seed;
     data.TREE = generateTree();
-    if (player.fruiting) {
-        for (apple of player.fruiting) {
-            player.apples[apple] = DEFAULT_APPLE();
-        }
-        player.fruiting = [];
-    }
 
 }
 
@@ -146,6 +141,12 @@ function setState(state) {
     player.state.previous = player.state.current;
     player.state.current = state;
     player.state.time = player.time;
+    if (state == 0 && player.fruiting) {
+        for (apple of player.fruiting) {
+            player.apples[apple] = DEFAULT_APPLE();
+        }
+        player.fruiting = [];
+    }
 
 }
 
@@ -190,11 +191,11 @@ function generateLayers() {
                         return player.apples[ID].colour || "#5A0";
                     },
                     nodeStyle() {
-                        if (!player.fruiting.includes(ID) || !  data.IDS.includes(ID)) return;
+                        if (!player.fruiting.includes(ID) || !data.IDS.includes(ID)) return;
                         return {
                             position: "absolute",
-                            top: "calc(120px + " + (120*data.TREE["L" + ID.slice(1)].states[4].position[1] + player.apples[ID].offset[1]) + "px)",
-                            left: "calc((50% - 300px) + " + (120*data.TREE["L" + ID.slice(1)].states[4].position[0] + player.apples[ID].offset[0]) + "px)",
+                            top: "calc(50px + " + (120*data.TREE["L" + ID.slice(1)].states[4].position[1] + player.apples[ID].offset[1]) + "px)",
+                            left: "calc((50% - 300px) + " + (120*data.TREE["L" + ID.slice(1)].states[4].position[0] + player.apples[ID].offset[0]) + "px",
 
                             height: "25px",
                             width: "25px",
@@ -203,6 +204,8 @@ function generateLayers() {
                             "border-radius": "100%",
 
                             background: player.apples[ID].colour || "#5A0",
+
+                            transform: "scale(" + buyableEffect("tree-tab", 12) + ")",
                         };
                     },
                     
@@ -215,17 +218,18 @@ function generateLayers() {
                     },
                     onClick() {
                         if (player.apples[ID].state == 2) {
-                            player.points = player.points.add(1);
+                            player.resources.apples += 1;
                             player.apples[ID].time = player.time;
                             player.apples[ID].state = 3;
                         }
                     },
 
                     update(diff) {
+                        let appleTime = 10000 / tmp["tree-tab"].getAppleDivider;
                         switch (player.apples[ID].state) {
                             case 1:
-                                player.apples[ID].colour = colourApproach("#5A0", "#F00", (player.time - player.apples[ID].time)/10000);
-                                if (player.time - player.apples[ID].time > 10000) {
+                                player.apples[ID].colour = colourApproach("#5A0", "#F00", (player.time - player.apples[ID].time)/appleTime);
+                                if (player.time - player.apples[ID].time > appleTime) {
                                     player.apples[ID].state = 2;
                                 }
                                 break;
@@ -233,8 +237,8 @@ function generateLayers() {
                                 player.apples[ID].colour = "#F00";
                                 break;
                             case 3:
-                                player.apples[ID].offset[1] += 1+10*diff*((player.time - player.apples[ID].time)/1000)**2;
-                                if (player.time - player.apples[ID].time > 10000) {
+                                player.apples[ID].offset[1] += 1+40*diff*((player.time - player.apples[ID].time)/1000)**2;
+                                if (player.time - player.apples[ID].time > 5000) {
                                     player.fruiting.splice(player.fruiting.indexOf(ID), 1);
                                     player.apples[ID] = DEFAULT_APPLE();
                                 }
@@ -255,7 +259,7 @@ function generateLayers() {
                         if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
                         return {
                             position: "absolute",
-                            top: "calc(120px + " + 120*tmp[ID].state.position[1] + "px)",
+                            top: "calc(50px + " + 120*tmp[ID].state.position[1] + "px)",
                             left: "calc((50% - 300px) + " + 120*tmp[ID].state.position[0] + "px)",
                             background: tmp[ID].state.colour,
                             transform: "scale(" + tmp[ID].state.scale + "," + tmp[ID].state.scale + ")",
@@ -264,7 +268,10 @@ function generateLayers() {
         
                     state() {
                         if (data.TREE[ID] == undefined) return;
-                        let stateTime = (player.time - player.state.time)/data.TREE[ID].states[player.state.current].time;
+
+                        let t = data.TREE[ID].states[player.state.current].time / tmp["tree-tab"].getGrowthDivider;
+
+                        let stateTime = (player.time - player.state.time)/t;
                         if (stateTime > 1) return {
                             position: data.TREE[ID].states[player.state.current].position,
                             colour: data.TREE[ID].states[player.state.current].colour,
@@ -297,14 +304,17 @@ function generateLayers() {
                         if (tmp[ID].state == undefined || tmp[ID].state instanceof Decimal) return;
                         return {
                             position: "absolute",
-                            top: "calc(120px + " + 120*tmp[ID].state.position[1] + "px)",
+                            top: "calc(50px + " + 120*tmp[ID].state.position[1] + "px)",
                             left: "calc((50% - 300px) + " + 120*tmp[ID].state.position[0] + "px)",
                         };
                     },
         
                     state() {
                         if (data.TREE[ID] == undefined) return;
-                        let stateTime = (player.time - player.state.time)/data.TREE[ID].states[player.state.current].time;
+
+                        let t = data.TREE[ID].states[player.state.current].time / tmp["tree-tab"].getGrowthDivider;
+
+                        let stateTime = (player.time - player.state.time)/t;
                         if (stateTime > 1) return {
                             position: data.TREE[ID].states[player.state.current].position,
                             branches: data.TREE[ID].states[player.state.current].branches,

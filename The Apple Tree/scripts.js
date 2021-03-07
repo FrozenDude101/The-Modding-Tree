@@ -84,8 +84,15 @@ function update(diff) {
 
     drawTree();
 
-    if (player.state.current == 4 && player.time > player.state.time + 10000 && player.time > player.appleTime) {
-        player.appleTime = player.time + Math.floor(Math.random()*5000) + 5000;
+    let growthTime = 10000 / tmp["tree-tab"].getGrowthDivider;
+
+    if (player.time > player.state.time + growthTime && player.state.current != 4 && !player.flags.plant) {
+        setState(player.state.current + 1); 
+    }
+
+    if (player.state.current == 4 && player.time > player.state.time + growthTime && player.time > player.appleTime) {
+        let t = (Math.floor(Math.random()*5000) + 5000) / (tmp["tree-tab"].getAppleDivider ** 1.25);
+        player.appleTime = player.time + t;
         let leaves = [];
         for (id of data.IDS) {
             if (id[0] == "L" && id.length > 5) leaves.push(id);
@@ -97,13 +104,19 @@ function update(diff) {
             player.apples[appleID] = {
                 state: 1,
                 offset: [
-                    Math.floor(Math.random()*25)+12.5,
-                    Math.floor(Math.random()*25)+12.5,
+                    Math.floor(Math.random()*60),
+                    Math.floor(Math.random()*60),
                 ],
                 time: player.time,
             };
         }
-
     }
+
+    let t = player.time / 10000 % 6;
+    data.applePrice = player.baseApplePrice * (1 - (t**3 - 9*t**2 + 18*t) / 20) * tmp["tree-tab"].getAppleMultiplier;
+    t = player.time / 26000 % 6;
+    data.woodPrice = player.baseWoodPrice * (1 - (t**3 - 9*t**2 + 18*t) / 20) * tmp["tree-tab"].getWoodMultiplier;
+
+    player.points = new Decimal(player.resources.apples);
 
 }

@@ -12,14 +12,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.4",
-	name: "Apples",
+	num: "1.0",
+	name: "Seedling",
 }
 
 let changelog = `
 `;
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `
+	Congratulations!<br>
+	You beat The Apple Tree v1.0!<br>
+`;
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -67,9 +70,22 @@ function addedPlayerData() {
 			previous: 0,
 			time: 0,
 		},
+
+		resources: {
+			apples: 0,
+			wood: 0,
+			money: 0,
+		},
+
+		toAdd: {},
+		flags: {},
+
 		apples: apples,
 		fruiting: [],
 		appleTime: 0,
+
+		baseApplePrice: 1,
+		baseWoodPrice: 5,
 	};
 }
 
@@ -79,7 +95,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.resources.money >= 1000;
 }
 
 
