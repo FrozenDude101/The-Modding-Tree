@@ -21,6 +21,450 @@ addLayer("Cbuyables", {
         return ret;
     },
     nodeStyle: merge(getNodeStyle(30, 0), {color: "#000"}),
+
+    startData() {
+        return {
+            points: new Decimal(0),
+
+            canSellOne: false,
+            canSellAll: false,
+        };
+    },
+
+    tabFormat: {
+        Base: {
+            content: [
+                ["display-text", `
+                    To create buyables, you must put them inside "buyables".<br>
+                    This is a special attribute in the layer object.<br>
+                    <br>
+                    This object can be given 2 attributes.<br>
+                    rows defines the maximum number of rows to display.<br>
+                    cols defines the maximum number of columns to display.<br>
+                    These are both regular numbers, not Decimals.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `buyables: {`,
+                    `    rows: 2,`,
+                    `    cols: 3,`,
+                    `},`,
+                ]],
+                ["display-text", `
+                    In this layer, at most, only a 3x2 block of buyables will appear.<br>
+                    All other buyables, such as 14, 25, 33 will not appear.<br>
+                `],
+                "blank",
+                ["display-text", `
+                    Challenges come with 2 automatic attributes, "layer" and "id",<br>
+                    corresponding to the layer the buyable is in, and the id of the buyable.<br>
+                    These can be accessed in any function of the upgrade.<br>
+                    <br>
+                    The id serves a second purpose: positioning the buyable.<br>
+                    The first digits are the row, and the final digit is the column.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `addLayer("p", {`,
+                    `    ...`,
+                    `    buyables: {`,
+                    `        ...`,
+                    `        123: {},`,
+                    `    },`,
+                    `})`,
+                ]],
+                ["display-text", `
+                    This buyable has a layer attribute of "p", and an id attribute of "123".<br>
+                    It is in the 12th row, and the 3rd column.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+        Visuals: {
+            content: [
+                ["buyable", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>title</h3><br>
+                            <br>
+                            A larger title displayed above the buyable.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "title"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>display</h3><br>
+                            <br>
+                            Smaller text placed beneath the title. Should describe what the buyable does.<br>
+                            It can including formatting and HTML.<br>
+                            It should be a string.<br>
+                        `],
+                        "blank",
+                        ["row", [
+                            ["display-text", "\""],
+                            ["text-input", "display"],
+                            ["display-text", "\""],
+                        ]],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>unlocked()</h3><br>
+                    <br>
+                    unlocked() determines whether or not to show the buyable.<br>
+                    Locked buyables don't effect the positions of other buyables.<br>
+                    It should return a boolean.<br>
+                `],
+                "blank",
+                "blank",
+            ],
+        },
+        Style: {
+            content: [
+                ["buyable", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>style</h3><br>
+                    <br>
+                    This is intended, but currently broken in the latest TMT.<br>
+                    <br>
+                    style allows you to set CSS values for this specific component.<br>
+                    The attribute is the CSS property, and the value is the value of the property.<br>
+                    These should both be strings.<br>
+                    style itself is an object.<br>
+                `],
+                "blank",
+                ["column", function() {
+                    return generateStyleEditor("Cbuyables");
+                }],
+                "blank",
+                "blank",
+            ],
+        },
+        Buy: {
+            content: [
+                ["buyable", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    <h3>canAfford()</h3><br>
+                    <br>
+                    canAfford() determines whether or not the buyable can be bought.<br>
+                    It should return true if the buyable can be bought at least once.<br>
+                    It should return a boolean.
+                `],
+                "blank",
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>buy()</h3><br>
+                            <br>
+                            This function is called when the buyable is bought once.<br>
+                            It should subtract currencies, and add one to the amount.<br>
+                        `],
+                        "blank",
+                        "blank",
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>buyMax()</h3><br>
+                            <br>
+                            This function must be called manually.<br>
+                            It has to calculate how many of the buyable can be bought.<br>
+                            It should subtract currencies, and add to the amount.<br>
+                        `],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+            ],
+        },
+        Sell: {
+            content: [
+                ["buyable", 11],
+                "blank",
+                ["row", [
+                    ["clickable", 11],
+                    "blank",
+                    ["clickable", 12],
+                ]],
+                "blank",
+                ["h-line", "500px"],
+                "blank",
+                ["display-text", `
+                    These optional functions create extra buttons beneath the buyable.<br>
+
+                `],
+                "blank",
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>sellOne()</h3><br>
+                            <br>
+                            Usually used to implement selling one of the buyable.<br>
+                            It has to deal with removing one from the amount and possibly refunding the cost.<br>
+                        `],
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>sellAll()</h3><br>
+                            <br>
+                            Usually used to implement selling all of the buyable.<br>
+                            It has to deal with resetting the amount and possibly refunding the cost.<br>
+                        `],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+                "blank",
+                "blank",
+                ["row", [
+                    ["column", [
+                        ["display-text", `
+                            <h3>canSellOne()</h3><br>
+                            <br>
+                            Determines if the sell all button can be clicked.<br>
+                            The button is only shown when it can be clicked.<br>
+                            It should return a boolean.<br>
+                        `],
+                        "blank",
+                        ["toggle", ["Cbuyables", "canSellOne"]],
+                    ], {
+                        width: "240px",
+                    }],
+                    "blank",
+                    ["column", [
+                        ["display-text", `
+                            <h3>canSellAll()</h3><br>
+                            <br>
+                            Determines if the sell all button can be clicked.<br>
+                            The button is only shown when it can be clicked.<br>
+                            It should return a boolean.<br>
+                        `],
+                        "blank",
+                        ["toggle", ["Cbuyables", "canSellAll"]],
+                    ], {
+                        width: "240px",
+                    }],
+                ]],
+                "blank",
+                "blank",
+            ],
+        },
+        Functions: {
+            content: [
+                ["display-text", `
+                <h3>getBuyableAmount(layer, id)</h3><br>
+                <br>
+                getBuyableAmount() get the amount of the buyable.<br>
+                It returns a Decimal number.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>setBuyableAmount(layer, id, value)</h3><br>
+                    <br>
+                    setBuyableAmount() sets the amount of the buyable.<br>
+                    value should be a Decimal number.<br>
+                `],
+                "blank",
+                "blank",
+                ["display-text", `
+                    <h3>buyableEffect(layer, id)</h3><br>
+                    <br>
+                    buyableEffect() gets the effect of a buyable.<br>
+                    It returns the result of the buyable's effect() function.<br>
+                `],
+                "blank",
+                "blank",
+                ["code-block", [
+                    `if (hasUpgrade("p", 11)) {`,
+                    `    gain = gain.mul(upgradeEffect("p", 11));`,
+                    `}`
+                ]],
+                ["display-text", `
+                    Applies an upgrade's effect to gain.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `if (hasUpgrade("q", 11)) {`,
+                    `    buyUpgrade("p", 11);`,
+                    `    buyUpgrade("p", 12);`,
+                    `    buyUpgrade("p", 13);`,
+                    `}`
+                ]],
+                ["display-text", `
+                    Attempts to buy the first 3 "p" upgrades.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+        Tips: {
+            content: [
+                ["display-text", `
+                    If a function will always return the same value,<br>
+                    you can turn it into an attribute to increase performance!<br>
+                    If you want any attribute to change, you can turn it into a function,<br>
+                    and it will automatically update.<br>
+                `],
+                "blank",
+                ["code-block", [
+                    `title() { return player.points; },`,
+                    `effect: new Decimal(2),`,
+                ]],
+                ["display-text", `
+                    The title will be the player's current points.<br>
+                    The effect will always be 2.<br>
+                `],
+                "blank",
+                "h-line",
+                "blank",
+                ["display-text", `
+                    Buyables are best used for scaling effects.<br>
+                    Individual effects are best left for regular upgrades.<br>
+                `],
+                "blank",
+                "h-line",
+                "blank",
+                ["display-text", `
+                    Be careful when making the cost and effect functions.<br>
+                    If the cost function scales slower than the effect function, inflation can occur.<br>
+                    Softcaps can mitigate this.<br>
+                `],
+                "blank",
+                "blank",
+            ]
+        },
+    },
+
+    inputs: {
+        title: "Title",
+        display: "Display",
+    },
+    clickables: {
+        11: {
+            display() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                        return "<h3>Change State</h3><br>Currently unaffordable.";
+                    case "unaffordable":
+                    case "buyable":
+                    case "bought":
+                        return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, this.id) + ".";
+                }
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                switch (getClickableState(this.layer, this.id)) {
+                    default:
+                    case "unaffordable":
+                        setClickableState(this.layer, this.id, "buyable");
+                        break;
+                    case "buyable":
+                        player[this.layer].upgrades = [11];
+                        setClickableState(this.layer, this.id, "bought");
+                        break;
+                    case "bought":
+                        player[this.layer].upgrades = [];
+                        setClickableState(this.layer, this.id, "unaffordable");
+                        break;
+                }
+            },
+        },
+        12: {
+            display() {
+                return "<h3>Export Upgrade</h3>";
+            },
+            style: {
+                height: "45px",
+                width: "150px",
+                "border-radius": "15px",
+            },
+
+            canClick: true,
+            onClick() {
+                layers[this.layer].generateComponent();
+            },
+        },
+    },
+    buyables: {
+        11: {
+            title() {
+                return player.Cbuyables.inputs.title;
+            },
+            display() {
+                return player.Cbuyables.inputs.display;
+            },
+            style() {
+                return generateStyle("Cbuyables");
+            },
+
+            sellOne() {},
+            canSellOne() {
+                return player.Cbuyables.canSellOne;
+            },
+
+            sellAll() {},
+            canSellAll() {
+                return player.Cbuyables.canSellAll;
+            },
+        },
+    },
 });
 
 addLayer("Cchallenges", {
@@ -245,8 +689,8 @@ addLayer("Cchallenges", {
                 ["display-text", `
                     <h3>unlocked()</h3><br>
                     <br>
-                    unlocked() determines whether or not to show the upgrade.<br>
-                    Locked upgrades don't effect the positions of other upgrades.<br>
+                    unlocked() determines whether or not to show the challenge.<br>
+                    Locked challenges don't effect the positions of other challenges.<br>
                     It should return a boolean.<br>
                 `],
                 "blank",
@@ -737,8 +1181,8 @@ addLayer("Cclickables", {
                 ["display-text", `
                     <h3>unlocked()</h3><br>
                     <br>
-                    unlocked() determines whether or not to show the upgrade.<br>
-                    Locked upgrades don't effect the positions of other upgrades.<br>
+                    unlocked() determines whether or not to show the clickable.<br>
+                    Locked clickables don't effect the positions of other clickables.<br>
                     It should return a boolean.<br>
                 `],
                 "blank",
@@ -1171,7 +1615,7 @@ addLayer("Cmilestones", {
                     <h3>unlocked()</h3><br>
                     <br>
                     unlocked() determines whether or not to show the milestone.<br>
-                    Locked upgrades do effect the positions of other milestone.<br>
+                    Locked milestones do effect the positions of other milestones.<br>
                     It should return a boolean.<br>
                 `],
                 "blank",
