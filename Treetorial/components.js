@@ -17,10 +17,50 @@ addLayer("Cbuyables", {
     tooltip: "Buyables",
     classes() {
         let ret = ["buyable"];
+        if (player[this.layer].completed) ret.push("can");
         if (player[this.layer].bought || !player[this.layer].completed) ret.push("locked");
         return ret;
     },
     nodeStyle: merge(getNodeStyle(30, 0), {color: "#000"}),
+
+    onClick() {
+        if (player[this.layer].completed) player[this.layer].bought = true;
+    },
+
+    generateComponent() {
+
+        let component = "{\n";
+
+        if (getInputState(this.layer, "title")) {
+            component += "    title: \"" + getInputState(this.layer, "title") + "\",\n";
+        }
+        if (getInputState(this.layer, "display")) {
+            component += "    display: \"" + getInputState(this.layer, "display") + "\",\n";
+        }
+
+        if (component != "{\n") component += "\n";
+
+        if (player.Cbuyables.canSellOne) {
+            component += "    canSellOne() {},\n";
+            component += "    sellOne() {},\n";
+            component += "\n";
+        }
+
+        if (player.Cbuyables.canSellAll) {
+            component += "    canSellAll() {},\n";
+            component += "    sellAll() {},\n";
+            component += "\n";
+        }
+
+        let style = convertStyleToString(generateStyle(this.layer));
+        if (style) {
+            component += "    style: " + style + ",\n";
+        }
+
+        exportSave(component + "},\n");
+        player[this.layer].completed = true;
+
+    },
 
     startData() {
         return {
@@ -397,8 +437,7 @@ addLayer("Cbuyables", {
                     default:
                         return "<h3>Change State</h3><br>Currently unaffordable.";
                     case "unaffordable":
-                    case "buyable":
-                    case "bought":
+                    case "affordable":
                         return "<h3>Change State</h3><br>Currently " + getClickableState(this.layer, this.id) + ".";
                 }
             },
@@ -413,14 +452,9 @@ addLayer("Cbuyables", {
                 switch (getClickableState(this.layer, this.id)) {
                     default:
                     case "unaffordable":
-                        setClickableState(this.layer, this.id, "buyable");
+                        setClickableState(this.layer, this.id, "affordable");
                         break;
-                    case "buyable":
-                        player[this.layer].upgrades = [11];
-                        setClickableState(this.layer, this.id, "bought");
-                        break;
-                    case "bought":
-                        player[this.layer].upgrades = [];
+                    case "affordable":
                         setClickableState(this.layer, this.id, "unaffordable");
                         break;
                 }
@@ -428,7 +462,7 @@ addLayer("Cbuyables", {
         },
         12: {
             display() {
-                return "<h3>Export Upgrade</h3>";
+                return "<h3>Export Buyable</h3>";
             },
             style: {
                 height: "45px",
@@ -452,6 +486,10 @@ addLayer("Cbuyables", {
             },
             style() {
                 return generateStyle("Cbuyables");
+            },
+
+            canAfford() {
+                return getClickableState("Cbuyables", 11) == "affordable";
             },
 
             sellOne() {},
@@ -1222,7 +1260,7 @@ addLayer("Cclickables", {
                 ["display-text", `
                     <h3>canClick()</h3><br>
                     <br>
-                    canClick() determines whether or not the upgrade can be clicked.<br>
+                    canClick() determines whether or not the clickable can be clicked.<br>
                     If not included, the clickable can always be clicked on.<br>
                     It should return a boolean.<br>
                 `],
@@ -1443,7 +1481,7 @@ addLayer("Cclickables", {
         },
         12: {
             display() {
-                return "<h3>Export Milestone</h3>";
+                return "<h3>Export Clickable</h3>";
             },
             style: {
                 height: "45px",
